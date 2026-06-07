@@ -245,16 +245,16 @@ export const translations = {
 };
 
 export const categories = [
-  { id: 'food', name: 'Food Assistance', emoji: '🍎', desc: 'Food banks, SNAP enrollment, community pantries' },
-  { id: 'health', name: 'Healthcare', emoji: '🩺', desc: 'Free clinics, dental, vision, mental health' },
-  { id: 'housing', name: 'Housing & Rent', emoji: '🏠', desc: 'Rental assistance, eviction prevention, shelters' },
-  { id: 'utilities', name: 'Utilities Assistance', emoji: '💡', desc: 'Electricity, water, gas, internet relief' },
-  { id: 'education', name: 'Education & Schools', emoji: '🎒', desc: 'School enrollment, ESL classes, tutoring, adult ed' },
-  { id: 'legal', name: 'Legal Aid', emoji: '⚖️', desc: 'Immigration aid, family law, tenant rights' },
-  { id: 'employment', name: 'Employment', emoji: '💼', desc: 'Job placement, resume workshops, training centers' },
-  { id: 'transport', name: 'Transportation', emoji: '🚌', desc: 'Bus fare discount, public transit, driver licensing' },
-  { id: 'english', name: 'English Classes', emoji: '📖', desc: 'Adult ESL, conversation circles, citizenship prep' },
-  { id: 'family', name: 'Family Services', emoji: '👶', desc: 'Childcare assistance, parenting classes, counseling' }
+  { id: 'food', name: 'Food Assistance', icon: 'Utensils', desc: 'Food banks, SNAP enrollment, community pantries' },
+  { id: 'health', name: 'Healthcare', icon: 'Stethoscope', desc: 'Free clinics, dental, vision, mental health' },
+  { id: 'housing', name: 'Housing & Rent', icon: 'HomeIcon', desc: 'Rental assistance, eviction prevention, shelters' },
+  { id: 'utilities', name: 'Utilities Assistance', icon: 'Zap', desc: 'Electricity, water, gas, internet relief' },
+  { id: 'education', name: 'Education & Schools', icon: 'GraduationCap', desc: 'School enrollment, ESL classes, tutoring, adult ed' },
+  { id: 'legal', name: 'Legal Aid', icon: 'Scale', desc: 'Immigration aid, family law, tenant rights' },
+  { id: 'employment', name: 'Employment', icon: 'Briefcase', desc: 'Job placement, resume workshops, training centers' },
+  { id: 'transport', name: 'Transportation', icon: 'Bus', desc: 'Bus fare discount, public transit, driver licensing' },
+  { id: 'english', name: 'English Classes', icon: 'BookOpen', desc: 'Adult ESL, conversation circles, citizenship prep' },
+  { id: 'family', name: 'Family Services', icon: 'Users', desc: 'Childcare assistance, parenting classes, counseling' }
 ];
 
 export const resources = [
@@ -517,7 +517,7 @@ export const stepByStepGuides = [
   {
     id: 1,
     title: "Enroll a child in school",
-    emoji: "🎒",
+    icon: "GraduationCap",
     target: "education",
     summary: "Complete step-by-step guide to enrolling your child in a public school in Katy/Richmond area.",
     steps: [
@@ -533,7 +533,7 @@ export const stepByStepGuides = [
   {
     id: 2,
     title: "Find healthcare",
-    emoji: "🩺",
+    icon: "Stethoscope",
     target: "health",
     summary: "How to access low-cost medical clinics, dental care, and mental health services.",
     steps: [
@@ -549,7 +549,7 @@ export const stepByStepGuides = [
   {
     id: 3,
     title: "Apply for food assistance",
-    emoji: "🍎",
+    icon: "Utensils",
     target: "food",
     summary: "Emergency food pantries and how to enroll in SNAP/WIC benefits.",
     steps: [
@@ -565,7 +565,7 @@ export const stepByStepGuides = [
   {
     id: 4,
     title: "Get rental assistance",
-    emoji: "🏠",
+    icon: "HomeIcon",
     target: "housing",
     summary: "Preventing eviction and securing financial emergency aid.",
     steps: [
@@ -581,7 +581,7 @@ export const stepByStepGuides = [
   {
     id: 5,
     title: "Pay utility bills",
-    emoji: "💡",
+    icon: "Zap",
     target: "utilities",
     summary: "Obtaining electricity, water, gas, and internet assistance.",
     steps: [
@@ -597,7 +597,7 @@ export const stepByStepGuides = [
   {
     id: 6,
     title: "Find legal help",
-    emoji: "⚖️",
+    icon: "Scale",
     target: "legal",
     summary: "Accessing free civil attorneys, immigration assistance, and tenant advocacy.",
     steps: [
@@ -613,7 +613,7 @@ export const stepByStepGuides = [
   {
     id: 7,
     title: "Learn English",
-    emoji: "📖",
+    icon: "BookOpen",
     target: "english",
     summary: "Finding adult ESL classes, conversation practice circles, and materials.",
     steps: [
@@ -629,7 +629,7 @@ export const stepByStepGuides = [
   {
     id: 8,
     title: "Find a job",
-    emoji: "💼",
+    icon: "Briefcase",
     target: "employment",
     summary: "Career navigation, resume building, and job training programs.",
     steps: [
@@ -645,7 +645,7 @@ export const stepByStepGuides = [
   {
     id: 9,
     title: "Obtain childcare",
-    emoji: "👶",
+    icon: "Baby",
     target: "family",
     summary: "Finding subsidized child care, Head Start, and after-school help.",
     steps: [
@@ -661,7 +661,7 @@ export const stepByStepGuides = [
   {
     id: 10,
     title: "Access transportation programs",
-    emoji: "🚌",
+    icon: "Bus",
     target: "transport",
     summary: "Enrolling in paratransit, bus pass discounts, and getting a driver's license.",
     steps: [

@@ -1,6 +1,38 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
+import { 
+  Utensils, 
+  Stethoscope, 
+  Home as HomeIcon, 
+  Zap, 
+  GraduationCap, 
+  Scale, 
+  Briefcase, 
+  Bus, 
+  BookOpen, 
+  Users,
+  AlertTriangle,
+  Search,
+  MessageSquare,
+  Baby,
+  Activity,
+  Heart,
+  ChevronRight,
+  ChevronDown,
+  Info,
+  Calendar,
+  DollarSign,
+  Clock,
+  MapPin,
+  Phone,
+  Globe,
+  Mail,
+  User,
+  Check,
+  Send,
+  AlertCircle
+} from 'lucide-react';
 import { 
   languages, 
   translations, 
@@ -12,6 +44,149 @@ import {
   impactMetrics, 
   chatbotAnswers 
 } from './data';
+
+const iconMap = {
+  Utensils: Utensils,
+  Stethoscope: Stethoscope,
+  HomeIcon: HomeIcon,
+  Zap: Zap,
+  GraduationCap: GraduationCap,
+  Scale: Scale,
+  Briefcase: Briefcase,
+  Bus: Bus,
+  BookOpen: BookOpen,
+  Users: Users,
+  Baby: Baby,
+  AlertTriangle: AlertTriangle,
+  Activity: Activity,
+  Heart: Heart,
+  Info: Info,
+  Calendar: Calendar,
+  DollarSign: DollarSign,
+  Clock: Clock,
+  MapPin: MapPin,
+  Phone: Phone,
+  Globe: Globe,
+  Mail: Mail,
+  User: User
+};
+
+function Icon({ name, className = "w-5 h-5", ...props }) {
+  const Comp = iconMap[name];
+  if (!Comp) return null;
+  return <Comp className={className} {...props} />;
+}
+
+// 3D Scroll transform animation component
+function Scroll3D({ children }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+
+  // Smooth 3D tilt as elements enter and exit the viewport
+  const rotateX = useTransform(scrollYProgress, [0, 0.35, 0.65, 1], [12, 0, 0, -12]);
+  const y = useTransform(scrollYProgress, [0, 0.35, 0.65, 1], [40, 0, 0, -40]);
+  const scale = useTransform(scrollYProgress, [0, 0.35, 0.65, 1], [0.96, 1, 1, 0.96]);
+  const opacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+
+  // Spring physics for smooth organic transitions
+  const springRotateX = useSpring(rotateX, { stiffness: 90, damping: 25 });
+  const springY = useSpring(y, { stiffness: 90, damping: 25 });
+  const springScale = useSpring(scale, { stiffness: 90, damping: 25 });
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{
+        perspective: 1000,
+        rotateX: springRotateX,
+        y: springY,
+        scale: springScale,
+        opacity,
+      }}
+      className="w-full h-full transform-gpu"
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// Ambient coloured orbs for section backgrounds
+function AmbientOrbs({ variant = 'default' }) {
+  const configs = {
+    default: [
+      { color: 'rgba(80,80,160,0.18)', size: '500px', top: '10%', left: '-10%', delay: '0s' },
+      { color: 'rgba(40,80,120,0.14)', size: '400px', top: '60%', right: '-5%', delay: '4s' },
+    ],
+    blue: [
+      { color: 'rgba(60,100,200,0.15)', size: '600px', top: '-20%', left: '20%', delay: '0s' },
+      { color: 'rgba(100,50,180,0.12)', size: '350px', bottom: '0%', right: '10%', delay: '7s' },
+    ],
+    red: [
+      { color: 'rgba(180,40,40,0.12)', size: '500px', top: '0%', right: '-10%', delay: '0s' },
+      { color: 'rgba(120,20,20,0.1)', size: '300px', bottom: '10%', left: '5%', delay: '5s' },
+    ],
+    green: [
+      { color: 'rgba(30,120,80,0.13)', size: '500px', top: '20%', left: '-5%', delay: '2s' },
+      { color: 'rgba(20,80,100,0.1)', size: '350px', bottom: '5%', right: '0%', delay: '8s' },
+    ],
+  };
+  const orbs = configs[variant] || configs.default;
+  return (
+    <>
+      {orbs.map((orb, i) => (
+        <div
+          key={i}
+          className="ambient-orb"
+          style={{
+            background: orb.color,
+            width: orb.size,
+            height: orb.size,
+            top: orb.top,
+            left: orb.left,
+            right: orb.right,
+            bottom: orb.bottom,
+            animationDelay: orb.delay,
+            zIndex: 0,
+          }}
+        />
+      ))}
+    </>
+  );
+}
+
+// Animated number counter on scroll
+function AnimatedCounter({ value, duration = 1800 }) {
+  const ref = useRef(null);
+  const [displayed, setDisplayed] = useState('0');
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] });
+  const hasStarted = useRef(false);
+
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on('change', (v) => {
+      if (v > 0.3 && !hasStarted.current) {
+        hasStarted.current = true;
+        const numeric = parseInt(String(value).replace(/[^0-9]/g, ''), 10);
+        const suffix = String(value).replace(/[0-9,]/g, '');
+        const start = Date.now();
+        const tick = () => {
+          const elapsed = Date.now() - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.round(numeric * eased);
+          setDisplayed(current.toLocaleString() + suffix);
+          if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }
+    });
+    return unsubscribe;
+  }, [scrollYProgress, value, duration]);
+
+  return <span ref={ref} className="stat-number">{displayed}</span>;
+}
 
 export default function App() {
   return (
@@ -130,8 +305,9 @@ function Navbar({ lang, setLang }) {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link to="/emergency" className="bg-red-600/30 border border-red-500/50 hover:bg-red-600 text-red-100 hover:text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors">
-            ⚠️ {t.emergencyHelpBtn}
+          <Link to="/emergency" className="bg-red-600/30 border border-red-500/50 hover:bg-red-600 text-red-100 hover:text-white px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors">
+            <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
+            {t.emergencyHelpBtn}
           </Link>
           
           {/* Top Mini Language Select */}
@@ -184,7 +360,7 @@ function AnimatedHeading({ text }) {
   }, [text]);
 
   const lines = text.split('\n');
-  const charDelay = 15; // slightly faster for responsiveness
+  const charDelay = 15;
 
   return (
     <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-normal mb-4 text-white leading-tight" style={{ letterSpacing: '-0.04em' }}>
@@ -216,16 +392,19 @@ function AnimatedHeading({ text }) {
   );
 }
 
-function PageHeader({ title, subtitle }) {
+function PageHeader({ title, subtitle, variant = 'default' }) {
   return (
-    <div className="relative pt-36 pb-16 px-6 md:px-12 lg:px-16 max-w-[1600px] mx-auto w-full">
-      <AnimatedHeading text={title} />
-      {subtitle && (
-        <FadeIn delay={300} duration={800}>
-          <p className="text-lg text-gray-400 max-w-3xl mt-4 font-light leading-relaxed">{subtitle}</p>
-        </FadeIn>
-      )}
-      <div className="w-full h-[1px] bg-white/10 mt-12" />
+    <div className="relative pt-36 pb-16 px-6 md:px-12 lg:px-16 max-w-[1600px] mx-auto w-full overflow-hidden">
+      <AmbientOrbs variant={variant} />
+      <div className="relative z-10">
+        <AnimatedHeading text={title} />
+        {subtitle && (
+          <FadeIn delay={300} duration={800}>
+            <p className="text-lg text-gray-400 max-w-3xl mt-4 font-light leading-relaxed">{subtitle}</p>
+          </FadeIn>
+        )}
+        <div className="section-divider mt-12" />
+      </div>
     </div>
   );
 }
@@ -284,15 +463,18 @@ function Home({ lang, setLang, trackReferral }) {
               {/* Search Bar */}
               <FadeIn delay={700} duration={800}>
                 <form onSubmit={handleSearchSubmit} className="mb-6 max-w-md flex gap-2">
-                  <input
-                    type="text"
-                    placeholder={t.searchPlaceholder}
-                    value={searchVal}
-                    onChange={(e) => setSearchVal(e.target.value)}
-                    className="flex-1 bg-black/60 backdrop-blur border border-white/20 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
-                  />
-                  <button type="submit" className="bg-white text-black px-6 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
-                    🔍
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      placeholder={t.searchPlaceholder}
+                      value={searchVal}
+                      onChange={(e) => setSearchVal(e.target.value)}
+                      className="w-full bg-black/60 backdrop-blur border border-white/20 rounded-lg pl-10 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+                    />
+                    <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
+                  </div>
+                  <button type="submit" className="bg-white text-black px-6 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors flex items-center justify-center">
+                    <Search className="w-4 h-4" />
                   </button>
                 </form>
               </FadeIn>
@@ -308,8 +490,9 @@ function Home({ lang, setLang, trackReferral }) {
                   </button>
                   <Link 
                     to="/emergency"
-                    className="liquid-glass border border-white/20 text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-black transition-colors"
+                    className="liquid-glass border border-white/20 text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-black transition-colors flex items-center gap-2"
                   >
+                    <AlertTriangle className="w-4 h-4 text-red-400" />
                     {t.emergencyHelpBtn}
                   </Link>
                   <button 
@@ -317,9 +500,10 @@ function Home({ lang, setLang, trackReferral }) {
                       const chatToggle = document.getElementById('chat-toggle-btn');
                       chatToggle?.click();
                     }}
-                    className="liquid-glass border border-white/20 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                    className="liquid-glass border border-white/20 text-gray-300 hover:text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
                   >
-                    💬 {t.chatBtn}
+                    <MessageSquare className="w-4 h-4" />
+                    {t.chatBtn}
                   </button>
                 </div>
               </FadeIn>
@@ -351,62 +535,97 @@ function Home({ lang, setLang, trackReferral }) {
         </div>
       </div>
 
+      {/* Marquee ticker */}
+      <div className="py-6 border-t border-white/5 bg-black overflow-hidden">
+        <div className="marquee-track">
+          {[...categories, ...categories].map((cat, idx) => (
+            <span key={idx} className="flex items-center gap-3 text-xs uppercase tracking-widest text-gray-500 whitespace-nowrap">
+              <Icon name={cat.icon} className="w-3.5 h-3.5 text-gray-600" />
+              {cat.name}
+              <span className="ml-4 text-gray-700">—</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Quick Access Categories */}
-      <div id="categories" className="py-32 px-6 md:px-12 lg:px-16 max-w-[1600px] mx-auto border-t border-white/10 bg-black">
-         <div className="mb-16">
-           <h2 className="text-3xl md:text-5xl font-light text-white tracking-tight mb-4">{t.needHelpBtn}</h2>
-           <p className="text-gray-400 max-w-2xl font-light text-lg">Select a category below to explore verified local organizations, detailed service lists, required documents, and eligibility requirements.</p>
-         </div>
-         
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-           {categories.map((cat, idx) => (
-             <Link 
-               key={cat.id} 
-               to={`/directory?category=${cat.id}`}
-               className="group flex flex-col justify-between h-56 p-6 border border-white/10 rounded-2xl liquid-glass hover:border-white/30 transition-all cursor-pointer"
-             >
-               <div>
-                 <div className="text-4xl mb-4">{cat.emoji}</div>
-                 <h3 className="text-lg font-medium text-white mb-2 group-hover:text-gray-200 transition-colors">{cat.name}</h3>
-                 <p className="text-xs text-gray-400 font-light leading-relaxed">{cat.desc}</p>
-               </div>
-               <div className="text-xs font-semibold text-white tracking-wider uppercase flex items-center gap-1 mt-4 group-hover:gap-2 transition-all">
-                 {t.explore} <span>→</span>
-               </div>
-             </Link>
-           ))}
-         </div>
+      <div id="categories" className="relative py-32 px-6 md:px-12 lg:px-16 overflow-hidden bg-black">
+        <AmbientOrbs variant="blue" />
+        <div className="section-divider mb-20" />
+        <div className="max-w-[1600px] mx-auto relative z-10">
+          <div className="mb-16">
+            <p className="text-3xs uppercase tracking-widest text-gray-500 mb-3">Civic Resource Hub</p>
+            <h2 className="text-3xl md:text-5xl font-light gradient-text tracking-tight mb-4" style={{letterSpacing:'-0.03em'}}>{t.needHelpBtn}</h2>
+            <p className="text-gray-500 max-w-2xl font-light text-base">Explore verified local organizations with full service details, documentation requirements, and eligibility information.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {categories.map((cat, idx) => (
+              <Scroll3D key={cat.id}>
+                <Link
+                  to={`/directory?category=${cat.id}`}
+                  className="group glow-card shimmer relative flex flex-col justify-between h-60 p-6 border border-white/8 rounded-2xl liquid-glass cursor-pointer"
+                >
+                  {/* top-right index number */}
+                  <span className="absolute top-4 right-5 text-3xs text-gray-700 font-mono tabular-nums">
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                  <div>
+                    <div
+                      className="w-12 h-12 rounded-xl flex items-center justify-center mb-5 border border-white/8"
+                      style={{ background: 'rgba(255,255,255,0.04)' }}
+                    >
+                      <Icon name={cat.icon} className="w-6 h-6 stroke-[1.3] text-white/70 group-hover:text-white transition-colors" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-white mb-2 tracking-wide">{cat.name}</h3>
+                    <p className="text-2xs text-gray-500 font-light leading-relaxed">{cat.desc}</p>
+                  </div>
+                  <div className="flex items-center gap-2 text-2xs font-semibold text-gray-500 tracking-widest uppercase group-hover:text-white transition-all mt-2">
+                    <span>{t.explore}</span>
+                    <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                  {/* Bottom accent glow line on hover */}
+                  <div className="absolute bottom-0 left-4 right-4 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </Scroll3D>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Impact Tracker Section */}
-      <div className="py-24 px-6 md:px-12 lg:px-16 max-w-[1600px] mx-auto border-t border-white/10 bg-black">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5">
-            <h2 className="text-3xl md:text-4xl font-light text-white tracking-tight mb-4">Project Impact</h2>
-            <p className="text-gray-400 font-light leading-relaxed">
-              Fulshear Key Club is dedicated to building sustainable, multilingual navigation hubs. We track real-time portal operations and community outreach to ensure no family is left in the dark due to systemic and language barriers.
-            </p>
-          </div>
-          <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            <div className="liquid-glass border border-white/10 p-6 rounded-2xl text-center">
-              <div className="text-2xl md:text-3xl font-normal text-white">{impactMetrics.familiesServed}</div>
-              <div className="text-3xs text-gray-500 uppercase tracking-widest mt-2">Families Served</div>
+      <div className="relative py-28 overflow-hidden bg-black">
+        <AmbientOrbs variant="green" />
+        <div className="section-divider mb-20" />
+        <div className="max-w-[1600px] mx-auto px-6 md:px-12 lg:px-16 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+            <div className="lg:col-span-5">
+              <p className="text-3xs uppercase tracking-widest text-gray-500 mb-3">Real Impact</p>
+              <h2 className="text-3xl md:text-4xl font-light gradient-text tracking-tight mb-6" style={{letterSpacing:'-0.03em'}}>Project Impact</h2>
+              <p className="text-gray-500 font-light leading-relaxed text-sm">
+                Fulshear Key Club is dedicated to building sustainable, multilingual navigation hubs. We track real-time portal operations to ensure no family is left behind due to language or systemic barriers.
+              </p>
+              <div className="mt-8 section-divider" />
+              <p className="text-3xs text-gray-600 uppercase tracking-widest mt-6">Verified April 2026 · Katy-Fulshear Metro Area</p>
             </div>
-            <div className="liquid-glass border border-white/10 p-6 rounded-2xl text-center">
-              <div className="text-2xl md:text-3xl font-normal text-white">{impactMetrics.kitsDistributed}</div>
-              <div className="text-3xs text-gray-500 uppercase tracking-widest mt-2">Kits Distributed</div>
-            </div>
-            <div className="liquid-glass border border-white/10 p-6 rounded-2xl text-center">
-              <div className="text-2xl md:text-3xl font-normal text-white">{impactMetrics.partnerOrganizations}</div>
-              <div className="text-3xs text-gray-500 uppercase tracking-widest mt-2">Partner Orgs</div>
-            </div>
-            <div className="liquid-glass border border-white/10 p-6 rounded-2xl text-center">
-              <div className="text-2xl md:text-3xl font-normal text-white">{impactMetrics.languagesSupported}</div>
-              <div className="text-3xs text-gray-500 uppercase tracking-widest mt-2">Languages</div>
-            </div>
-            <div className="liquid-glass border border-white/10 p-6 rounded-2xl text-center col-span-2 md:col-span-1">
-              <div className="text-2xl md:text-3xl font-normal text-white">{impactMetrics.websiteVisits}</div>
-              <div className="text-3xs text-gray-500 uppercase tracking-widest mt-2">Website Visits</div>
+            <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {[
+                { val: impactMetrics.familiesServed, label: "Families Served", icon: 'Users' },
+                { val: impactMetrics.kitsDistributed, label: "Kits Distributed", icon: 'Briefcase' },
+                { val: impactMetrics.partnerOrganizations, label: "Partner Orgs", icon: 'Globe' },
+                { val: impactMetrics.languagesSupported, label: "Languages", icon: 'BookOpen' },
+                { val: impactMetrics.websiteVisits, label: "Website Visits", icon: 'Activity', colspan: true }
+              ].map((metric, idx) => (
+                <Scroll3D key={idx}>
+                  <div className={`glow-card shimmer liquid-glass border border-white/8 p-6 rounded-2xl text-center flex flex-col items-center gap-2 ${metric.colspan ? 'col-span-2 md:col-span-1' : ''}`}>
+                    <Icon name={metric.icon} className="w-4 h-4 text-gray-600 mb-1" />
+                    <div className="text-2xl md:text-3xl font-light text-white">
+                      <AnimatedCounter value={metric.val} />
+                    </div>
+                    <div className="text-3xs text-gray-600 uppercase tracking-widest">{metric.label}</div>
+                  </div>
+                </Scroll3D>
+              ))}
             </div>
           </div>
         </div>
@@ -455,7 +674,6 @@ function DirectoryPage({ lang, trackReferral }) {
     navigate(`/directory?category=${selectedCategory}${val ? `&search=${encodeURIComponent(val)}` : ''}`);
   };
 
-  // Checklist categories info blocks (as specified in checklist)
   const categoryBulletPoints = {
     food: "Includes: Food banks, SNAP enrollment assistance, school meal programs, community pantries, meal delivery programs, faith-based food support.",
     health: "Includes: Free clinics, low-cost clinics, dental care, vision care, mental health services, women’s health services, children’s healthcare.",
@@ -485,8 +703,9 @@ function DirectoryPage({ lang, trackReferral }) {
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search by keywords..."
-                className="w-full bg-black/60 border border-white/20 rounded-lg px-4 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+                className="w-full bg-black/60 border border-white/20 rounded-lg pl-9 pr-4 py-2.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
               />
+              <Search className="w-3.5 h-3.5 text-gray-500 absolute left-3 top-3.5" />
             </div>
           </div>
 
@@ -495,8 +714,9 @@ function DirectoryPage({ lang, trackReferral }) {
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => handleCategorySelect('all')}
-                className={`text-left text-xs px-3 py-2 rounded-lg transition-all ${selectedCategory === 'all' ? 'bg-white text-black font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                className={`text-left text-xs px-3 py-2 rounded-lg transition-all flex items-center gap-2 ${selectedCategory === 'all' ? 'bg-white text-black font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
               >
+                <BookOpen className="w-3.5 h-3.5" />
                 📁 All Resources
               </button>
               {categories.map(cat => (
@@ -505,7 +725,7 @@ function DirectoryPage({ lang, trackReferral }) {
                   onClick={() => handleCategorySelect(cat.id)}
                   className={`text-left text-xs px-3 py-2 rounded-lg transition-all flex items-center gap-2 ${selectedCategory === cat.id ? 'bg-white text-black font-medium' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                 >
-                  <span>{cat.emoji}</span>
+                  <Icon name={cat.icon} className="w-3.5 h-3.5" />
                   <span>{cat.name}</span>
                 </button>
               ))}
@@ -516,10 +736,12 @@ function DirectoryPage({ lang, trackReferral }) {
         {/* Right Directory Listings Column */}
         <div className="lg:col-span-9 flex flex-col gap-6">
           
-          {/* Dynamic Content Requirement Box (to satisfy checklist bullet requirements) */}
           {selectedCategory !== 'all' && categoryBulletPoints[selectedCategory] && (
             <div className="liquid-glass border border-white/20 p-6 rounded-2xl bg-white/5">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-white mb-2">⚡ Category Checklist Scope</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-white flex items-center gap-1.5 mb-2">
+                <Activity className="w-4 h-4 text-white" />
+                Category Checklist Scope
+              </h4>
               <p className="text-sm text-gray-300 font-light leading-relaxed">{categoryBulletPoints[selectedCategory]}</p>
               <div className="flex gap-4 mt-4">
                 <Link to="/guides" className="text-xs text-white underline hover:text-gray-300">
@@ -539,61 +761,65 @@ function DirectoryPage({ lang, trackReferral }) {
           {filteredResources.length > 0 ? (
             <div className="grid grid-cols-1 gap-6">
               {filteredResources.map(res => (
-                <div key={res.id} className="liquid-glass border border-white/10 p-8 rounded-2xl flex flex-col gap-6 relative group hover:border-white/20 transition-all">
-                  
-                  {/* Category Pill Tag */}
-                  <div className="absolute top-6 right-6 text-3xs font-semibold tracking-widest uppercase border border-white/10 px-2 py-0.5 rounded text-gray-500">
-                    {categories.find(c => c.id === res.categoryId)?.name || res.categoryId}
-                  </div>
-
-                  <div>
-                    <h3 className="text-2xl font-normal text-white mb-2">{res.name}</h3>
-                    <p className="text-sm text-gray-300 font-light leading-relaxed mb-4">{res.description}</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 border-t border-white/5 pt-6 text-xs text-gray-400">
-                    <div className="flex flex-col gap-2">
-                      <div><strong className="text-white uppercase tracking-widest text-3xs">{t.hoursText}:</strong> {res.hours}</div>
-                      <div><strong className="text-white uppercase tracking-widest text-3xs">{t.languagesText}:</strong> {res.languages.join(', ')}</div>
-                      <div><strong className="text-white uppercase tracking-widest text-3xs">{t.costText}:</strong> {res.cost}</div>
-                      <div><strong className="text-white uppercase tracking-widest text-3xs">{t.transportText}:</strong> {res.transit}</div>
-                    </div>
+                <Scroll3D key={res.id}>
+                  <div className="liquid-glass border border-white/10 p-8 rounded-2xl flex flex-col gap-6 relative group hover:border-white/20 transition-all">
                     
-                    <div className="flex flex-col gap-2">
-                      <div><strong className="text-white uppercase tracking-widest text-3xs">{t.eligibilityText}:</strong> {res.eligibility}</div>
-                      <div><strong className="text-white uppercase tracking-widest text-3xs">{t.documentsText}:</strong> {res.documentsRequired}</div>
-                      <div><strong className="text-white uppercase tracking-widest text-3xs">{t.contactText}:</strong> {res.contactPerson}</div>
-                      <div><strong className="text-white uppercase tracking-widest text-3xs">Services Offered:</strong> {res.servicesOffered}</div>
+                    {/* Category Pill Tag */}
+                    <div className="absolute top-6 right-6 text-3xs font-semibold tracking-widest uppercase border border-white/10 px-2 py-0.5 rounded text-gray-500">
+                      {categories.find(c => c.id === res.categoryId)?.name || res.categoryId}
                     </div>
-                  </div>
 
-                  <div className="flex flex-wrap gap-4 border-t border-white/5 pt-6 items-center justify-between">
-                    <div className="text-3xs text-gray-600 uppercase tracking-widest">Verified by Key Club outreach • Last Checked April 2026</div>
-                    <div className="flex gap-4">
-                      {res.website && (
-                        <a 
-                          href={res.website} 
-                          target="_blank" 
-                          rel="noreferrer"
-                          onClick={() => trackReferral(res.category)}
-                          className="bg-white text-black text-xs px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                        >
-                          Visit Website
-                        </a>
-                      )}
-                      {res.phone && (
-                        <a 
-                          href={`tel:${res.phone}`}
-                          onClick={() => trackReferral(res.category)}
-                          className="border border-white/20 text-white text-xs px-4 py-2 rounded-lg hover:bg-white/5 transition-all"
-                        >
-                          📞 Call {res.phone}
-                        </a>
-                      )}
+                    <div>
+                      <h3 className="text-2xl font-normal text-white mb-2">{res.name}</h3>
+                      <p className="text-sm text-gray-300 font-light leading-relaxed mb-4">{res.description}</p>
                     </div>
-                  </div>
 
-                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 border-t border-white/5 pt-6 text-xs text-gray-400">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2"><Clock className="w-3.5 h-3.5 text-gray-500" /> <span><strong className="text-white uppercase tracking-widest text-3xs">{t.hoursText}:</strong> {res.hours}</span></div>
+                        <div className="flex items-center gap-2"><Globe className="w-3.5 h-3.5 text-gray-500" /> <span><strong className="text-white uppercase tracking-widest text-3xs">{t.languagesText}:</strong> {res.languages.join(', ')}</span></div>
+                        <div className="flex items-center gap-2"><DollarSign className="w-3.5 h-3.5 text-gray-500" /> <span><strong className="text-white uppercase tracking-widest text-3xs">{t.costText}:</strong> {res.cost}</span></div>
+                        <div className="flex items-center gap-2"><Bus className="w-3.5 h-3.5 text-gray-500" /> <span><strong className="text-white uppercase tracking-widest text-3xs">{t.transportText}:</strong> {res.transit}</span></div>
+                      </div>
+                      
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-gray-500" /> <span><strong className="text-white uppercase tracking-widest text-3xs">{t.eligibilityText}:</strong> {res.eligibility}</span></div>
+                        <div className="flex items-center gap-2"><Info className="w-3.5 h-3.5 text-gray-500" /> <span><strong className="text-white uppercase tracking-widest text-3xs">{t.documentsText}:</strong> {res.documentsRequired}</span></div>
+                        <div className="flex items-center gap-2"><User className="w-3.5 h-3.5 text-gray-500" /> <span><strong className="text-white uppercase tracking-widest text-3xs">{t.contactText}:</strong> {res.contactPerson}</span></div>
+                        <div className="flex items-center gap-2"><Activity className="w-3.5 h-3.5 text-gray-500" /> <span><strong className="text-white uppercase tracking-widest text-3xs">Services:</strong> {res.servicesOffered}</span></div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-4 border-t border-white/5 pt-6 items-center justify-between">
+                      <div className="text-3xs text-gray-600 uppercase tracking-widest">Verified by Key Club outreach • Last Checked April 2026</div>
+                      <div className="flex gap-4">
+                        {res.website && (
+                          <a 
+                            href={res.website} 
+                            target="_blank" 
+                            rel="noreferrer"
+                            onClick={() => trackReferral(res.category)}
+                            className="bg-white text-black text-xs px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center gap-1.5"
+                          >
+                            <Globe className="w-3.5 h-3.5" />
+                            Visit Website
+                          </a>
+                        )}
+                        {res.phone && (
+                          <a 
+                            href={`tel:${res.phone}`}
+                            onClick={() => trackReferral(res.category)}
+                            className="border border-white/20 text-white text-xs px-4 py-2 rounded-lg hover:bg-white/5 transition-all flex items-center gap-1.5"
+                          >
+                            <Phone className="w-3.5 h-3.5" />
+                            Call {res.phone}
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
+                  </div>
+                </Scroll3D>
               ))}
             </div>
           ) : (
@@ -627,14 +853,15 @@ function GuidesPage({ lang }) {
       <div className="px-6 md:px-12 lg:px-16 max-w-[1600px] mx-auto pb-32">
         
         {/* Search Input */}
-        <div className="mb-10 max-w-md">
+        <div className="mb-10 max-w-md relative">
           <input
             type="text"
             placeholder="Search guides (e.g. SNAP, enroll, transport)..."
             value={guideSearch}
             onChange={(e) => setGuideSearch(e.target.value)}
-            className="w-full bg-black/60 border border-white/20 rounded-lg px-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+            className="w-full bg-black/60 border border-white/20 rounded-lg pl-10 pr-4 py-3 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
           />
+          <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-3.5" />
         </div>
 
         {/* Guides layout */}
@@ -643,20 +870,23 @@ function GuidesPage({ lang }) {
           {/* Guides list */}
           <div className="lg:col-span-5 flex flex-col gap-3">
             {filteredGuides.map(guide => (
-              <button
-                key={guide.id}
-                onClick={() => setActiveGuide(guide.id === activeGuide ? null : guide.id)}
-                className={`p-5 text-left border rounded-xl flex items-center justify-between transition-all ${activeGuide === guide.id ? 'bg-white text-black border-white' : 'border-white/10 hover:border-white/20 hover:bg-white/5'}`}
-              >
-                <div className="flex items-center gap-4">
-                  <span className="text-2xl">{guide.emoji}</span>
-                  <div>
-                    <h4 className="font-medium text-sm">{guide.title}</h4>
-                    <p className={`text-2xs font-light mt-1 ${activeGuide === guide.id ? 'text-black/80' : 'text-gray-400'}`}>{guide.summary.slice(0, 75)}...</p>
+              <Scroll3D key={guide.id}>
+                <button
+                  onClick={() => setActiveGuide(guide.id === activeGuide ? null : guide.id)}
+                  className={`w-full p-5 text-left border rounded-xl flex items-center justify-between transition-all ${activeGuide === guide.id ? 'bg-white text-black border-white' : 'border-white/10 hover:border-white/20 hover:bg-white/5'}`}
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="p-2 bg-white/5 rounded-lg">
+                      <Icon name={guide.icon} className={`w-6 h-6 ${activeGuide === guide.id ? 'text-black' : 'text-white'}`} />
+                    </span>
+                    <div>
+                      <h4 className="font-medium text-sm">{guide.title}</h4>
+                      <p className={`text-2xs font-light mt-1 ${activeGuide === guide.id ? 'text-black/80' : 'text-gray-400'}`}>{guide.summary.slice(0, 75)}...</p>
+                    </div>
                   </div>
-                </div>
-                <span className="text-xs">{activeGuide === guide.id ? '▼' : '▶'}</span>
-              </button>
+                  <ChevronRight className={`w-4 h-4 transition-transform ${activeGuide === guide.id ? 'rotate-90' : ''}`} />
+                </button>
+              </Scroll3D>
             ))}
           </div>
 
@@ -668,7 +898,7 @@ function GuidesPage({ lang }) {
                 return (
                   <div className="liquid-glass border border-white/20 p-8 rounded-2xl flex flex-col gap-6">
                     <div className="flex items-center gap-4 border-b border-white/10 pb-4">
-                      <span className="text-4xl">{guide.emoji}</span>
+                      <Icon name={guide.icon} className="w-10 h-10 text-white stroke-[1.2]" />
                       <div>
                         <h3 className="text-2xl font-normal text-white">{guide.title}</h3>
                         <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider">{categories.find(c => c.id === guide.target)?.name || guide.target}</p>
@@ -704,8 +934,11 @@ function GuidesPage({ lang }) {
                     </div>
 
                     {guide.safetyNote && (
-                      <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-xs text-red-200">
-                        🛡️ <strong>Safety Advisory:</strong> {guide.safetyNote}
+                      <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl text-xs text-red-200 flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                        <div>
+                          <strong>Safety Advisory:</strong> {guide.safetyNote}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -713,7 +946,7 @@ function GuidesPage({ lang }) {
               })()
             ) : (
               <div className="liquid-glass border border-white/10 p-12 rounded-2xl text-center text-gray-500 h-full flex flex-col justify-center items-center">
-                <span className="text-4xl mb-4">👈</span>
+                <Info className="w-10 h-10 text-gray-500 mb-4" />
                 <p>Select a plain-language guide from the list to view step-by-step instructions, documentation requirements, and safety policies.</p>
               </div>
             )}
@@ -736,18 +969,20 @@ function PartnersPage({ lang }) {
       <div className="px-6 md:px-12 lg:px-16 max-w-[1600px] mx-auto pb-32">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {communityPartners.map((partner, idx) => (
-            <div key={idx} className="liquid-glass border border-white/10 p-6 rounded-2xl flex flex-col justify-between hover:border-white/20 transition-all">
-              <div>
-                <span className="text-3xs font-semibold tracking-widest uppercase border border-white/10 px-2 py-0.5 rounded text-gray-500 inline-block mb-4">
-                  {partner.type}
-                </span>
-                <h3 className="text-lg font-medium text-white mb-2">{partner.name}</h3>
-                <p className="text-xs text-gray-400 font-light leading-relaxed">{partner.services}</p>
+            <Scroll3D key={idx}>
+              <div className="liquid-glass border border-white/10 p-6 rounded-2xl flex flex-col justify-between hover:border-white/20 transition-all h-full">
+                <div>
+                  <span className="text-3xs font-semibold tracking-widest uppercase border border-white/10 px-2 py-0.5 rounded text-gray-500 inline-block mb-4">
+                    {partner.type}
+                  </span>
+                  <h3 className="text-lg font-medium text-white mb-2">{partner.name}</h3>
+                  <p className="text-xs text-gray-400 font-light leading-relaxed">{partner.services}</p>
+                </div>
+                <div className="mt-8 pt-4 border-t border-white/5 text-3xs text-gray-600 uppercase tracking-widest">
+                  Resource Kit Distribution Partner
+                </div>
               </div>
-              <div className="mt-8 pt-4 border-t border-white/5 text-3xs text-gray-600 uppercase tracking-widest">
-                Resource Kit Distribution Partner
-              </div>
-            </div>
+            </Scroll3D>
           ))}
         </div>
       </div>
@@ -801,7 +1036,7 @@ function VolunteerPage({ lang }) {
             
             {success ? (
               <div className="bg-emerald-500/10 border border-emerald-500/30 p-6 rounded-xl text-center">
-                <span className="text-3xl">🎉</span>
+                <Check className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
                 <h4 className="text-lg font-semibold text-white mt-2">Registration Submitted!</h4>
                 <p className="text-xs text-gray-400 mt-1">Thank you for volunteering. We will connect you to outreach coordinators soon.</p>
                 <button 
@@ -899,24 +1134,21 @@ function VolunteerPage({ lang }) {
 
         {/* Opportunity descriptions */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <div className="liquid-glass border border-white/10 p-6 rounded-2xl">
-            <h4 className="text-sm font-semibold text-white mb-2">📝 Translation Opportunities</h4>
-            <p className="text-xs text-gray-400 leading-relaxed font-light">
-              Are you fluent in Spanish, Arabic, Vietnamese, Mandarin, Urdu, or Hindi? Help us translate resource descriptions, emergency guides, and update database fields to better serve local non-English speakers.
-            </p>
-          </div>
-          <div className="liquid-glass border border-white/10 p-6 rounded-2xl">
-            <h4 className="text-sm font-semibold text-white mb-2">📦 Distribution Events</h4>
-            <p className="text-xs text-gray-400 leading-relaxed font-light">
-              We regularly print plain-language resource cards and distribute physical kits directly to schools, county library branches, and community health centers. Sign up to help pack and place kits.
-            </p>
-          </div>
-          <div className="liquid-glass border border-white/10 p-6 rounded-2xl">
-            <h4 className="text-sm font-semibold text-white mb-2">🤝 Community Outreach</h4>
-            <p className="text-xs text-gray-400 leading-relaxed font-light">
-              Coordinate with local organizations to check that their hours, phone numbers, and eligibility rules remain accurate. You will act as the direct liaison between providers and our Key Club tech division.
-            </p>
-          </div>
+          {[
+            { title: "Translation Opportunities", text: "Are you fluent in Spanish, Arabic, Vietnamese, Mandarin, Urdu, or Hindi? Help us translate resource descriptions, emergency guides, and update database fields to better serve local non-English speakers." },
+            { title: "Distribution Events", text: "We regularly print plain-language resource cards and distribute physical kits directly to schools, county library branches, and community health centers. Sign up to help pack and place kits." },
+            { title: "Community Outreach", text: "Coordinate with local organizations to check that their hours, phone numbers, and eligibility rules remain accurate. You will act as the direct liaison between providers and our Key Club tech division." }
+          ].map((op, idx) => (
+            <Scroll3D key={idx}>
+              <div className="liquid-glass border border-white/10 p-6 rounded-2xl">
+                <h4 className="text-sm font-semibold text-white flex items-center gap-1.5 mb-2">
+                  <Activity className="w-4 h-4 text-white" />
+                  {op.title}
+                </h4>
+                <p className="text-xs text-gray-400 leading-relaxed font-light">{op.text}</p>
+              </div>
+            </Scroll3D>
+          ))}
         </div>
 
       </div>
@@ -943,8 +1175,6 @@ function FeedbackPage({ lang, tracker, setTracker }) {
     setTimeout(() => {
       setLoading(false);
       setSuccess(true);
-      
-      // Update trackers internally to mock community feedback input
       setTracker(prev => ({
         ...prev,
         conversations: prev.conversations + 1
@@ -985,7 +1215,7 @@ function FeedbackPage({ lang, tracker, setTracker }) {
 
             {success ? (
               <div className="bg-emerald-500/10 border border-emerald-500/30 p-6 rounded-xl text-center">
-                <span className="text-3xl">📧</span>
+                <Check className="w-10 h-10 text-emerald-400 mx-auto mb-4" />
                 <h4 className="text-lg font-semibold text-white mt-2">Feedback Received</h4>
                 <p className="text-xs text-gray-400 mt-1">Thank you. The Key Club review committee will verify the details within 48 hours.</p>
                 <button 
@@ -1054,48 +1284,50 @@ function FeedbackPage({ lang, tracker, setTracker }) {
 
         {/* Live Admin Data Tracker Display (Real-time tracking of portal stats) */}
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <div className="liquid-glass border border-white/20 p-8 rounded-2xl">
-            <h3 className="text-lg font-normal text-white mb-4">📈 System Operations Tracker</h3>
-            <p className="text-xs text-gray-400 font-light leading-relaxed mb-6">
-              Our backend tracks search query topics and translation selections to dynamically prioritize which physical guides we print and translate next.
-            </p>
-            
-            <div className="flex flex-col gap-4 text-xs">
-              <div className="flex justify-between border-b border-white/5 pb-2">
-                <span className="text-gray-400">Total Portal Consultations</span>
-                <span className="text-white font-mono">{tracker.conversations}</span>
-              </div>
-              <div className="flex justify-between border-b border-white/5 pb-2">
-                <span className="text-gray-400">Database Outward Referrals</span>
-                <span className="text-white font-mono">{tracker.referrals}</span>
-              </div>
-              <div className="flex justify-between border-b border-white/5 pb-2">
-                <span className="text-gray-400">Total Live Clicks</span>
-                <span className="text-white font-mono">{tracker.clicks}</span>
-              </div>
+          <Scroll3D>
+            <div className="liquid-glass border border-white/20 p-8 rounded-2xl h-full">
+              <h3 className="text-lg font-normal text-white mb-4">📈 System Operations Tracker</h3>
+              <p className="text-xs text-gray-400 font-light leading-relaxed mb-6">
+                Our backend tracks search query topics and translation selections to dynamically prioritize which physical guides we print and translate next.
+              </p>
+              
+              <div className="flex flex-col gap-4 text-xs">
+                <div className="flex justify-between border-b border-white/5 pb-2">
+                  <span className="text-gray-400">Total Portal Consultations</span>
+                  <span className="text-white font-mono">{tracker.conversations}</span>
+                </div>
+                <div className="flex justify-between border-b border-white/5 pb-2">
+                  <span className="text-gray-400">Database Outward Referrals</span>
+                  <span className="text-white font-mono">{tracker.referrals}</span>
+                </div>
+                <div className="flex justify-between border-b border-white/5 pb-2">
+                  <span className="text-gray-400">Total Live Clicks</span>
+                  <span className="text-white font-mono">{tracker.clicks}</span>
+                </div>
 
-              <div className="mt-4">
-                <span className="text-3xs uppercase tracking-widest text-gray-500 block mb-2">Most Consulted Categories</span>
-                {Object.entries(tracker.searches).slice(0, 3).map(([key, val]) => (
-                  <div key={key} className="flex justify-between py-1 font-mono">
-                    <span className="text-gray-400 font-sans">{key}</span>
-                    <span className="text-white">{val} searches</span>
-                  </div>
-                ))}
-              </div>
+                <div className="mt-4">
+                  <span className="text-3xs uppercase tracking-widest text-gray-500 block mb-2">Most Consulted Categories</span>
+                  {Object.entries(tracker.searches).slice(0, 3).map(([key, val]) => (
+                    <div key={key} className="flex justify-between py-1 font-mono">
+                      <span className="text-gray-400 font-sans">{key}</span>
+                      <span className="text-white">{val} searches</span>
+                    </div>
+                  ))}
+                </div>
 
-              <div className="mt-4">
-                <span className="text-3xs uppercase tracking-widest text-gray-500 block mb-2">Top Client Languages Used</span>
-                {Object.entries(tracker.languages).map(([key, val]) => (
-                  <div key={key} className="flex justify-between py-1 font-mono">
-                    <span className="text-gray-400 font-sans">{key}</span>
-                    <span className="text-white">{val} requests</span>
-                  </div>
-                ))}
-              </div>
+                <div className="mt-4">
+                  <span className="text-3xs uppercase tracking-widest text-gray-500 block mb-2">Top Client Languages Used</span>
+                  {Object.entries(tracker.languages).map(([key, val]) => (
+                    <div key={key} className="flex justify-between py-1 font-mono">
+                      <span className="text-gray-400 font-sans">{key}</span>
+                      <span className="text-white">{val} requests</span>
+                    </div>
+                  ))}
+                </div>
 
+              </div>
             </div>
-          </div>
+          </Scroll3D>
         </div>
 
       </div>
@@ -1116,61 +1348,51 @@ function AboutPage({ lang }) {
         {/* Mission grid layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mb-24">
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <div className="liquid-glass border border-white/10 p-8 rounded-2xl">
-              <h3 className="text-2xl font-normal text-white mb-4">Why VEX Civic Was Created</h3>
-              <p className="text-sm text-gray-400 leading-relaxed font-light mb-4">
-                Government documents are often technical, written in dense jargon, and rarely translated into the languages spoken by immigrant households. This information bottleneck leaves thousands eligible for local food, medicine, and utilities assistance, but unable to access them due to fear or confusion.
-              </p>
-              <p className="text-sm text-gray-400 leading-relaxed font-light">
-                Developed in coordination with the Fulshear Key Club, VEX Civic translates government databases into plain-language step-by-step guides, ensuring zero barriers to essential resources.
-              </p>
-            </div>
+            <Scroll3D>
+              <div className="liquid-glass border border-white/10 p-8 rounded-2xl mb-6">
+                <h3 className="text-2xl font-normal text-white mb-4">Why VEX Civic Was Created</h3>
+                <p className="text-sm text-gray-400 leading-relaxed font-light mb-4">
+                  Government documents are often technical, written in dense jargon, and rarely translated into the languages spoken by immigrant households. This information bottleneck leaves thousands eligible for local food, medicine, and utilities assistance, but unable to access them due to fear or confusion.
+                </p>
+                <p className="text-sm text-gray-400 leading-relaxed font-light">
+                  Developed in coordination with the Fulshear Key Club, VEX Civic translates government databases into plain-language step-by-step guides, ensuring zero barriers to essential resources.
+                </p>
+              </div>
+            </Scroll3D>
             
-            <div className="liquid-glass border border-white/10 p-8 rounded-2xl">
-              <h3 className="text-2xl font-normal text-white mb-4">Fulshear Key Club Network</h3>
-              <p className="text-sm text-gray-400 leading-relaxed font-light mb-4">
-                The leadership structure comprises student volunteers who conduct regular field inspections of local charities and food banks. They print physical resource cards and host multilingual clinics in county libraries.
-              </p>
-              <ul className="list-disc list-inside text-sm text-gray-400 font-light flex flex-col gap-2">
-                <li>Annual Impact Reviews published every May.</li>
-                <li>DOJ-accredited partner lawyer supervision.</li>
-                <li>Direct community outreach network covering 45 local institutions.</li>
-              </ul>
-            </div>
+            <Scroll3D>
+              <div className="liquid-glass border border-white/10 p-8 rounded-2xl">
+                <h3 className="text-2xl font-normal text-white mb-4">Fulshear Key Club Network</h3>
+                <p className="text-sm text-gray-400 leading-relaxed font-light mb-4">
+                  The leadership structure comprises student volunteers who conduct regular field inspections of local charities and food banks. They print physical resource cards and host multilingual clinics in county libraries.
+                </p>
+                <ul className="list-disc list-inside text-sm text-gray-400 font-light flex flex-col gap-2">
+                  <li>Annual Impact Reviews published every May.</li>
+                  <li>DOJ-accredited partner lawyer supervision.</li>
+                  <li>Direct community outreach network covering 45 local institutions.</li>
+                </ul>
+              </div>
+            </Scroll3D>
           </div>
 
           <div className="lg:col-span-5 flex flex-col gap-6">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-2">Verified Research Base</h3>
             
-            <div className="liquid-glass border border-white/10 p-6 rounded-xl text-xs">
-              <div className="flex justify-between items-center mb-2">
-                <strong className="text-white font-medium text-sm">Pew Research</strong>
-                <span className="text-gray-500">2025</span>
-              </div>
-              <p className="text-gray-400 leading-relaxed font-light">
-                14 Million undocumented residents live in the US. 8.4 million reside in mixed-status households. Fear of public charge rules causes citizens in these households to avoid food and health services they qualify for.
-              </p>
-            </div>
-
-            <div className="liquid-glass border border-white/10 p-6 rounded-xl text-xs">
-              <div className="flex justify-between items-center mb-2">
-                <strong className="text-white font-medium text-sm">Urban Institute Survey</strong>
-                <span className="text-gray-500">2023</span>
-              </div>
-              <p className="text-gray-400 leading-relaxed font-light">
-                1 in 4 adults in mixed-status families avoided safety-net programs like SNAP or Medicaid solely because of confusion regarding rules, leading to elevated health challenges.
-              </p>
-            </div>
-
-            <div className="liquid-glass border border-white/10 p-6 rounded-xl text-xs">
-              <div className="flex justify-between items-center mb-2">
-                <strong className="text-white font-medium text-sm">Migration Policy Institute</strong>
-                <span className="text-gray-500">2023</span>
-              </div>
-              <p className="text-gray-400 leading-relaxed font-light">
-                27.7 Million US residents experience limited English proficiency. Without targeted multilingual access portals, they face immediate exclusion from local services.
-              </p>
-            </div>
+            {[
+              { title: "Pew Research", year: "2025", text: "14 Million undocumented residents live in the US. 8.4 million reside in mixed-status households. Fear of public charge rules causes citizens in these households to avoid food and health services they qualify for." },
+              { title: "Urban Institute Survey", year: "2023", text: "1 in 4 adults in mixed-status families avoided safety-net programs like SNAP or Medicaid solely because of confusion regarding rules, leading to elevated health challenges." },
+              { title: "Migration Policy Institute", year: "2023", text: "27.7 Million US residents experience limited English proficiency. Without targeted multilingual access portals, they face immediate exclusion from local services." }
+            ].map((res, idx) => (
+              <Scroll3D key={idx}>
+                <div className="liquid-glass border border-white/10 p-6 rounded-xl text-xs h-full">
+                  <div className="flex justify-between items-center mb-2">
+                    <strong className="text-white font-medium text-sm">{res.title}</strong>
+                    <span className="text-gray-500">{res.year}</span>
+                  </div>
+                  <p className="text-gray-400 leading-relaxed font-light">{res.text}</p>
+                </div>
+              </Scroll3D>
+            ))}
 
           </div>
         </div>
@@ -1191,25 +1413,29 @@ function EmergencyPage({ lang }) {
       <div className="px-6 md:px-12 lg:px-16 max-w-[1600px] mx-auto pb-32">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {emergencyResources.map((er, idx) => (
-            <div key={idx} className="border border-red-500/30 bg-red-950/15 p-8 rounded-2xl flex flex-col justify-between hover:border-red-500/50 transition-all">
-              <div>
-                <span className="text-3xs font-semibold tracking-widest uppercase border border-red-500/30 px-2 py-0.5 rounded text-red-400 inline-block mb-4">
-                  {er.category}
-                </span>
-                <h3 className="text-xl font-normal text-white mb-2">{er.name}</h3>
-                <p className="text-xs text-gray-400 font-light leading-relaxed mb-6">{er.details}</p>
-                {er.address && <p className="text-3xs text-gray-500 font-mono mb-6">📍 {er.address}</p>}
-              </div>
+            <Scroll3D key={idx}>
+              <div className="border border-red-500/30 bg-red-950/15 p-8 rounded-2xl flex flex-col justify-between hover:border-red-500/50 transition-all h-full">
+                <div>
+                  <span className="text-3xs font-semibold tracking-widest uppercase border border-red-500/30 px-2 py-0.5 rounded text-red-400 inline-block mb-4 flex items-center gap-1 w-fit">
+                    <AlertTriangle className="w-3 h-3" />
+                    {er.category}
+                  </span>
+                  <h3 className="text-xl font-normal text-white mb-2">{er.name}</h3>
+                  <p className="text-xs text-gray-400 font-light leading-relaxed mb-6">{er.details}</p>
+                  {er.address && <p className="text-3xs text-gray-500 font-mono mb-6">📍 {er.address}</p>}
+                </div>
 
-              <div className="flex gap-4">
-                <a 
-                  href={`tel:${er.phone.split(' ')[0]}`}
-                  className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg text-center block w-full transition-colors"
-                >
-                  📞 Call Hotline ({er.phone.split(' ')[0]})
-                </a>
+                <div className="flex gap-4">
+                  <a 
+                    href={`tel:${er.phone.split(' ')[0]}`}
+                    className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2.5 rounded-lg text-center w-full transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    Call Hotline ({er.phone.split(' ')[0]})
+                  </a>
+                </div>
               </div>
-            </div>
+            </Scroll3D>
           ))}
         </div>
       </div>
@@ -1268,13 +1494,11 @@ function Chatbot({ lang, tracker, setTracker }) {
   ];
 
   const processChatQuery = (queryText) => {
-    // Increment metrics: Total conversations
     setTracker(prev => ({
       ...prev,
       conversations: prev.conversations + 1
     }));
 
-    // Perform keyword analysis
     const lowerQuery = queryText.toLowerCase();
     let matchedAnswer = chatbotAnswers.find(ans => 
       ans.keywords.some(kw => lowerQuery.includes(kw))
@@ -1286,7 +1510,6 @@ function Chatbot({ lang, tracker, setTracker }) {
 
     const topic = matchedAnswer ? matchedAnswer.topic : "Unknown Topic";
 
-    // Track searched topics
     if (matchedAnswer) {
       setTracker(prev => ({
         ...prev,
@@ -1353,9 +1576,10 @@ function Chatbot({ lang, tracker, setTracker }) {
                  <button
                    key={idx}
                    onClick={() => processChatQuery(q.query)}
-                   className="text-left text-[10px] bg-white/5 hover:bg-white hover:text-black border border-white/10 text-gray-300 p-2 rounded-lg transition-all truncate"
+                   className="text-left text-[10px] bg-white/5 hover:bg-white hover:text-black border border-white/10 text-gray-300 p-2 rounded-lg transition-all truncate flex items-center gap-1"
                  >
-                   💬 {q.label}
+                   <MessageSquare className="w-3 h-3" />
+                   {q.label}
                  </button>
                ))}
              </div>
@@ -1367,13 +1591,13 @@ function Chatbot({ lang, tracker, setTracker }) {
                  placeholder="Type your question..."
                  value={inputValue}
                  onChange={(e) => setInputValue(e.target.value)}
-                 className="flex-1 bg-white/5 border border-white/15 rounded-lg px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+                 className="w-full bg-white/5 border border-white/15 rounded-lg px-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
                />
                <button 
                  type="submit" 
-                 className="bg-white text-black px-4 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors"
+                 className="bg-white text-black px-4 rounded-lg text-xs font-semibold hover:bg-gray-200 transition-colors flex items-center justify-center"
                >
-                 Send
+                 <Send className="w-3 h-3" />
                </button>
              </form>
              
@@ -1394,7 +1618,7 @@ function Chatbot({ lang, tracker, setTracker }) {
          {isOpen ? (
            <span className="text-lg font-bold">✕</span>
          ) : (
-           <span className="text-xl">💬</span>
+           <MessageSquare className="w-5 h-5 text-black" />
          )}
        </button>
     </div>
