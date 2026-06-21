@@ -1,16 +1,24 @@
-# React + Vite
+# New American Kits
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Fulshear Key Club civic resource portal for immigrant and newcomer families.
 
-Currently, two official plugins are available:
+The site combines:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Verified Fulshear, Fort Bend, Katy, and Richmond resource listings
+- Multilingual UI support for English, Spanish, Arabic, Chinese, Vietnamese, Hindi, and Urdu
+- Step-by-step guides, emergency resources, partner information, feedback, volunteer intake, and a local Civic Navigator chatbot
+- Ink-on-canvas editorial visuals and a scroll-driven landing page
 
-## React Compiler
+## Development
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+## Checks
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm run lint
+npm run build
+```
