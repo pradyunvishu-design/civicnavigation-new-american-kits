@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import {
   AlertTriangle,
@@ -28,7 +28,6 @@ import {
   categoryScope,
   categories,
   chatbotAnswers,
-  communityPartners,
   emergencyResources,
   impactMetrics,
   locales,
@@ -262,7 +261,7 @@ function AppContent() {
             <Route path="/" element={<Home lang={lang} />} />
             <Route path="/directory" element={<DirectoryPage lang={lang} trackReferral={trackReferral} />} />
             <Route path="/guides" element={<GuidesPage lang={lang} />} />
-            <Route path="/partners" element={<PartnersPage lang={lang} />} />
+            <Route path="/partners" element={<Navigate to="/" replace />} />
             <Route path="/volunteer" element={<VolunteerPage lang={lang} />} />
             <Route path="/feedback" element={<FeedbackPage lang={lang} tracker={tracker} setTracker={setTracker} />} />
             <Route path="/about" element={<AboutPage lang={lang} />} />
@@ -285,7 +284,6 @@ function Navbar({ lang, setLang }) {
     ['/', t.nav.home],
     ['/directory', t.nav.directory],
     ['/guides', t.nav.guides],
-    ['/partners', t.nav.partners],
     ['/volunteer', t.nav.volunteer],
     ['/about', t.nav.about]
   ];
@@ -461,7 +459,7 @@ function Home({ lang }) {
             <h2 className="display-heading">{t.home.modelTitle}</h2>
             <p className="section-copy">{t.home.actionText}</p>
             <div className="stat-row">
-              <span><strong>{impactMetrics.partnerOrganizations}</strong>{t.nav.partners}</span>
+              <span><strong>{impactMetrics.partnerOrganizations}</strong>{t.misc.touchpoints || 'Community touchpoints'}</span>
               <span><strong>{impactMetrics.languagesSupported}</strong>{t.labels.languages}</span>
               <span><strong>2026</strong>{t.labels.lastVerified}</span>
             </div>
@@ -664,25 +662,6 @@ function GuidesPage({ lang }) {
   );
 }
 
-function PartnersPage({ lang }) {
-  const t = useCopy(lang);
-
-  return (
-    <PageTransition>
-      <PageHeader eyebrow={t.nav.partners} title={t.pages.partnersTitle} subtitle={t.pages.partnersDesc} />
-      <section className="container partner-grid">
-        {communityPartners.map(partner => (
-          <article className="paper-card partner-card" key={`${partner.type}-${partner.name}`}>
-            <span>{partner.type}</span>
-            <h2>{partner.name}</h2>
-            <p>{localize(partner.services, lang)}</p>
-          </article>
-        ))}
-      </section>
-    </PageTransition>
-  );
-}
-
 function VolunteerPage({ lang }) {
   const t = useCopy(lang);
   const [saved, setSaved] = useState(false);
@@ -873,7 +852,6 @@ function Footer({ lang }) {
         <div>
           <Link to="/directory">{t.pages.directoryTitle}</Link>
           <Link to="/guides">{t.pages.guidesTitle}</Link>
-          <Link to="/partners">{t.pages.partnersTitle}</Link>
           <Link to="/feedback">{t.pages.feedbackTitle}</Link>
         </div>
       </div>

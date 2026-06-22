@@ -121,7 +121,8 @@ export const locales = {
       guide: 'Guide',
       urgent: 'Urgent help',
       footer: 'Fulshear Key Club’s student-led civic navigation project.',
-      research: 'Research basis'
+      research: 'Research basis',
+      touchpoints: 'Community touchpoints'
     }
   },
   es: {
