@@ -36,9 +36,10 @@ import {
   rtlLanguages,
   stepByStepGuides,
   supportedLanguages
-} from './data';
+} from './houstonData';
 
 const BRAND = 'New American Kits';
+const KIT_PDF_PATH = '/kits/houston-assistance-guide.pdf';
 
 const iconMap = {
   BookOpen,
@@ -261,6 +262,7 @@ function AppContent() {
             <Route path="/" element={<Home lang={lang} />} />
             <Route path="/directory" element={<DirectoryPage lang={lang} trackReferral={trackReferral} />} />
             <Route path="/guides" element={<GuidesPage lang={lang} />} />
+            <Route path="/kit" element={<KitPage lang={lang} />} />
             <Route path="/partners" element={<Navigate to="/" replace />} />
             <Route path="/volunteer" element={<VolunteerPage lang={lang} />} />
             <Route path="/feedback" element={<FeedbackPage lang={lang} tracker={tracker} setTracker={setTracker} />} />
@@ -284,6 +286,7 @@ function Navbar({ lang, setLang }) {
     ['/', t.nav.home],
     ['/directory', t.nav.directory],
     ['/guides', t.nav.guides],
+    ['/kit', t.nav.kit],
     ['/volunteer', t.nav.volunteer],
     ['/about', t.nav.about]
   ];
@@ -662,6 +665,48 @@ function GuidesPage({ lang }) {
   );
 }
 
+function KitPage({ lang }) {
+  const t = useCopy(lang);
+  const kitTopics = categories.slice(0, 6);
+
+  return (
+    <PageTransition>
+      <PageHeader eyebrow={t.nav.kit} title={t.pages.kitTitle} subtitle={t.pages.kitDesc} />
+      <section className="container kit-layout">
+        <div className="paper-card kit-intro-card">
+          <p className="eyebrow">{t.home.storyEyebrow}</p>
+          <h2>{t.home.modelTitle}</h2>
+          <p>{t.pages.kitIntro}</p>
+          <div className="kit-actions">
+            <a href={KIT_PDF_PATH} target="_blank" rel="noreferrer" className="dark-button">
+              {t.pages.kitOpen} <ExternalLink size={16} />
+            </a>
+            <a href={KIT_PDF_PATH} download="new-american-kits-houston-assistance-guide.pdf" className="outline-button">
+              {t.pages.kitDownload} <ChevronRight size={16} />
+            </a>
+          </div>
+          <p className="source-note">{t.pages.kitNote}</p>
+          <div className="kit-topic-grid">
+            {kitTopics.map(topic => (
+              <span key={topic.id}>
+                <Icon name={topic.icon} />
+                {localize(topic.name, lang)}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="paper-card pdf-preview-card">
+          <div className="pdf-toolbar">
+            <span>{t.pages.kitTitle}</span>
+            <a href={KIT_PDF_PATH} target="_blank" rel="noreferrer">{t.pages.kitOpen}</a>
+          </div>
+          <iframe src={`${KIT_PDF_PATH}#view=FitH`} title={t.pages.kitTitle} loading="lazy" />
+        </div>
+      </section>
+    </PageTransition>
+  );
+}
+
 function VolunteerPage({ lang }) {
   const t = useCopy(lang);
   const [saved, setSaved] = useState(false);
@@ -852,6 +897,7 @@ function Footer({ lang }) {
         <div>
           <Link to="/directory">{t.pages.directoryTitle}</Link>
           <Link to="/guides">{t.pages.guidesTitle}</Link>
+          <Link to="/kit">{t.pages.kitTitle}</Link>
           <Link to="/feedback">{t.pages.feedbackTitle}</Link>
         </div>
       </div>
