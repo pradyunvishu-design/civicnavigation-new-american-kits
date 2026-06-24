@@ -1,3 +1,5 @@
+import { allTranslations } from './generatedHoustonTranslations.js';
+
 export const supportedLanguages = [
   { code: 'en', name: 'English' },
   { code: 'es', name: 'Español' },
@@ -11,7 +13,11 @@ export const supportedLanguages = [
 export const rtlLanguages = ['ar', 'ur'];
 
 const tx = (en, es, ar, zh, vi, hi, ur) => ({ en, es, ar, zh, vi, hi, ur });
-const all = (text) => tx(text, text, text, text, text, text, text);
+const all = (text) => allTranslations[text] || tx(text, text, text, text, text, text, text);
+
+export function translateStaticText(text, lang) {
+  return allTranslations[text]?.[lang] || text;
+}
 
 const enLocale = {
   nav: {
@@ -130,23 +136,34 @@ const enLocale = {
   }
 };
 
-function mergeLocale(overrides) {
-  return {
-    ...enLocale,
-    ...overrides,
-    nav: { ...enLocale.nav, ...(overrides.nav || {}) },
-    home: { ...enLocale.home, ...(overrides.home || {}) },
-    pages: { ...enLocale.pages, ...(overrides.pages || {}) },
-    labels: { ...enLocale.labels, ...(overrides.labels || {}) },
-    forms: { ...enLocale.forms, ...(overrides.forms || {}) },
-    chatbot: { ...enLocale.chatbot, ...(overrides.chatbot || {}) },
-    misc: { ...enLocale.misc, ...(overrides.misc || {}) }
-  };
+function translateMissing(value, lang) {
+  if (Array.isArray(value)) return value.map(item => translateMissing(item, lang));
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, translateMissing(item, lang)]));
+  }
+  if (typeof value === 'string') return translateStaticText(value, lang);
+  return value;
+}
+
+function mergeValue(base, override, lang) {
+  if (override === undefined) return translateMissing(base, lang);
+  if (typeof override !== 'object' || override === null) return override;
+  if (Array.isArray(override)) return override;
+  if (!base || typeof base !== 'object' || Array.isArray(base)) return override;
+
+  const keys = new Set([...Object.keys(base), ...Object.keys(override)]);
+  return Object.fromEntries(
+    [...keys].map(key => [key, mergeValue(base[key], override[key], lang)])
+  );
+}
+
+function mergeLocale(lang, overrides) {
+  return mergeValue(enLocale, overrides, lang);
 }
 
 export const locales = {
   en: enLocale,
-  es: mergeLocale({
+  es: mergeLocale('es', {
     nav: { home: 'Inicio', directory: 'Directorio', guides: 'Guías', kit: 'Kit ejemplo', volunteer: 'Voluntariado', about: 'Acerca de', emergency: 'Emergencia' },
     home: {
       eyebrow: 'Red de navegación cívica de Houston',
@@ -203,7 +220,7 @@ export const locales = {
     },
     misc: { guide: 'Guía', urgent: 'Ayuda urgente', touchpoints: 'Puntos de ayuda en Houston' }
   }),
-  ar: mergeLocale({
+  ar: mergeLocale('ar', {
     nav: { home: 'الرئيسية', directory: 'الدليل', guides: 'الأدلة', kit: 'نموذج الكتيب', volunteer: 'تطوع', about: 'حول', emergency: 'طوارئ' },
     home: {
       eyebrow: 'شبكة الملاحة المدنية في هيوستن',
@@ -242,7 +259,7 @@ export const locales = {
     chatbot: { title: 'الملاح المدني', placeholder: 'اكتب سؤالك...', close: 'إغلاق', prompts: ['طعام', 'فواتير', 'طبيب', 'مدرسة', 'قانون', 'مواصلات', 'طوارئ', 'وثائق'] },
     misc: { guide: 'دليل', urgent: 'مساعدة عاجلة', touchpoints: 'نقاط مساعدة في هيوستن' }
   }),
-  zh: mergeLocale({
+  zh: mergeLocale('zh', {
     nav: { home: '首页', directory: '目录', guides: '指南', kit: '样例工具包', volunteer: '志愿者', about: '关于', emergency: '紧急' },
     home: {
       eyebrow: '休斯顿公共服务导航网络',
@@ -278,7 +295,7 @@ export const locales = {
     chatbot: { title: '公共服务导航员', placeholder: '输入问题...', close: '关闭', prompts: ['需要食物', '水电费', '找医生', '学校注册', '法律帮助', '交通', '紧急', '文件'] },
     misc: { guide: '指南', urgent: '紧急帮助', touchpoints: '休斯顿服务点' }
   }),
-  vi: mergeLocale({
+  vi: mergeLocale('vi', {
     nav: { home: 'Trang chủ', directory: 'Danh mục', guides: 'Hướng dẫn', kit: 'Bộ kit mẫu', volunteer: 'Tình nguyện', about: 'Giới thiệu', emergency: 'Khẩn cấp' },
     home: {
       eyebrow: 'Mạng điều hướng công dân Houston',
@@ -309,11 +326,11 @@ export const locales = {
       kitNote: 'Xem trước PDF tốt nhất trên máy tính. Trên điện thoại, dùng Mở PDF.'
     },
     labels: { search: 'Tìm kiếm', allResources: 'Tất cả nguồn lực', lifeSituations: 'Nhu cầu', verified: 'Kết quả Houston đã kiểm chứng', source: 'Nguồn', call: 'Gọi', website: 'Trang web' },
-    forms: { name: 'Tên', email: 'Email', details: 'Chi tiết', submitFeedback: 'Gửi phản hồi', received: 'Đã nhận' },
-    chatbot: { title: 'Civic Navigator', placeholder: 'Nhập câu hỏi...', close: 'Đóng', prompts: ['Cần thức ăn', 'Hóa đơn', 'Bác sĩ', 'Ghi danh trường', 'Pháp lý', 'Giao thông', 'Khẩn cấp', 'Giấy tờ'] },
+    forms: { name: 'Tên', email: 'Địa chỉ email', details: 'Chi tiết', submitFeedback: 'Gửi phản hồi', received: 'Đã nhận' },
+    chatbot: { title: 'Điều hướng viên công dân', placeholder: 'Nhập câu hỏi...', close: 'Đóng', prompts: ['Cần thức ăn', 'Hóa đơn', 'Bác sĩ', 'Ghi danh trường', 'Pháp lý', 'Giao thông', 'Khẩn cấp', 'Giấy tờ'] },
     misc: { guide: 'Hướng dẫn', urgent: 'Trợ giúp khẩn cấp', touchpoints: 'Điểm hỗ trợ Houston' }
   }),
-  hi: mergeLocale({
+  hi: mergeLocale('hi', {
     nav: { home: 'होम', directory: 'डायरेक्टरी', guides: 'गाइड', kit: 'नमूना किट', volunteer: 'स्वयंसेवक', about: 'परिचय', emergency: 'आपातकाल' },
     home: {
       eyebrow: 'ह्यूस्टन नागरिक सहायता नेटवर्क',
@@ -345,10 +362,10 @@ export const locales = {
     },
     labels: { search: 'खोजें', allResources: 'सभी संसाधन', lifeSituations: 'जीवन जरूरतें', verified: 'सत्यापित ह्यूस्टन परिणाम', source: 'स्रोत', call: 'कॉल', website: 'वेबसाइट' },
     forms: { name: 'नाम', email: 'ईमेल', details: 'विवरण', submitFeedback: 'फीडबैक भेजें', received: 'प्राप्त हुआ' },
-    chatbot: { title: 'Civic Navigator', placeholder: 'अपना प्रश्न लिखें...', close: 'बंद करें', prompts: ['भोजन', 'बिल', 'डॉक्टर', 'स्कूल', 'कानूनी मदद', 'यातायात', 'आपातकाल', 'दस्तावेज'] },
+    chatbot: { title: 'नागरिक नेविगेटर', placeholder: 'अपना प्रश्न लिखें...', close: 'बंद करें', prompts: ['भोजन', 'बिल', 'डॉक्टर', 'स्कूल', 'कानूनी मदद', 'यातायात', 'आपातकाल', 'दस्तावेज'] },
     misc: { guide: 'गाइड', urgent: 'तत्काल मदद', touchpoints: 'ह्यूस्टन सहायता बिंदु' }
   }),
-  ur: mergeLocale({
+  ur: mergeLocale('ur', {
     nav: { home: 'ہوم', directory: 'ڈائریکٹری', guides: 'رہنما', kit: 'نمونہ کٹ', volunteer: 'رضاکار', about: 'تعارف', emergency: 'ایمرجنسی' },
     home: {
       eyebrow: 'ہیوسٹن شہری رہنمائی نیٹ ورک',
@@ -380,7 +397,7 @@ export const locales = {
     },
     labels: { search: 'تلاش', allResources: 'تمام وسائل', lifeSituations: 'زندگی کی ضروریات', verified: 'تصدیق شدہ ہیوسٹن نتائج', source: 'ذریعہ', call: 'کال', website: 'ویب سائٹ' },
     forms: { name: 'نام', email: 'ای میل', details: 'تفصیلات', submitFeedback: 'رائے بھیجیں', received: 'موصول ہوا' },
-    chatbot: { title: 'Civic Navigator', placeholder: 'اپنا سوال لکھیں...', close: 'بند کریں', prompts: ['خوراک', 'بل', 'ڈاکٹر', 'اسکول', 'قانونی مدد', 'آمد و رفت', 'ایمرجنسی', 'دستاویزات'] },
+    chatbot: { title: 'شہری رہنما', placeholder: 'اپنا سوال لکھیں...', close: 'بند کریں', prompts: ['خوراک', 'بل', 'ڈاکٹر', 'اسکول', 'قانونی مدد', 'آمد و رفت', 'ایمرجنسی', 'دستاویزات'] },
     misc: { guide: 'رہنما', urgent: 'فوری مدد', touchpoints: 'ہیوسٹن مدد مقامات' }
   })
 };

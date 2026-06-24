@@ -35,7 +35,8 @@ import {
   resources,
   rtlLanguages,
   stepByStepGuides,
-  supportedLanguages
+  supportedLanguages,
+  translateStaticText
 } from './houstonData';
 
 const BRAND = 'New American Kits';
@@ -75,64 +76,24 @@ const chromeCopy = {
 
 const reviewRoles = [
   {
-    title: { en: 'Research desk', es: 'Equipo de investigación', ar: 'فريق البحث', zh: '研究组', vi: 'Nhóm nghiên cứu', hi: 'शोध टीम', ur: 'تحقیق ٹیم' },
-    text: {
-      en: 'Verify source pages, phone numbers, documents, and changes before listings are printed.',
-      es: 'Verifica fuentes, teléfonos, documentos y cambios antes de imprimir listados.',
-      ar: 'يتحقق من المصادر والأرقام والوثائق والتغييرات قبل طباعة القوائم.',
-      zh: '打印前核实来源页面、电话、文件和变更。',
-      vi: 'Xác minh nguồn, số điện thoại, giấy tờ và thay đổi trước khi in.',
-      hi: 'प्रिंट से पहले स्रोत, फोन, दस्तावेज और बदलाव जांचें।',
-      ur: 'پرنٹ سے پہلے ذرائع، فون، کاغذات اور تبدیلیاں چیک کریں۔'
-    }
+    title: 'Research desk',
+    text: 'Verify source pages, phone numbers, documents, and changes before listings are printed.'
   },
   {
-    title: { en: 'Translation review', es: 'Revisión de traducción', ar: 'مراجعة الترجمة', zh: '翻译审核', vi: 'Duyệt bản dịch', hi: 'अनुवाद समीक्षा', ur: 'ترجمہ جائزہ' },
-    text: {
-      en: 'Check short, plain-language summaries with bilingual volunteers and trusted adults.',
-      es: 'Revisa resúmenes claros con voluntarios bilingües y adultos de confianza.',
-      ar: 'يراجع الملخصات البسيطة مع متطوعين ثنائيي اللغة وبالغين موثوقين.',
-      zh: '与双语志愿者和可信成人检查简明摘要。',
-      vi: 'Kiểm tra tóm tắt dễ hiểu với tình nguyện viên song ngữ và người lớn tin cậy.',
-      hi: 'द्विभाषी स्वयंसेवकों और भरोसेमंद वयस्कों के साथ सरल सार जांचें।',
-      ur: 'دو لسانی رضاکاروں اور قابل اعتماد بڑوں کے ساتھ آسان خلاصے چیک کریں۔'
-    }
+    title: 'Translation review',
+    text: 'Check short, plain-language summaries with bilingual volunteers and trusted adults.'
   },
   {
-    title: { en: 'Design and QR', es: 'Diseño y QR', ar: 'التصميم و QR', zh: '设计和二维码', vi: 'Thiết kế và QR', hi: 'डिजाइन और QR', ur: 'ڈیزائن اور QR' },
-    text: {
-      en: 'Keep printed guides readable, visual, and connected to the live portal.',
-      es: 'Mantiene guías impresas legibles, visuales y conectadas al portal.',
-      ar: 'يبقي الأدلة المطبوعة واضحة ومرئية ومتصلة بالبوابة.',
-      zh: '让纸质指南清晰、视觉化，并连接到在线门户。',
-      vi: 'Giữ bản in dễ đọc, trực quan và liên kết với cổng trực tuyến.',
-      hi: 'प्रिंट गाइड को पढ़ने योग्य, दृश्य और लाइव पोर्टल से जुड़ा रखें।',
-      ur: 'پرنٹ رہنما کو واضح، بصری اور لائیو پورٹل سے منسلک رکھیں۔'
-    }
+    title: 'Design and QR',
+    text: 'Keep printed guides readable, visual, and connected to the live portal.'
   },
   {
-    title: { en: 'Distribution team', es: 'Equipo de distribución', ar: 'فريق التوزيع', zh: '发放组', vi: 'Nhóm phân phối', hi: 'वितरण टीम', ur: 'تقسیم ٹیم' },
-    text: {
-      en: 'Place kits through libraries, food fairs, clinics, schools, and faith groups.',
-      es: 'Coloca kits en bibliotecas, ferias de comida, clínicas, escuelas y grupos de fe.',
-      ar: 'يوزع الكتيبات عبر المكتبات ومعارض الطعام والعيادات والمدارس ودور العبادة.',
-      zh: '通过图书馆、食品发放、诊所、学校和信仰团体放置工具包。',
-      vi: 'Đặt bộ kit tại thư viện, hội chợ thực phẩm, clinic, trường học và nhóm tôn giáo.',
-      hi: 'किट लाइब्रेरी, फूड फेयर, क्लिनिक, स्कूल और धार्मिक समूहों में रखें।',
-      ur: 'کٹس لائبریری، فوڈ فیئر، کلینک، اسکول اور مذہبی گروپس میں رکھیں۔'
-    }
+    title: 'Distribution team',
+    text: 'Place kits through libraries, food fairs, clinics, schools, and faith groups.'
   },
   {
-    title: { en: 'Historian', es: 'Historial y archivo', ar: 'الأرشيف', zh: '记录员', vi: 'Lưu trữ', hi: 'रिकॉर्ड टीम', ur: 'ریکارڈ ٹیم' },
-    text: {
-      en: 'Track sources, updates, partner notes, feedback, and handoff instructions.',
-      es: 'Registra fuentes, actualizaciones, notas de aliados, comentarios e instrucciones.',
-      ar: 'يتابع المصادر والتحديثات وملاحظات الشركاء والتعليقات وتعليمات التسليم.',
-      zh: '记录来源、更新、伙伴备注、反馈和交接说明。',
-      vi: 'Theo dõi nguồn, cập nhật, ghi chú đối tác, phản hồi và bàn giao.',
-      hi: 'स्रोत, अपडेट, साझेदार नोट, फीडबैक और हैंडऑफ निर्देश ट्रैक करें।',
-      ur: 'ذرائع، اپ ڈیٹس، پارٹنر نوٹس، رائے اور ہینڈ آف ہدایات ٹریک کریں۔'
-    }
+    title: 'Historian',
+    text: 'Track sources, updates, partner notes, feedback, and handoff instructions.'
   }
 ];
 
@@ -140,6 +101,7 @@ function localize(value, lang) {
   if (value && typeof value === 'object' && !Array.isArray(value)) {
     return value[lang] || value.en || Object.values(value)[0] || '';
   }
+  if (typeof value === 'string') return translateStaticText(value, lang);
   return value ?? '';
 }
 
@@ -293,7 +255,7 @@ function Navbar({ lang, setLang }) {
 
   return (
     <nav className="floating-nav" aria-label={ui.primaryNav}>
-      <Link to="/" className="brand-mark" aria-label={`${BRAND} home`}>
+      <Link to="/" className="brand-mark" aria-label={`${BRAND} ${t.nav.home}`}>
         <span className="brand-icon">NA</span>
         <span>{BRAND}</span>
       </Link>
@@ -576,9 +538,9 @@ function ResourceCard({ resource, lang, t, trackReferral }) {
         <p>{localize(resource.description, lang)}</p>
       </div>
       <dl className="resource-details">
-        <div><dt>{t.labels.areaServed}</dt><dd>{resource.areaServed}</dd></div>
-        <div><dt>{t.labels.hours}</dt><dd>{resource.hours}</dd></div>
-        <div><dt>{t.labels.languages}</dt><dd>{resource.languages.join(', ')}</dd></div>
+        <div><dt>{t.labels.areaServed}</dt><dd>{localize(resource.areaServed, lang)}</dd></div>
+        <div><dt>{t.labels.hours}</dt><dd>{localize(resource.hours, lang)}</dd></div>
+        <div><dt>{t.labels.languages}</dt><dd>{resource.languages.map(language => translateStaticText(language, lang)).join(', ')}</dd></div>
         <div><dt>{t.labels.cost}</dt><dd>{localize(resource.cost, lang)}</dd></div>
         <div><dt>{t.labels.eligibility}</dt><dd>{localize(resource.eligibility, lang)}</dd></div>
         <div><dt>{t.labels.documents}</dt><dd>{localize(resource.documentsRequired, lang)}</dd></div>
@@ -744,7 +706,7 @@ function VolunteerPage({ lang }) {
               <label>
                 <span>{t.forms.role}</span>
                 <select>
-                  {reviewRoles.map(role => <option key={role.title.en}>{localize(role.title, lang)}</option>)}
+                  {reviewRoles.map(role => <option key={role.title}>{localize(role.title, lang)}</option>)}
                 </select>
               </label>
               <label><span>{t.forms.why}</span><textarea rows="4" placeholder={t.forms.why} /></label>
@@ -755,7 +717,7 @@ function VolunteerPage({ lang }) {
       </section>
       <section className="container role-list-wide">
         {reviewRoles.map(role => (
-          <article className="paper-card role-card" key={role.title.en}>
+          <article className="paper-card role-card" key={role.title}>
             <h3>{localize(role.title, lang)}</h3>
             <p>{localize(role.text, lang)}</p>
           </article>
