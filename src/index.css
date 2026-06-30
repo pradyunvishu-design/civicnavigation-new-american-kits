@@ -193,12 +193,12 @@ img {
 }
 
 .brand-icon img {
-  width: 35px;
-  height: 35px;
-  object-fit: cover;
-  object-position: 50% 48%;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  object-position: center;
   mix-blend-mode: multiply;
-  transform: scale(1.12);
+  transform: translateY(1px);
 }
 
 .brand-wordmark {
@@ -1806,8 +1806,8 @@ img {
   }
 
   .brand-icon img {
-    width: 29px;
-    height: 29px;
+    width: 30px;
+    height: 30px;
   }
 
   .nav-actions {
