@@ -39,7 +39,8 @@ import {
   translateStaticText
 } from './houstonData';
 
-const BRAND = 'New American Kits';
+const BRAND = 'civicnavigation';
+const BRAND_LOGO_PATH = '/brand/civicnavigation-logo.png';
 const KIT_PDF_PATH = '/kits/houston-assistance-guide.pdf';
 
 const iconMap = {
@@ -256,8 +257,10 @@ function Navbar({ lang, setLang }) {
   return (
     <nav className="floating-nav" aria-label={ui.primaryNav}>
       <Link to="/" className="brand-mark" aria-label={`${BRAND} ${t.nav.home}`}>
-        <span className="brand-icon">NA</span>
-        <span>{BRAND}</span>
+        <span className="brand-icon" aria-hidden="true">
+          <img src={BRAND_LOGO_PATH} alt="" />
+        </span>
+        <span className="brand-wordmark">{BRAND}</span>
       </Link>
       <div className="nav-links">
         {links.map(([path, label]) => (

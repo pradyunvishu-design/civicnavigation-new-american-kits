@@ -167,23 +167,48 @@ img {
 }
 
 .brand-mark {
-  gap: 10px;
+  gap: 11px;
   min-width: 0;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  letter-spacing: -0.035em;
 }
 
 .brand-icon {
-  display: inline-grid;
-  place-items: center;
-  width: 31px;
-  height: 31px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
   flex: 0 0 auto;
-  border: 1px solid rgba(0, 223, 255, 0.54);
+  overflow: hidden;
+  border: 1px solid rgba(250, 248, 242, 0.28);
   border-radius: 999px;
-  color: var(--cyan);
-  font-family: var(--font-mono);
-  font-size: 10px;
+  background:
+    radial-gradient(circle at 68% 28%, rgba(0, 223, 255, 0.2), transparent 32%),
+    var(--paper);
+  box-shadow:
+    inset rgba(17, 17, 17, 0.12) 0 0 0 1px,
+    rgba(0, 223, 255, 0.12) 0 0 22px;
+}
+
+.brand-icon img {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  object-position: 50% 48%;
+  mix-blend-mode: multiply;
+  transform: scale(1.12);
+}
+
+.brand-wordmark {
+  color: var(--paper-bright);
+  font-family: var(--font-display);
+  font-size: 19px;
+  line-height: 1;
+  text-transform: lowercase;
+  white-space: nowrap;
+  text-shadow: rgba(0, 223, 255, 0.14) 0 0 18px;
 }
 
 .nav-links {
@@ -1778,6 +1803,11 @@ img {
   .brand-icon {
     width: 34px;
     height: 34px;
+  }
+
+  .brand-icon img {
+    width: 29px;
+    height: 29px;
   }
 
   .nav-actions {
