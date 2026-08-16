@@ -7,6 +7,7 @@ import {
   Briefcase,
   Bus,
   Check,
+  ClipboardCheck,
   ChevronRight,
   Clock,
   ExternalLink,
@@ -14,6 +15,7 @@ import {
   GraduationCap,
   Home as HomeIcon,
   Languages,
+  MapPin,
   MessageSquare,
   Phone,
   Scale,
@@ -42,6 +44,7 @@ import {
 const BRAND = 'civicnavigation';
 const BRAND_LOGO_PATH = '/brand/civicnavigation-logo.png';
 const KIT_PDF_PATH = '/kits/houston-assistance-guide.pdf';
+const CONTACT_EMAIL = 'translytic@gmail.com';
 
 const iconMap = {
   BookOpen,
@@ -128,6 +131,10 @@ function Icon({ name, className = '', ...props }) {
 function telHref(phone) {
   const first = String(phone || '').split('/')[0].replace(/[^\d+]/g, '');
   return first ? `tel:${first}` : undefined;
+}
+
+function mapHref(address) {
+  return address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : undefined;
 }
 
 function trackerLabel(key, lang, t) {
@@ -529,6 +536,8 @@ function DirectoryPage({ lang, trackReferral }) {
 
 function ResourceCard({ resource, lang, t, trackReferral }) {
   const category = categories.find(item => item.id === resource.categoryId);
+  const phoneLink = telHref(resource.phone);
+  const directionsLink = mapHref(resource.address);
 
   return (
     <article className="paper-card resource-card">
@@ -540,6 +549,23 @@ function ResourceCard({ resource, lang, t, trackReferral }) {
         <h2>{resource.name}</h2>
         <p>{localize(resource.description, lang)}</p>
       </div>
+      <section className="resource-guidance" aria-label={`${resource.name} visit guidance`}>
+        <div>
+          <ClipboardCheck size={18} aria-hidden="true" />
+          <div>
+            <strong>Before you go</strong>
+            <p>Review the documents listed below, then call ahead to confirm today’s hours, availability, and any appointment requirements.</p>
+          </div>
+        </div>
+        <div>
+          <MapPin size={18} aria-hidden="true" />
+          <div>
+            <strong>Where to start</strong>
+            <p>{resource.address || 'Use the organization website or source page to confirm the best location for your needs.'}</p>
+          </div>
+        </div>
+      </section>
+      <p className="detail-intro">Service details</p>
       <dl className="resource-details">
         <div><dt>{t.labels.areaServed}</dt><dd>{localize(resource.areaServed, lang)}</dd></div>
         <div><dt>{t.labels.hours}</dt><dd>{localize(resource.hours, lang)}</dd></div>
@@ -548,7 +574,7 @@ function ResourceCard({ resource, lang, t, trackReferral }) {
         <div><dt>{t.labels.eligibility}</dt><dd>{localize(resource.eligibility, lang)}</dd></div>
         <div><dt>{t.labels.documents}</dt><dd>{localize(resource.documentsRequired, lang)}</dd></div>
         <div><dt>{t.labels.services}</dt><dd>{localize(resource.servicesOffered, lang)}</dd></div>
-        <div><dt>{t.labels.contact}</dt><dd>{resource.phone}</dd></div>
+        <div><dt>{t.labels.contact}</dt><dd>{phoneLink ? <a href={phoneLink}>{resource.phone}</a> : resource.phone}</dd></div>
       </dl>
       <p className="source-note">{t.labels.sourceNote}</p>
       <div className="card-actions">
@@ -563,6 +589,11 @@ function ResourceCard({ resource, lang, t, trackReferral }) {
         {telHref(resource.phone) && (
           <a href={telHref(resource.phone)} onClick={() => trackReferral(resource.categoryId)}>
             {t.labels.call} <Phone size={15} />
+          </a>
+        )}
+        {directionsLink && (
+          <a href={directionsLink} target="_blank" rel="noreferrer" onClick={() => trackReferral(resource.categoryId)}>
+            Directions <MapPin size={15} />
           </a>
         )}
       </div>
@@ -607,6 +638,10 @@ function GuidesPage({ lang }) {
               <p className="eyebrow">{t.misc.guide} {String(filteredGuides.findIndex(guide => guide.id === selectedGuide.id) + 1).padStart(2, '0')}</p>
               <h2>{localize(selectedGuide.title, lang)}</h2>
               <p>{localize(selectedGuide.summary, lang)}</p>
+              <section className="guide-orientation">
+                <p><strong>Use this guide when:</strong> you want a clear first step, a short list of what to prepare, and a way to decide what to do next.</p>
+                <p><strong>Take your time:</strong> service availability and eligibility can change. Save the organization’s source page and call before traveling.</p>
+              </section>
               <div className="steps-list">
                 {selectedGuide.steps.map((step, index) => (
                   <article key={`${selectedGuide.id}-${index}`}>
@@ -802,7 +837,10 @@ function AboutPage({ lang }) {
           <h2 className="display-heading">{t.home.storyTitle}</h2>
           <p className="section-copy">{t.home.actionText}</p>
         </div>
-        <figure className="image-card"><img src={imageSet.handoff} alt="" /></figure>
+        <figure className="image-card">
+          <img src="/photos/community-resource-desk.png" alt="A family reviewing local resource information with a community guide at a library table." />
+          <figcaption>Local help works best when clear information, a trusted person, and a current source come together.</figcaption>
+        </figure>
       </section>
       <section className="container research-grid">
         {researchCards.map(card => (
@@ -858,6 +896,9 @@ function Footer({ lang }) {
         <div>
           <strong>{BRAND}</strong>
           <p>{t.misc.footer}</p>
+          <a className="footer-email" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('CivicNavigation question')}`}>
+            Email the CivicNavigation team
+          </a>
         </div>
         <div>
           <Link to="/directory">{t.pages.directoryTitle}</Link>
@@ -913,9 +954,10 @@ function Chatbot({ lang, tracker, setTracker }) {
         {isOpen && (
           <motion.div className="chat-panel" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}>
             <header>
-              <div><span /> {t.chatbot.title}</div>
+              <div><span /> Quick resource finder</div>
               <button type="button" onClick={() => setIsOpen(false)}>{t.chatbot.close}</button>
             </header>
+            <p className="chat-disclosure">This is a simple on-site guide, not live AI or a caseworker. It can point you to the right local starting place; always confirm details with the provider.</p>
             <div className="chat-messages">
               {[{ type: 'bot', text: t.chatbot.welcome }, ...messages].map((message, index) => (
                 <div key={`${message.type}-${index}`} className={message.type === 'user' ? 'message user' : 'message bot'}>
@@ -933,11 +975,11 @@ function Chatbot({ lang, tracker, setTracker }) {
               <input value={inputValue} onChange={event => setInputValue(event.target.value)} placeholder={t.chatbot.placeholder} />
               <button type="submit"><Send size={15} /></button>
             </form>
-            <p className="chat-footnote">{t.chatbot.footnote}</p>
+            <p className="chat-footnote">For urgent danger, call 911. For current local referrals, call 211. For help we do not cover here, <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('CivicNavigation support request')}`}>email the team</a>.</p>
           </motion.div>
         )}
       </AnimatePresence>
-      <button type="button" className="chat-toggle" onClick={() => setIsOpen(prev => !prev)} aria-label={t.chatbot.title}>
+      <button type="button" className="chat-toggle" onClick={() => setIsOpen(prev => !prev)} aria-label="Open quick resource finder">
         <MessageSquare size={22} />
         <span>{tracker.conversations}</span>
       </button>
