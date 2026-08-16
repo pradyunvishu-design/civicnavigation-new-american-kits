@@ -44,7 +44,40 @@ import {
 const BRAND = 'civicnavigation';
 const BRAND_LOGO_PATH = '/brand/civicnavigation-logo.png';
 const KIT_PDF_PATH = '/kits/houston-assistance-guide.pdf';
-const CONTACT_EMAIL = 'translytic@gmail.com';
+const CONTACT_EMAIL = 'nacivicnav@gmail.com';
+
+const verifiedServiceFacts = [
+  {
+    label: 'Start anywhere',
+    title: '211 Texas searches by need and ZIP code',
+    text: 'Call 2-1-1 or 1-877-541-7905, or search online for food, housing, health, transportation, childcare, and other local services.',
+    href: 'https://www.211texas.org/'
+  },
+  {
+    label: 'Food today',
+    title: 'Confirm a pantry before traveling',
+    text: 'Houston Food Bank’s locator shows nearby pantries and distributions. Its official guidance asks visitors to confirm hours, services, and requirements first.',
+    href: 'https://www.houstonfoodbank.org/find-help/find-food-map/'
+  },
+  {
+    label: 'Healthcare costs',
+    title: 'Harris Health assistance is not insurance',
+    text: 'Harris County residents can review financial-assistance eligibility and required documents. Applying is free; call 713-566-6509 with questions.',
+    href: 'https://www.harrishealth.org/access-care-hh/eligibility/Pages/default.aspx'
+  },
+  {
+    label: 'Learn and prepare',
+    title: 'Free English and citizenship learning',
+    text: 'Harris County Public Library offers English learning, citizenship preparation, literacy, and adult-education resources; schedules and registration vary by branch.',
+    href: 'https://hcpl.net/adult-education/'
+  }
+];
+
+const collaborationPaths = [
+  { title: 'Families and newcomers', text: 'Find a practical first call, compare documents and eligibility notes, and leave with questions to ask the provider.' },
+  { title: 'Schools and libraries', text: 'Use the portal during a referral conversation, request printable kits, or invite students to support a resource-navigation event.' },
+  { title: 'Community partners', text: 'Suggest a service, correct a listing, sponsor printing, or discuss a local distribution and translation partnership.' }
+];
 
 const iconMap = {
   BookOpen,
@@ -137,31 +170,9 @@ function mapHref(address) {
   return address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : undefined;
 }
 
-function trackerLabel(key, lang, t) {
-  const categoryById = categories.find(category => category.id === key);
-  if (categoryById) return localize(categoryById.name, lang);
-
-  const topicMap = {
-    'Food Assistance': 'food',
-    'Utility Assistance': 'utilities',
-    Healthcare: 'health',
-    'School Enrollment': 'education',
-    'Legal Aid': 'legal',
-    Transportation: 'transport',
-    Emergency: 'emergency',
-    'Required Documents': 'documents',
-    'Source check': 'source',
-    source: 'source',
-    unknown: 'unknown'
-  };
-  const mapped = topicMap[key] || key;
-  const category = categories.find(item => item.id === mapped);
-  if (category) return localize(category.name, lang);
-  if (mapped === 'emergency') return t.nav.emergency;
-  if (mapped === 'documents') return t.labels.documents;
-  if (mapped === 'source') return t.labels.source;
-  if (mapped === 'unknown') return t.chatbot.unknown;
-  return key;
+function mailtoHref(subject, body = '') {
+  const params = new URLSearchParams({ subject, body });
+  return `mailto:${CONTACT_EMAIL}?${params.toString()}`;
 }
 
 export default function App() {
@@ -235,7 +246,7 @@ function AppContent() {
             <Route path="/kit" element={<KitPage lang={lang} />} />
             <Route path="/partners" element={<Navigate to="/" replace />} />
             <Route path="/volunteer" element={<VolunteerPage lang={lang} />} />
-            <Route path="/feedback" element={<FeedbackPage lang={lang} tracker={tracker} setTracker={setTracker} />} />
+            <Route path="/feedback" element={<FeedbackPage lang={lang} setTracker={setTracker} />} />
             <Route path="/about" element={<AboutPage lang={lang} />} />
             <Route path="/emergency" element={<EmergencyPage lang={lang} />} />
           </Routes>
@@ -502,6 +513,18 @@ function DirectoryPage({ lang, trackReferral }) {
         alt="Student volunteers helping an immigrant family review local service information on a tablet at a library."
         caption="CivicNavigation students help families compare service information and find a clear next step."
       />
+      <section className="container content-intro-grid" aria-label="How to use the directory">
+        <article>
+          <p className="eyebrow">Use the directory with confidence</p>
+          <h2>Details for the decision—not just a name and address.</h2>
+          <p>Each listing explains who the service is for, what it may cost, what to prepare, where to begin, and how to confirm the information with the provider.</p>
+        </article>
+        <ol className="plain-steps">
+          <li><strong>Choose a need.</strong><span>Search a life situation or organization name.</span></li>
+          <li><strong>Compare the details.</strong><span>Review eligibility, language, cost, documents, and service area.</span></li>
+          <li><strong>Confirm before traveling.</strong><span>Call or open the official source because funding, hours, and intake rules can change.</span></li>
+        </ol>
+      </section>
       <section className="portal-layout container">
         <aside className="filter-panel">
           <label>
@@ -568,7 +591,7 @@ function ResourceCard({ resource, lang, t, trackReferral }) {
           <ClipboardCheck size={18} aria-hidden="true" />
           <div>
             <strong>Before you go</strong>
-            <p>Review the documents listed below, then call ahead to confirm today’s hours, availability, and any appointment requirements.</p>
+            <p>Review the documents listed below. Ask whether the program is accepting people today, whether an appointment is required, and whether your ZIP code is served.</p>
           </div>
         </div>
         <div>
@@ -636,6 +659,19 @@ function GuidesPage({ lang }) {
         alt="A student volunteer explaining a document checklist to an immigrant family at their kitchen table."
         caption="Students can walk through a guide with a family, explain unfamiliar terms, and help organize questions for a provider."
       />
+      <section className="container content-intro-grid" aria-label="Guide purpose">
+        <article>
+          <p className="eyebrow">A calm path through a complicated system</p>
+          <h2>Every guide answers four questions.</h2>
+          <p>Where do I start? What should I say? What should I bring? What should I do if the first option does not work?</p>
+        </article>
+        <div className="paper-card expectation-card">
+          <strong>What these guides can do</strong>
+          <p>Help you prepare and connect to official providers.</p>
+          <strong>What they cannot do</strong>
+          <p>Guarantee eligibility, funding, appointments, legal outcomes, or emergency response.</p>
+        </div>
+      </section>
       <section className="container guide-layout">
         <aside className="filter-panel">
           <label>
@@ -673,6 +709,10 @@ function GuidesPage({ lang }) {
                 <p><strong>{t.misc.documentsNeeded}:</strong> {localize(selectedGuide.documentsNeeded, lang)}</p>
                 <p><strong>{t.labels.eligibility}:</strong> {localize(selectedGuide.eligibility, lang)}</p>
                 <p><strong>{t.misc.safetyNote}:</strong> {localize(selectedGuide.safetyNote, lang)}</p>
+              </div>
+              <div className="guide-actions">
+                <Link className="dark-button" to={`/directory?category=${selectedGuide.target}`}>Find related services <Search size={15} /></Link>
+                <a className="outline-button" href={mailtoHref(`Question about: ${localize(selectedGuide.title, 'en')}`)}>Ask CivicNavigation <Send size={15} /></a>
               </div>
             </>
           ) : (
@@ -727,6 +767,16 @@ function KitPage({ lang }) {
           <iframe src={`${KIT_PDF_PATH}#view=FitH`} title={t.pages.kitTitle} loading="lazy" />
         </div>
       </section>
+      <section className="container client-section">
+        <div className="section-heading-row">
+          <div><p className="eyebrow">Bring the kit to your community</p><h2>Built for handoffs, workshops, and referral desks.</h2></div>
+          <a className="outline-button" href={mailtoHref('Printed kit or community partnership request')}>Request kits or a partnership <Send size={15} /></a>
+        </div>
+        <div className="collaboration-grid">
+          {collaborationPaths.map(path => <article className="paper-card" key={path.title}><h3>{path.title}</h3><p>{path.text}</p></article>)}
+        </div>
+        <p className="verification-disclaimer">Printed information can become outdated. Use the QR-linked portal and official source buttons for the newest provider information before acting.</p>
+      </section>
     </PageTransition>
   );
 }
@@ -736,8 +786,13 @@ function VolunteerPage({ lang }) {
   const [saved, setSaved] = useState(false);
   const saveInterest = (event) => {
     event.preventDefault();
-    const form = event.currentTarget.form || event.currentTarget;
+    const form = event.currentTarget;
     if (typeof form.reportValidity === 'function' && !form.reportValidity()) return;
+    const values = new FormData(form);
+    window.location.href = mailtoHref(
+      `Volunteer interest: ${values.get('role') || 'CivicNavigation'}`,
+      `Name: ${values.get('name') || ''}\nReply email: ${values.get('email') || ''}\nPreferred role: ${values.get('role') || ''}\n\nWhy I want to help:\n${values.get('why') || ''}`
+    );
     setSaved(true);
   };
 
@@ -762,25 +817,34 @@ function VolunteerPage({ lang }) {
           {saved ? (
             <div className="success-state">
               <Check size={34} />
-              <h2>{t.forms.received}</h2>
-              <p>{t.forms.receivedBody}</p>
-              <button type="button" onClick={() => setSaved(false)}>{t.forms.another}</button>
+              <h2>Your email draft is ready.</h2>
+              <p>Review and send it in your email app. If nothing opened, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> directly.</p>
+              <button type="button" onClick={() => setSaved(false)}>Edit the form</button>
             </div>
           ) : (
             <>
-              <label><span>{t.forms.name}</span><input required placeholder={t.forms.name} /></label>
-              <label><span>{t.forms.email}</span><input required type="email" placeholder="name@example.com" /></label>
+              <p className="form-explainer">Submitting opens a pre-addressed email to our student team. We do not silently store your information in this browser.</p>
+              <label><span>{t.forms.name}</span><input required name="name" placeholder={t.forms.name} /></label>
+              <label><span>{t.forms.email}</span><input required name="email" type="email" placeholder="name@example.com" /></label>
               <label>
                 <span>{t.forms.role}</span>
-                <select>
+                <select name="role">
                   {reviewRoles.map(role => <option key={role.title}>{localize(role.title, lang)}</option>)}
                 </select>
               </label>
-              <label><span>{t.forms.why}</span><textarea rows="4" placeholder={t.forms.why} /></label>
-              <button type="submit" className="dark-button" onClick={saveInterest}>{t.forms.saveInterest} <ChevronRight size={16} /></button>
+              <label><span>{t.forms.why}</span><textarea name="why" rows="4" placeholder={t.forms.why} /></label>
+              <button type="submit" className="dark-button">Email my interest <Send size={16} /></button>
             </>
           )}
         </form>
+      </section>
+      <section className="container process-section">
+        <p className="eyebrow">What happens next</p>
+        <div className="collaboration-grid">
+          <article className="paper-card"><strong>1. Introduce yourself</strong><p>Tell us your school, skills, languages, availability, and the role that interests you.</p></article>
+          <article className="paper-card"><strong>2. Complete orientation</strong><p>Learn the source-checking, privacy, plain-language, and referral boundaries used by the project.</p></article>
+          <article className="paper-card"><strong>3. Work with review</strong><p>Student work is checked before publication; volunteers do not give legal, medical, or benefits advice.</p></article>
+        </div>
       </section>
       <section className="container role-list-wide">
         {reviewRoles.map(role => (
@@ -794,7 +858,7 @@ function VolunteerPage({ lang }) {
   );
 }
 
-function FeedbackPage({ lang, tracker, setTracker }) {
+function FeedbackPage({ lang, setTracker }) {
   const t = useCopy(lang);
   const [success, setSuccess] = useState(false);
   const [feedbackType, setFeedbackType] = useState('outdated');
@@ -804,6 +868,8 @@ function FeedbackPage({ lang, tracker, setTracker }) {
   const submit = (event) => {
     event.preventDefault();
     if (!inputs.message.trim()) return;
+    const subject = `${t.forms.tabs[tabIds.indexOf(feedbackType)] || 'Website feedback'}${inputs.resourceName ? `: ${inputs.resourceName}` : ''}`;
+    window.location.href = mailtoHref(subject, `Feedback type: ${feedbackType}\nOrganization/resource: ${inputs.resourceName || 'Not provided'}\nReply email: ${inputs.email || 'Not provided'}\n\nDetails:\n${inputs.message}`);
     setSuccess(true);
     setTracker(prev => ({ ...prev, conversations: prev.conversations + 1 }));
   };
@@ -826,12 +892,13 @@ function FeedbackPage({ lang, tracker, setTracker }) {
           {success ? (
             <div className="success-state">
               <Check size={34} />
-              <h2>{t.forms.received}</h2>
-              <p>{t.forms.receivedBody}</p>
+              <h2>Your email draft is ready.</h2>
+              <p>Review and send it in your email app. If nothing opened, email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
               <button type="button" onClick={() => { setSuccess(false); setInputs({ message: '', email: '', resourceName: '' }); }}>{t.forms.another}</button>
             </div>
           ) : (
             <form onSubmit={submit} className="feedback-form">
+              <p className="form-explainer">This form opens a pre-addressed email so your correction or question reaches a real person. It does not claim to save data to a backend.</p>
               {feedbackType === 'outdated' && (
                 <label><span>{t.forms.organization}</span><input value={inputs.resourceName} onChange={event => setInputs({ ...inputs, resourceName: event.target.value })} placeholder={t.forms.organization} /></label>
               )}
@@ -841,18 +908,15 @@ function FeedbackPage({ lang, tracker, setTracker }) {
             </form>
           )}
         </div>
-        <aside className="paper-card tracker-card">
-          <p className="eyebrow">{t.misc.liveOps}</p>
-          <h2>{t.misc.trackerTitle}</h2>
-          <dl>
-            <div><dt>{t.misc.portalConsultations}</dt><dd>{tracker.conversations}</dd></div>
-            <div><dt>{t.misc.outwardReferrals}</dt><dd>{tracker.referrals}</dd></div>
-            <div><dt>{t.misc.trackedClicks}</dt><dd>{tracker.clicks}</dd></div>
-          </dl>
-          <h3>{t.misc.mostConsulted}</h3>
-          {Object.entries(tracker.searches).slice(0, 5).map(([key, value]) => (
-            <p className="tracker-row" key={key}><span>{trackerLabel(key, lang, t)}</span><strong>{value}</strong></p>
-          ))}
+        <aside className="paper-card contact-card">
+          <p className="eyebrow">A real contact point</p>
+          <h2>Talk to the CivicNavigation team.</h2>
+          <p>Use this contact for corrections, translation questions, school or library partnerships, printing support, volunteer interest, and general project questions.</p>
+          <a className="dark-button" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL} <Send size={15} /></a>
+          <div className="response-notes">
+            <strong>Not an emergency line</strong><p>Call 911 for immediate danger or 988 for a mental-health crisis.</p>
+            <strong>Not a caseworker or law office</strong><p>We can point to sources and providers, but cannot determine eligibility or give legal advice.</p>
+          </div>
         </aside>
       </section>
     </PageTransition>
@@ -885,6 +949,32 @@ function AboutPage({ lang }) {
           </article>
         ))}
       </section>
+      <section className="container client-section">
+        <div className="section-heading-row"><div><p className="eyebrow">Current, source-first information</p><h2>What we verified while strengthening this portal.</h2></div></div>
+        <div className="verified-facts-grid">
+          {verifiedServiceFacts.map(fact => (
+            <a className="paper-card verified-fact" href={fact.href} target="_blank" rel="noreferrer" key={fact.title}>
+              <span>{fact.label}</span><h3>{fact.title}</h3><p>{fact.text}</p><small>Open official source <ExternalLink size={13} /></small>
+            </a>
+          ))}
+        </div>
+      </section>
+      <section className="container methodology-section">
+        <article><p className="eyebrow">Verification method</p><h2>How a listing earns its place.</h2></article>
+        <ol className="plain-steps">
+          <li><strong>Start with an official provider page.</strong><span>We prefer the agency’s own current website over copied directories or social posts.</span></li>
+          <li><strong>Capture decision details.</strong><span>Phone, service area, hours, cost, eligibility, documents, languages, and official source.</span></li>
+          <li><strong>Publish with limits.</strong><span>The portal never promises funding, appointments, eligibility, or outcomes.</span></li>
+          <li><strong>Invite corrections.</strong><span>Every visitor can report a change directly to {CONTACT_EMAIL}.</span></li>
+        </ol>
+      </section>
+      <section className="container client-section compact-client-section">
+        <div className="section-heading-row">
+          <div><p className="eyebrow">Work with us</p><h2>Turn local knowledge into a trusted community handoff.</h2></div>
+          <a className="dark-button" href={mailtoHref('CivicNavigation partnership inquiry')}>Start a conversation <Send size={15} /></a>
+        </div>
+        <div className="collaboration-grid">{collaborationPaths.map(path => <article className="paper-card" key={path.title}><h3>{path.title}</h3><p>{path.text}</p></article>)}</div>
+      </section>
       <section className="container source-grid">
         {uniqueSources.map(resource => (
           <a className="source-card" href={resource.sourceUrl} target="_blank" rel="noreferrer" key={resource.id}>
@@ -909,6 +999,10 @@ function EmergencyPage({ lang }) {
         alt="A student volunteer helping an immigrant adult make a resource call while another student checks a printed guide."
         caption="Students can help someone locate the right number and prepare for a call; trained emergency services handle urgent situations."
       />
+      <section className="container emergency-intro">
+        <strong>If there is immediate danger, call 911.</strong>
+        <p>Use the cards below for direct crisis and support lines. A student volunteer or website cannot replace emergency responders, trained advocates, or licensed clinicians.</p>
+      </section>
       <section className="container emergency-grid">
         {emergencyResources.map(resource => (
           <article className="paper-card emergency-card" key={resource.name}>
@@ -936,8 +1030,9 @@ function Footer({ lang }) {
           <strong>{BRAND}</strong>
           <p>{t.misc.footer}</p>
           <a className="footer-email" href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('CivicNavigation question')}`}>
-            Email the CivicNavigation team
+            {CONTACT_EMAIL}
           </a>
+          <p className="footer-note">Questions, corrections, partnerships, printing requests, and volunteer interest are welcome.</p>
         </div>
         <div>
           <Link to="/directory">{t.pages.directoryTitle}</Link>

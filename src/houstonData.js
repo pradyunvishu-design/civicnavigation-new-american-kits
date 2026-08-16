@@ -41,7 +41,7 @@ const enLocale = {
       ['01 // The City', 'Houston is vast: a family may need food in Gulfton, a clinic in the East End, school enrollment in HISD, and legal help downtown.'],
       ['02 // The Gap', 'Resources exist, but phone trees, documents, office hours, and language barriers can make the system feel invisible.'],
       ['03 // The Kit', 'The booklet gives families a first path: 911, 988, 211, key documents, and plain-language next steps.'],
-      ['04 // The Portal', 'The website keeps that path current with Houston-wide search, source links, emergency contacts, guides, and the Civic Navigator chatbot.']
+      ['04 // The Portal', 'The website supports that path with Houston-wide search, official source links, emergency contacts, step-by-step guides, and a simple on-site resource finder.']
     ],
     portalTitle: 'Verified Houston resources',
     portalText: 'Houston-first, Harris County-wide: food, healthcare, school enrollment, housing, utilities, English classes, legal aid, transportation, and emergency support.',
@@ -442,7 +442,7 @@ export const resources = [
     documentsRequired: all('No documents required to call; have your ZIP code, household size, and urgent deadlines ready.'),
     servicesOffered: all('Information and referrals for food, rent, utilities, healthcare, legal aid, childcare, transportation, and disaster recovery.'),
     sourceUrl: 'https://unitedwayhouston.org/what-we-do/211-texas-united-way-helpline/',
-    lastVerified: '2026-06-24',
+    lastVerified: '2026-08-16',
     areaServed: 'Greater Houston and Texas'
   },
   {
@@ -453,14 +453,14 @@ export const resources = [
     address: '535 Portwall St, Houston, TX 77029',
     phone: '832-369-9390',
     website: 'https://www.houstonfoodbank.org/find-help/',
-    hours: 'Helpline generally Mon-Fri 8am-5pm; check source for current service hours',
+    hours: 'Call 832-369-9390 for current assistance hours; pantry schedules vary by location',
     languages: ['English', 'Spanish', 'language access varies by program'],
     cost: all('Free assistance and referrals'),
     eligibility: all('Pantry access and benefit eligibility vary by program; mixed-status families can ask about benefits for eligible children.'),
-    documentsRequired: all('Photo ID, address, household size, income information, and benefit letters if applying for SNAP or Medicaid support.'),
+    documentsRequired: all('No documents are needed to use the pantry locator. Individual pantries or benefit applications may request ID, address, household, income, or benefit information; call first.'),
     servicesOffered: all('Food pantry locator, SNAP application assistance, Medicaid referrals, and community assistance navigation.'),
     sourceUrl: 'https://www.houstonfoodbank.org/our-programs/communityassistanceprogram/snap/',
-    lastVerified: '2026-06-24',
+    lastVerified: '2026-08-16',
     areaServed: 'Houston Food Bank service area, including Harris County'
   },
   {
@@ -488,15 +488,15 @@ export const resources = [
     description: all('Financial assistance for Harris County residents using Harris Health services. The program is not insurance, but can lower costs for eligible patients.'),
     address: 'Harris Health System eligibility sites and clinics, Harris County, TX',
     phone: '713-566-6509',
-    website: 'https://www.harrishealth.org/access-care/patient-eligibility',
+    website: 'https://www.harrishealth.org/access-care-hh/eligibility/Pages/default.aspx',
     hours: 'Eligibility Call Center Mon-Fri 8am-4pm; fourth Friday 8am-2pm',
     languages: ['English', 'Spanish', 'language assistance available'],
     cost: all('Free to apply; patient costs depend on eligibility level and services.'),
-    eligibility: all('Harris County residency and household income documentation are used to determine assistance.'),
-    documentsRequired: all('Photo ID, proof of address, proof of income, household information, and immigration or benefit documents if available.'),
+    eligibility: all('Harris County residency, household income, and family size are reviewed. The program is not health insurance; the official eligibility page explains current rules.'),
+    documentsRequired: all('The application may require identity, Harris County residence, household relationship, income for the past 30 days, healthcare coverage, and other program-specific proof. Use the official checklist.'),
     servicesOffered: all('Eligibility screening for reduced-cost Harris Health medical, pharmacy, dental, vision, prenatal, and behavioral-health care.'),
-    sourceUrl: 'https://www.harrishealth.org/access-care/patient-information',
-    lastVerified: '2026-06-24',
+    sourceUrl: 'https://www.harrishealth.org/access-care-hh/eligibility/Pages/default.aspx',
+    lastVerified: '2026-08-16',
     areaServed: 'Harris County'
   },
   {
@@ -694,7 +694,7 @@ export const resources = [
     documentsRequired: all('Fare card or payment; for discounted fare or METROLift, bring ID and eligibility/disability documents as requested.'),
     servicesOffered: all('Local bus, rail, Park & Ride, curb2curb, discounted fares, trip planning, METROLift applications, and RideStore support.'),
     sourceUrl: 'https://www.ridemetro.org/riding-metro/transit-services/metrolift-paratransit',
-    lastVerified: '2026-06-24',
+    lastVerified: '2026-08-16',
     areaServed: 'Houston and METRO service area'
   },
   {
@@ -1006,10 +1006,10 @@ export const chatbotAnswers = [
 
 export const researchCards = [
   {
-    stat: '39%',
-    source: 'Rice Kinder Institute',
-    text: all('Harris County households reported as food insecure in a 2025 Houston/Harris County snapshot, matching the booklet’s urgency around food help.'),
-    sourceUrl: 'https://kinder.rice.edu/research/food-insecurity-houston-and-harris-county'
+    stat: 'Free',
+    source: 'Harris Health',
+    text: all('There is no fee to apply for the Harris Health Financial Assistance Program. Eligibility and patient costs depend on the official program rules.'),
+    sourceUrl: 'https://www.harrishealth.org/access-care-hh/eligibility/Pages/default.aspx'
   },
   {
     stat: '24/7',
