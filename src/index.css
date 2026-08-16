@@ -845,6 +845,44 @@ img {
   line-height: 1.45;
 }
 
+.internal-photo {
+  position: relative;
+  margin-top: -34px;
+  margin-bottom: 42px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--ink-faint);
+  background: var(--paper);
+}
+
+.internal-photo img {
+  display: block;
+  width: 100%;
+  height: clamp(230px, 33vw, 410px);
+  object-fit: cover;
+  object-position: center;
+}
+
+.internal-photo figcaption {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.internal-photo figcaption span {
+  flex: 0 0 auto;
+  color: var(--sage);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .outline-button,
 .dark-button {
   width: fit-content;
@@ -2080,6 +2118,22 @@ img {
   .situation-row p {
     grid-column: 1 / -1;
     margin: 2px 0 0;
+  }
+
+  .internal-photo {
+    width: calc(100% - 24px);
+    margin-top: -22px;
+    margin-bottom: 28px;
+  }
+
+  .internal-photo img {
+    height: 230px;
+  }
+
+  .internal-photo figcaption {
+    display: grid;
+    gap: 4px;
+    padding: 11px 12px;
   }
 
   .portal-layout,

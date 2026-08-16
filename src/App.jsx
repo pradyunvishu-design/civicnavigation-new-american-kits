@@ -314,6 +314,15 @@ function PageHeader({ eyebrow, title, subtitle }) {
   );
 }
 
+function InternalPhoto({ src, alt, caption }) {
+  return (
+    <figure className="internal-photo container">
+      <img src={src} alt={alt} loading="lazy" />
+      <figcaption><span>Representative scene</span>{caption}</figcaption>
+    </figure>
+  );
+}
+
 function Home({ lang }) {
   const t = useCopy(lang);
   const storyRef = useRef(null);
@@ -488,6 +497,11 @@ function DirectoryPage({ lang, trackReferral }) {
   return (
     <PageTransition>
       <PageHeader eyebrow={t.nav.directory} title={t.pages.directoryTitle} subtitle={t.pages.directoryDesc} />
+      <InternalPhoto
+        src="/photos/students-directory-guidance.webp"
+        alt="Student volunteers helping an immigrant family review local service information on a tablet at a library."
+        caption="CivicNavigation students help families compare service information and find a clear next step."
+      />
       <section className="portal-layout container">
         <aside className="filter-panel">
           <label>
@@ -617,6 +631,11 @@ function GuidesPage({ lang }) {
   return (
     <PageTransition>
       <PageHeader eyebrow={t.misc.guide} title={t.pages.guidesTitle} subtitle={t.pages.guidesDesc} />
+      <InternalPhoto
+        src="/photos/student-family-guide.webp"
+        alt="A student volunteer explaining a document checklist to an immigrant family at their kitchen table."
+        caption="Students can walk through a guide with a family, explain unfamiliar terms, and help organize questions for a provider."
+      />
       <section className="container guide-layout">
         <aside className="filter-panel">
           <label>
@@ -672,6 +691,11 @@ function KitPage({ lang }) {
   return (
     <PageTransition>
       <PageHeader eyebrow={t.nav.kit} title={t.pages.kitTitle} subtitle={t.pages.kitDesc} />
+      <InternalPhoto
+        src="/photos/students-assembling-kits.webp"
+        alt="Students and community volunteers assembling printed newcomer resource kits in a library."
+        caption="Student teams prepare printed kits for schools, libraries, clinics, and community events."
+      />
       <section className="container kit-layout">
         <div className="paper-card kit-intro-card">
           <p className="eyebrow">{t.home.storyEyebrow}</p>
@@ -720,6 +744,11 @@ function VolunteerPage({ lang }) {
   return (
     <PageTransition>
       <PageHeader eyebrow={t.nav.volunteer} title={t.pages.volunteerTitle} subtitle={t.pages.volunteerDesc} />
+      <InternalPhoto
+        src="/photos/students-assembling-kits.webp"
+        alt="A diverse student volunteer team preparing folders of local resource information."
+        caption="Volunteers research, translate, assemble, and share practical local information."
+      />
       <section className="container two-column">
         <div>
           <h2 className="display-heading">{t.home.actionTitle}</h2>
@@ -782,6 +811,11 @@ function FeedbackPage({ lang, tracker, setTracker }) {
   return (
     <PageTransition>
       <PageHeader eyebrow={t.forms.feedbackType} title={t.pages.feedbackTitle} subtitle={t.pages.feedbackDesc} />
+      <InternalPhoto
+        src="/photos/students-resource-call.webp"
+        alt="Student volunteers helping an immigrant adult call for local resource information and record the next steps."
+        caption="Student navigators listen, help families prepare questions, and point them toward current provider information."
+      />
       <section className="container feedback-layout">
         <div className="paper-card">
           <div className="feedback-tabs">
@@ -838,8 +872,8 @@ function AboutPage({ lang }) {
           <p className="section-copy">{t.home.actionText}</p>
         </div>
         <figure className="image-card">
-          <img src="/photos/community-resource-desk.png" alt="A family reviewing local resource information with a community guide at a library table." />
-          <figcaption>Local help works best when clear information, a trusted person, and a current source come together.</figcaption>
+          <img src="/photos/students-directory-guidance.webp" alt="Student volunteers and an immigrant family reviewing local resource information together at a library table." />
+          <figcaption>Representative scene: CivicNavigation students make local information easier to understand, compare, and act on.</figcaption>
         </figure>
       </section>
       <section className="container research-grid">
@@ -870,6 +904,11 @@ function EmergencyPage({ lang }) {
   return (
     <PageTransition>
       <PageHeader eyebrow={t.misc.urgent} title={t.pages.emergencyTitle} subtitle={t.pages.emergencyDesc} />
+      <InternalPhoto
+        src="/photos/students-resource-call.webp"
+        alt="A student volunteer helping an immigrant adult make a resource call while another student checks a printed guide."
+        caption="Students can help someone locate the right number and prepare for a call; trained emergency services handle urgent situations."
+      />
       <section className="container emergency-grid">
         {emergencyResources.map(resource => (
           <article className="paper-card emergency-card" key={resource.name}>
