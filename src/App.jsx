@@ -20,6 +20,7 @@ import {
   Home as HomeIcon,
   Languages,
   MapPin,
+  Menu,
   MessageSquare,
   Navigation,
   Phone,
@@ -30,6 +31,7 @@ import {
   Stethoscope,
   Users,
   Utensils,
+  X,
   Zap
 } from 'lucide-react';
 import {
@@ -48,7 +50,7 @@ import {
 } from './houstonData';
 
 const BRAND = 'civicnavigation';
-const BRAND_LOGO_PATH = '/brand/civicnavigation-logo.png';
+const BRAND_LOGO_PATH = '/brand/civicnavigation-premium-logo.png';
 const KIT_PDF_PATH = '/kits/houston-assistance-guide.pdf';
 const CONTACT_EMAIL = 'nacivicnav@gmail.com';
 
@@ -350,6 +352,7 @@ function Navbar({ lang, setLang }) {
   const t = useCopy(lang);
   const ui = chromeCopy[lang] || chromeCopy.en;
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
   const now = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   const links = [
     ['/', t.nav.home],
@@ -361,16 +364,16 @@ function Navbar({ lang, setLang }) {
   ];
 
   return (
-    <nav className="floating-nav" aria-label={ui.primaryNav}>
-      <Link to="/" className="brand-mark" aria-label={`${BRAND} ${t.nav.home}`}>
+    <nav className={`floating-nav${menuOpen ? ' menu-open' : ''}`} aria-label={ui.primaryNav}>
+      <Link to="/" className="brand-mark" aria-label={`${BRAND} ${t.nav.home}`} onClick={() => setMenuOpen(false)}>
         <span className="brand-icon" aria-hidden="true">
           <img src={BRAND_LOGO_PATH} alt="" />
         </span>
         <span className="brand-wordmark">{BRAND}</span>
       </Link>
-      <div className="nav-links">
+      <div className="nav-links" id="primary-navigation-links">
         {links.map(([path, label]) => (
-          <Link key={path} to={path} className={location.pathname === path || (path !== '/' && location.pathname.startsWith(`${path}/`)) ? 'active' : ''}>
+          <Link key={path} to={path} onClick={() => setMenuOpen(false)} className={location.pathname === path || (path !== '/' && location.pathname.startsWith(`${path}/`)) ? 'active' : ''}>
             {label}
           </Link>
         ))}
@@ -385,9 +388,19 @@ function Navbar({ lang, setLang }) {
             ))}
           </select>
         </label>
-        <Link to="/emergency" className="nav-cta">
+        <Link to="/emergency" className="nav-cta" onClick={() => setMenuOpen(false)}>
           {t.nav.emergency} <ChevronRight size={14} />
         </Link>
+        <button
+          type="button"
+          className="nav-menu-toggle"
+          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={menuOpen}
+          aria-controls="primary-navigation-links"
+          onClick={() => setMenuOpen(open => !open)}
+        >
+          {menuOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
       </div>
     </nav>
   );
@@ -650,11 +663,6 @@ function DirectoryPage({ lang, trackReferral }) {
           )}
         </div>
       </section>
-      <InternalPhoto
-        src="/photos/students-directory-guidance.webp"
-        alt="Student volunteers helping an immigrant family review local service information on a tablet at a library."
-        caption="CivicNavigation students help families compare service information and find a clear next step."
-      />
     </PageTransition>
   );
 }
