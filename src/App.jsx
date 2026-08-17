@@ -1254,19 +1254,109 @@ function Chatbot({ lang, tracker, setTracker }) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
+  const [showAllTopics, setShowAllTopics] = useState(false);
   const bottomRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isOpen]);
 
-  const quickQueries = ['food', 'utility bill', 'doctor', 'school enrollment', 'legal aid', 'transportation', 'emergency', 'documents'];
+  const quickQueries = ['food', 'utility bill', 'doctor', 'school enrollment', 'legal aid', 'transportation', 'emergency', 'documents', 'housing rent', 'english classes', 'childcare', 'benefits 211'];
+  const topicActions = {
+    'Food Assistance': [
+      { kind: 'call', href: 'tel:+18323699390', label: 'Houston Food Bank' },
+      { kind: 'route', to: '/directory/houston-food-bank-community-assistance', label: t.nav.directory }
+    ],
+    'Utility Assistance': [
+      { kind: 'call', href: 'tel:+17135902327', label: 'BakerRipley' },
+      { kind: 'route', to: '/directory/bakerripley-utility-assistance', label: t.nav.directory }
+    ],
+    Healthcare: [
+      { kind: 'call', href: 'tel:+17135666509', label: 'Harris Health' },
+      { kind: 'route', to: '/directory/harris-health-financial-assistance', label: t.nav.directory }
+    ],
+    'School Enrollment': [
+      { kind: 'call', href: 'tel:+17135566000', label: 'Houston ISD' },
+      { kind: 'route', to: '/guides', label: t.nav.guides }
+    ],
+    'Housing & Shelter': [
+      { kind: 'call', href: 'tel:211', label: '211' },
+      { kind: 'route', to: '/directory', label: t.nav.directory }
+    ],
+    'English Classes': [
+      { kind: 'call', href: 'tel:+18323931313', label: 'Houston Public Library' },
+      { kind: 'route', to: '/directory/houston-public-library-language-citizenship', label: t.nav.directory }
+    ],
+    'Legal Aid': [
+      { kind: 'call', href: 'tel:+17132280735', label: 'Houston Volunteer Lawyers' },
+      { kind: 'route', to: '/guides', label: t.nav.guides }
+    ],
+    Transportation: [
+      { kind: 'call', href: 'tel:+17136354000', label: 'METRO' },
+      { kind: 'route', to: '/directory/metro-houston', label: t.nav.directory }
+    ],
+    Childcare: [{ kind: 'call', href: 'tel:211', label: '211' }],
+    'Benefits Navigation': [
+      { kind: 'call', href: 'tel:211', label: '211' },
+      { kind: 'route', to: '/directory/houston-food-bank-community-assistance', label: t.nav.directory }
+    ],
+    'Mental Health': [
+      { kind: 'call', href: 'tel:988', label: '988' },
+      { kind: 'route', to: '/emergency', label: t.nav.emergency }
+    ],
+    'Safety & Domestic Violence': [
+      { kind: 'call', href: 'tel:+17135282121', label: 'HAWC' },
+      { kind: 'route', to: '/emergency', label: t.nav.emergency }
+    ],
+    'Disaster Recovery': [{ kind: 'call', href: 'tel:211', label: '211' }],
+    Emergency: [
+      { kind: 'call', href: 'tel:911', label: '911' },
+      { kind: 'route', to: '/emergency', label: t.nav.emergency }
+    ],
+    'Required Documents': [
+      { kind: 'route', to: '/guides', label: t.nav.guides },
+      { kind: 'route', to: '/kit', label: t.nav.kit }
+    ],
+    'Language Access': [{ kind: 'call', href: 'tel:211', label: '211' }],
+    'Printed Kit': [{ kind: 'route', to: '/kit', label: t.nav.kit }],
+    'Volunteer & Partnerships': [
+      { kind: 'route', to: '/volunteer', label: t.nav.volunteer },
+      { kind: 'email', href: `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('CivicNavigation volunteer or partnership')}`, label: CONTACT_EMAIL }
+    ],
+    'Website Feedback': [
+      { kind: 'route', to: '/feedback', label: t.pages.feedbackTitle },
+      { kind: 'email', href: `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('CivicNavigation website feedback')}`, label: CONTACT_EMAIL }
+    ]
+  };
+
+  const defaultActions = [
+    { kind: 'route', to: '/directory', label: t.nav.directory },
+    { kind: 'call', href: 'tel:211', label: '211' }
+  ];
+
+  const keywordMatches = (text, keyword) => {
+    const normalizedKeyword = keyword.toLowerCase();
+    if (/^[a-z0-9 ]+$/.test(normalizedKeyword)) {
+      const escapedKeyword = normalizedKeyword
+        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        .replace(/\s+/g, '\\s+');
+      return new RegExp(`\\b${escapedKeyword}\\b`, 'i').test(text);
+    }
+    return text.includes(normalizedKeyword);
+  };
 
   const processQuery = (queryText) => {
     const lowerQuery = queryText.toLowerCase();
-    const matchedAnswer = chatbotAnswers.find(answer => answer.keywords.some(keyword => lowerQuery.includes(keyword)));
+    const matchedAnswer = chatbotAnswers
+      .map(answer => ({
+        answer,
+        score: answer.keywords.reduce((total, keyword) => total + (keywordMatches(lowerQuery, keyword) ? Math.max(1, keyword.split(' ').length) : 0), 0)
+      }))
+      .sort((first, second) => second.score - first.score)
+      .find(result => result.score > 0)?.answer;
     const replyText = matchedAnswer ? localize(matchedAnswer.reply, lang) : t.chatbot.unknown;
     const topic = matchedAnswer ? matchedAnswer.topic : 'unknown';
+    const actions = matchedAnswer ? (topicActions[topic] || defaultActions) : defaultActions;
 
     setTracker(prev => ({
       ...prev,
@@ -1276,7 +1366,7 @@ function Chatbot({ lang, tracker, setTracker }) {
         [topic]: (prev.searches[topic] || 0) + 1
       }
     }));
-    setMessages(prev => [...prev, { type: 'user', text: queryText }, { type: 'bot', text: replyText }]);
+    setMessages(prev => [...prev, { type: 'user', text: queryText }, { type: 'bot', text: replyText, actions }]);
   };
 
   const submit = (event) => {
@@ -1290,34 +1380,54 @@ function Chatbot({ lang, tracker, setTracker }) {
     <div className="chatbot">
       <AnimatePresence>
         {isOpen && (
-          <motion.div className="chat-panel" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}>
+          <motion.div id="civic-navigator-panel" className="chat-panel" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}>
             <header>
               <div><span /> Quick resource finder</div>
-              <button type="button" onClick={() => setIsOpen(false)}>{t.chatbot.close}</button>
+              <div className="chat-header-actions">
+                {messages.length > 0 && <button type="button" onClick={() => setMessages([])}>{t.chatbot.clear}</button>}
+                <button type="button" onClick={() => setIsOpen(false)}>{t.chatbot.close}</button>
+              </div>
             </header>
             <p className="chat-disclosure">This is a simple on-site guide, not live AI or a caseworker. It can point you to the right local starting place; always confirm details with the provider.</p>
-            <div className="chat-messages">
+            <div className="chat-messages" aria-live="polite">
               {[{ type: 'bot', text: t.chatbot.welcome }, ...messages].map((message, index) => (
                 <div key={`${message.type}-${index}`} className={message.type === 'user' ? 'message user' : 'message bot'}>
-                  {message.text}
+                  <span>{message.text}</span>
+                  {message.actions && (
+                    <div className="message-actions">
+                      {message.actions.map(action => {
+                        const icon = action.kind === 'call' ? <Phone size={13} /> : action.kind === 'email' ? <Send size={13} /> : <ChevronRight size={13} />;
+                        const label = action.kind === 'call' ? `${t.labels.call} ${action.label}` : action.label;
+                        return action.to ? (
+                          <Link key={`${action.kind}-${action.to}`} to={action.to} onClick={() => setIsOpen(false)}>{icon}{label}</Link>
+                        ) : (
+                          <a key={`${action.kind}-${action.href}`} href={action.href}>{icon}{label}</a>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               ))}
               <div ref={bottomRef} />
             </div>
+            <div className="quick-prompt-heading">
+              <span>{t.chatbot.suggested}</span>
+              <button type="button" onClick={() => setShowAllTopics(show => !show)}>{showAllTopics ? t.chatbot.fewerTopics : t.chatbot.moreTopics}</button>
+            </div>
             <div className="quick-prompts">
-              {t.chatbot.prompts.map((label, index) => (
+              {t.chatbot.prompts.slice(0, showAllTopics ? quickQueries.length : 6).map((label, index) => (
                 <button type="button" key={label} onClick={() => processQuery(quickQueries[index])}>{label}</button>
               ))}
             </div>
             <form onSubmit={submit}>
-              <input value={inputValue} onChange={event => setInputValue(event.target.value)} placeholder={t.chatbot.placeholder} />
-              <button type="submit"><Send size={15} /></button>
+              <input value={inputValue} onChange={event => setInputValue(event.target.value)} placeholder={t.chatbot.placeholder} aria-label={t.chatbot.placeholder} />
+              <button type="submit" aria-label="Send question"><Send size={15} /></button>
             </form>
             <p className="chat-footnote">For urgent danger, call 911. For current local referrals, call 211. For help we do not cover here, <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('CivicNavigation support request')}`}>email the team</a>.</p>
           </motion.div>
         )}
       </AnimatePresence>
-      <button type="button" className="chat-toggle" onClick={() => setIsOpen(prev => !prev)} aria-label="Open quick resource finder">
+      <button type="button" className="chat-toggle" onClick={() => setIsOpen(prev => !prev)} aria-label="Open quick resource finder" aria-expanded={isOpen} aria-controls="civic-navigator-panel">
         <MessageSquare size={22} />
         <span>{tracker.conversations}</span>
       </button>

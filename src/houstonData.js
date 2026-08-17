@@ -115,9 +115,13 @@ const enLocale = {
     welcome: 'Welcome to the Houston Civic Navigator. Choose a prompt or type what your family needs help with.',
     placeholder: 'Type your question...',
     close: 'Close',
+    clear: 'Clear',
+    suggested: 'Suggested topics',
+    moreTopics: 'More topics',
+    fewerTopics: 'Fewer topics',
     unknown: 'I could not find a direct match. Try food, healthcare, school, rent, utility bills, English classes, legal aid, transportation, or emergency.',
     footnote: 'Emergency medical services stabilize emergencies regardless of status. Do not submit SSNs here.',
-    prompts: ['I need food', 'Utility bills', 'Find a doctor', 'Enroll in school', 'Legal aid', 'Transportation', 'Emergency help', 'Documents']
+    prompts: ['I need food', 'Utility bills', 'Find a doctor', 'Enroll in school', 'Legal aid', 'Transportation', 'Emergency help', 'Documents', 'Housing or rent', 'English or classes', 'Childcare', 'Benefits and 211']
   },
   misc: {
     liveOps: 'Live operations',
@@ -216,7 +220,8 @@ export const locales = {
     chatbot: {
       title: 'Navegador Cívico', welcome: 'Bienvenido al Navegador Cívico de Houston. Elija una pregunta o escriba lo que necesita su familia.',
       placeholder: 'Escriba su pregunta...', close: 'Cerrar',
-      prompts: ['Necesito comida', 'Servicios públicos', 'Encontrar doctor', 'Inscribir escuela', 'Ayuda legal', 'Transporte', 'Emergencia', 'Documentos']
+      clear: 'Borrar', suggested: 'Temas sugeridos', moreTopics: 'Más temas', fewerTopics: 'Menos temas',
+      prompts: ['Necesito comida', 'Servicios públicos', 'Encontrar doctor', 'Inscribir escuela', 'Ayuda legal', 'Transporte', 'Emergencia', 'Documentos', 'Vivienda o alquiler', 'Inglés o clases', 'Cuidado infantil', 'Beneficios y 211']
     },
     misc: { guide: 'Guía', urgent: 'Ayuda urgente', touchpoints: 'Puntos de ayuda en Houston' }
   }),
@@ -256,7 +261,7 @@ export const locales = {
     },
     labels: { search: 'بحث', allResources: 'كل الموارد', lifeSituations: 'احتياجات الحياة', verified: 'نتائج موثقة في هيوستن', source: 'المصدر', call: 'اتصل', website: 'الموقع' },
     forms: { name: 'الاسم', email: 'البريد الإلكتروني', role: 'الدور المفضل', details: 'التفاصيل', submitFeedback: 'إرسال الملاحظة', received: 'تم الاستلام' },
-    chatbot: { title: 'الملاح المدني', placeholder: 'اكتب سؤالك...', close: 'إغلاق', prompts: ['طعام', 'فواتير', 'طبيب', 'مدرسة', 'قانون', 'مواصلات', 'طوارئ', 'وثائق'] },
+    chatbot: { title: 'الملاح المدني', placeholder: 'اكتب سؤالك...', close: 'إغلاق', prompts: ['طعام', 'فواتير', 'طبيب', 'مدرسة', 'قانون', 'مواصلات', 'طوارئ', 'وثائق', 'السكن والإيجار', 'الإنجليزية والدروس', 'رعاية الأطفال', 'المزايا و211'] },
     misc: { guide: 'دليل', urgent: 'مساعدة عاجلة', touchpoints: 'نقاط مساعدة في هيوستن' }
   }),
   zh: mergeLocale('zh', {
@@ -292,7 +297,7 @@ export const locales = {
     },
     labels: { search: '搜索', allResources: '所有资源', lifeSituations: '生活需求', verified: '已核实休斯顿结果', source: '来源', call: '拨打', website: '网站' },
     forms: { name: '姓名', email: '电子邮件', details: '详情', submitFeedback: '提交反馈', received: '已收到' },
-    chatbot: { title: '公共服务导航员', placeholder: '输入问题...', close: '关闭', prompts: ['需要食物', '水电费', '找医生', '学校注册', '法律帮助', '交通', '紧急', '文件'] },
+    chatbot: { title: '公共服务导航员', placeholder: '输入问题...', close: '关闭', prompts: ['需要食物', '水电费', '找医生', '学校注册', '法律帮助', '交通', '紧急', '文件', '住房或房租', '英语或课程', '儿童照护', '福利和 211'] },
     misc: { guide: '指南', urgent: '紧急帮助', touchpoints: '休斯顿服务点' }
   }),
   vi: mergeLocale('vi', {
@@ -327,7 +332,7 @@ export const locales = {
     },
     labels: { search: 'Tìm kiếm', allResources: 'Tất cả nguồn lực', lifeSituations: 'Nhu cầu', verified: 'Kết quả Houston đã kiểm chứng', source: 'Nguồn', call: 'Gọi', website: 'Trang web' },
     forms: { name: 'Tên', email: 'Địa chỉ email', details: 'Chi tiết', submitFeedback: 'Gửi phản hồi', received: 'Đã nhận' },
-    chatbot: { title: 'Điều hướng viên công dân', placeholder: 'Nhập câu hỏi...', close: 'Đóng', prompts: ['Cần thức ăn', 'Hóa đơn', 'Bác sĩ', 'Ghi danh trường', 'Pháp lý', 'Giao thông', 'Khẩn cấp', 'Giấy tờ'] },
+    chatbot: { title: 'Điều hướng viên công dân', placeholder: 'Nhập câu hỏi...', close: 'Đóng', prompts: ['Cần thức ăn', 'Hóa đơn', 'Bác sĩ', 'Ghi danh trường', 'Pháp lý', 'Giao thông', 'Khẩn cấp', 'Giấy tờ', 'Nhà ở hoặc tiền thuê', 'Tiếng Anh hoặc lớp học', 'Chăm sóc trẻ', 'Phúc lợi và 211'] },
     misc: { guide: 'Hướng dẫn', urgent: 'Trợ giúp khẩn cấp', touchpoints: 'Điểm hỗ trợ Houston' }
   }),
   hi: mergeLocale('hi', {
@@ -362,7 +367,7 @@ export const locales = {
     },
     labels: { search: 'खोजें', allResources: 'सभी संसाधन', lifeSituations: 'जीवन जरूरतें', verified: 'सत्यापित ह्यूस्टन परिणाम', source: 'स्रोत', call: 'कॉल', website: 'वेबसाइट' },
     forms: { name: 'नाम', email: 'ईमेल', details: 'विवरण', submitFeedback: 'फीडबैक भेजें', received: 'प्राप्त हुआ' },
-    chatbot: { title: 'नागरिक नेविगेटर', placeholder: 'अपना प्रश्न लिखें...', close: 'बंद करें', prompts: ['भोजन', 'बिल', 'डॉक्टर', 'स्कूल', 'कानूनी मदद', 'यातायात', 'आपातकाल', 'दस्तावेज'] },
+    chatbot: { title: 'नागरिक नेविगेटर', placeholder: 'अपना प्रश्न लिखें...', close: 'बंद करें', prompts: ['भोजन', 'बिल', 'डॉक्टर', 'स्कूल', 'कानूनी मदद', 'यातायात', 'आपातकाल', 'दस्तावेज', 'आवास या किराया', 'अंग्रेज़ी या कक्षाएँ', 'बाल देखभाल', 'लाभ और 211'] },
     misc: { guide: 'गाइड', urgent: 'तत्काल मदद', touchpoints: 'ह्यूस्टन सहायता बिंदु' }
   }),
   ur: mergeLocale('ur', {
@@ -397,7 +402,7 @@ export const locales = {
     },
     labels: { search: 'تلاش', allResources: 'تمام وسائل', lifeSituations: 'زندگی کی ضروریات', verified: 'تصدیق شدہ ہیوسٹن نتائج', source: 'ذریعہ', call: 'کال', website: 'ویب سائٹ' },
     forms: { name: 'نام', email: 'ای میل', details: 'تفصیلات', submitFeedback: 'رائے بھیجیں', received: 'موصول ہوا' },
-    chatbot: { title: 'شہری رہنما', placeholder: 'اپنا سوال لکھیں...', close: 'بند کریں', prompts: ['خوراک', 'بل', 'ڈاکٹر', 'اسکول', 'قانونی مدد', 'آمد و رفت', 'ایمرجنسی', 'دستاویزات'] },
+    chatbot: { title: 'شہری رہنما', placeholder: 'اپنا سوال لکھیں...', close: 'بند کریں', prompts: ['خوراک', 'بل', 'ڈاکٹر', 'اسکول', 'قانونی مدد', 'آمد و رفت', 'ایمرجنسی', 'دستاویزات', 'رہائش یا کرایہ', 'انگریزی یا کلاسیں', 'بچوں کی دیکھ بھال', 'فوائد اور 211'] },
     misc: { guide: 'رہنما', urgent: 'فوری مدد', touchpoints: 'ہیوسٹن مدد مقامات' }
   })
 };
@@ -993,6 +998,31 @@ export const chatbotAnswers = [
     reply: all('For METRO routes and fares call 713-635-4000. For METROLift eligibility call 713-225-0119. For Harris County RIDES call 713-368-7433.')
   },
   {
+    topic: 'Childcare',
+    keywords: ['childcare', 'child care', 'daycare', 'day care', 'head start', 'babysitting', 'guarderia'],
+    reply: all('Call 211 and ask for current childcare, Head Start, after-school, diaper, or family-support referrals near your ZIP code. Ask each program about age limits, cost, waitlists, language help, and documents before visiting.')
+  },
+  {
+    topic: 'Benefits Navigation',
+    keywords: ['benefit', 'benefits', 'medicaid', 'wic', 'tanf', 'chip', 'application help'],
+    reply: all('Call 211 for benefits screening and nearby application help. Houston Food Bank Community Assistance can also help families ask about SNAP, Medicaid, and other programs. Eligibility is program-specific, so ask what household and income documents are required.')
+  },
+  {
+    topic: 'Mental Health',
+    keywords: ['mental health', 'depression', 'anxiety', 'suicide', '988', 'counseling', 'substance use'],
+    reply: all('Call or text 988 for a mental-health, suicide, or substance-use crisis. For ongoing counseling or a nearby clinic, call 211 and give your ZIP code. If someone is in immediate danger, call 911.')
+  },
+  {
+    topic: 'Safety & Domestic Violence',
+    keywords: ['domestic violence', 'abuse', 'sexual assault', 'trafficking', 'unsafe at home', 'hawc'],
+    reply: all('For immediate danger call 911. For confidential domestic-violence or sexual-assault support, call the Houston Area Women’s Center 24-hour hotline at 713-528-2121. If it is safer, use a trusted phone and clear call or browser history.')
+  },
+  {
+    topic: 'Disaster Recovery',
+    keywords: ['disaster', 'flood', 'hurricane', 'storm', 'fema', 'recovery'],
+    reply: all('Call 211 for current disaster shelter, food, cleanup, transportation, and recovery referrals. Write down your case or confirmation numbers and keep photos, receipts, insurance letters, and notices together. Program availability changes after each event.')
+  },
+  {
     topic: 'Emergency',
     keywords: ['emergency', 'danger', 'violence', 'suicide', 'crisis', 'poison', '911', '988'],
     reply: all('For immediate danger call 911. For mental-health crisis call or text 988. For domestic violence call HAWC at 713-528-2121. For poison help call 1-800-222-1222.')
@@ -1001,6 +1031,26 @@ export const chatbotAnswers = [
     topic: 'Required Documents',
     keywords: ['document', 'documents', 'paper', 'papers', 'id', 'passport', 'birth certificate'],
     reply: all('Keep ID/passport, birth certificates, immunization records, school records, lease or utility bill, proof of income, benefit letters, medical records, and legal notices together in the kit folder.')
+  },
+  {
+    topic: 'Language Access',
+    keywords: ['interpreter', 'interpretation', 'translation', 'translate', 'language help', 'speak english'],
+    reply: all('Use the language selector at the top of this site for translated navigation. When calling a provider, ask for an interpreter before sharing detailed information. You can also call 211 and state the language you prefer.')
+  },
+  {
+    topic: 'Printed Kit',
+    keywords: ['printed kit', 'booklet', 'handout', 'pdf', 'download guide', 'print guide'],
+    reply: all('Open the Sample Kit page to read or download the Harris County assistance guide. The printed folder is designed to hold IDs, school records, benefit letters, medical information, and legal notices together.')
+  },
+  {
+    topic: 'Volunteer & Partnerships',
+    keywords: ['volunteer', 'volunteering', 'student', 'partner', 'partnership', 'distribute kits'],
+    reply: all('Students and community partners can help research resources, verify updates, translate, assemble printed kits, and distribute them through trusted local sites. Open the Volunteer page or email nacivicnav@gmail.com.')
+  },
+  {
+    topic: 'Website Feedback',
+    keywords: ['outdated', 'wrong information', 'correction', 'report resource', 'suggest resource', 'website feedback'],
+    reply: all('Use Community Feedback to report outdated hours, phone numbers, eligibility rules, translations, or missing resources. The form opens a pre-addressed email to nacivicnav@gmail.com so the student team can review the source before changing a listing.')
   }
 ];
 
