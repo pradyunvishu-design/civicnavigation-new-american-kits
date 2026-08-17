@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
 import {
   AlertTriangle,
+  ArrowLeft,
   BookOpen,
   Briefcase,
+  Building2,
   Bus,
+  CalendarDays,
   Check,
+  CircleDollarSign,
   ClipboardCheck,
   ChevronRight,
   Clock,
@@ -17,10 +21,12 @@ import {
   Languages,
   MapPin,
   MessageSquare,
+  Navigation,
   Phone,
   Scale,
   Search,
   Send,
+  ShieldCheck,
   Stethoscope,
   Users,
   Utensils,
@@ -78,6 +84,57 @@ const collaborationPaths = [
   { title: 'Schools and libraries', text: 'Use the portal during a referral conversation, request printable kits, or invite students to support a resource-navigation event.' },
   { title: 'Community partners', text: 'Suggest a service, correct a listing, sponsor printing, or discuss a local distribution and translation partnership.' }
 ];
+
+const guideSupport = {
+  food: {
+    before: 'Know your ZIP code, how many people need food, whether anyone needs food today, and whether you can travel to a pantry.',
+    say: '“I need food help near my ZIP code. Can you tell me what is open, what I should bring, and whether I need an appointment?”',
+    blocked: 'Call 211 and ask for another pantry, meal site, or same-day distribution near your ZIP code.',
+    after: 'Write down the pantry name, address, hours, contact person, documents requested, and the date you plan to go.'
+  },
+  health: {
+    before: 'Write down symptoms, medicines, allergies, your preferred language, and whether the need is urgent. Bring insurance information only if you have it.',
+    say: '“I need a low-cost appointment. I live in Harris County, I prefer help in my language, and I need to know the cost and documents before I come.”',
+    blocked: 'Call 211 for another community clinic. For immediate danger or a life-threatening emergency, call 911.',
+    after: 'Keep the appointment time, clinic address, payment estimate, medicine list, and follow-up instructions together.'
+  },
+  school: {
+    before: 'Know the child’s age, grade, home address, previous school, preferred language, and any disability or learning support they receive.',
+    say: '“I need to enroll my child. These are the documents I have. Please tell me what else is required and how I can receive language help.”',
+    blocked: 'Ask for the campus registrar or district enrollment office and request a written list of acceptable alternative documents.',
+    after: 'Save the student ID, school contact, start date, bus information, meal information, and copies of everything submitted.'
+  },
+  'housing-utilities': {
+    before: 'Find the exact deadline on the eviction, rent, or disconnect notice. Gather the lease, bill, notice, income proof, and household information.',
+    say: '“I have a housing or utility deadline on this date. I live in this ZIP code. Is funding open, and what must I submit today?”',
+    blocked: 'Call 211 for another open program. If court papers are involved, contact a qualified legal-aid provider immediately.',
+    after: 'Record the application number, documents submitted, staff name, next deadline, and when to follow up.'
+  },
+  english: {
+    before: 'Decide whether you need English, citizenship, GED, computer, or job help. Know the days, times, transportation, and childcare you need.',
+    say: '“I am looking for a class near me. What level is it, when does it start, is it free, and how do I register?”',
+    blocked: 'Ask to join a waitlist, check another library branch, or call 211 for another adult-learning program.',
+    after: 'Save the registration date, class schedule, address, teacher contact, cost, materials, and bus route.'
+  },
+  legal: {
+    before: 'Put every notice and deadline in date order. Bring copies—not your only originals—and write a short timeline of what happened.',
+    say: '“I need help understanding this legal notice. My deadline is this date. Do you handle this type of case, and how does your intake work?”',
+    blocked: 'Ask for a referral to a licensed attorney or DOJ-accredited representative. Never pay someone who guarantees a result.',
+    after: 'Write down the lawyer or advocate’s name, advice, deadlines, fees, and documents you were asked to provide.'
+  },
+  transport: {
+    before: 'Know the pickup address, destination, arrival time, return time, mobility needs, and whether you can use regular bus or rail.',
+    say: '“I need to arrive at this address by this time. Which service fits, what will it cost, and how do I arrange the return trip?”',
+    blocked: 'Ask the clinic, school, provider, or 211 whether another transportation benefit or voucher is available.',
+    after: 'Save route numbers, pickup points, fare, transfer instructions, return-trip rules, and the customer-service number.'
+  },
+  documents: {
+    before: 'Choose a safe folder and a secure place for digital copies. Separate originals from the copies you can hand to an office.',
+    say: '“Before I submit this, which documents are required, will you keep a copy, and can I receive a receipt?”',
+    blocked: 'Ask whether another document can prove the same fact. Do not send sensitive information through this website.',
+    after: 'Add the submission date, receipt, application number, contact person, and next deadline to the folder.'
+  }
+};
 
 const iconMap = {
   BookOpen,
@@ -170,6 +227,36 @@ function mapHref(address) {
   return address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}` : undefined;
 }
 
+function mapEmbedHref(address) {
+  return address ? `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed` : undefined;
+}
+
+function organizationInitials(name) {
+  return String(name || '')
+    .replace(/\([^)]*\)/g, '')
+    .split(/\s+/)
+    .filter(word => /^[A-Za-z0-9]/.test(word))
+    .slice(0, 3)
+    .map(word => word[0])
+    .join('')
+    .toUpperCase();
+}
+
+function organizationIconHref(website) {
+  try {
+    return `${new URL(website).origin}/favicon.ico`;
+  } catch {
+    return undefined;
+  }
+}
+
+function serviceList(resource, lang) {
+  return String(localize(resource.servicesOffered, lang))
+    .split(/[,;]/)
+    .map(item => item.trim().replace(/^and\s+/i, ''))
+    .filter(Boolean);
+}
+
 function mailtoHref(subject, body = '') {
   const params = new URLSearchParams({ subject, body });
   return `mailto:${CONTACT_EMAIL}?${params.toString()}`;
@@ -242,6 +329,7 @@ function AppContent() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home lang={lang} />} />
             <Route path="/directory" element={<DirectoryPage lang={lang} trackReferral={trackReferral} />} />
+            <Route path="/directory/:resourceId" element={<ResourceProfilePage lang={lang} trackReferral={trackReferral} />} />
             <Route path="/guides" element={<GuidesPage lang={lang} />} />
             <Route path="/kit" element={<KitPage lang={lang} />} />
             <Route path="/partners" element={<Navigate to="/" replace />} />
@@ -282,7 +370,7 @@ function Navbar({ lang, setLang }) {
       </Link>
       <div className="nav-links">
         {links.map(([path, label]) => (
-          <Link key={path} to={path} className={location.pathname === path ? 'active' : ''}>
+          <Link key={path} to={path} className={location.pathname === path || (path !== '/' && location.pathname.startsWith(`${path}/`)) ? 'active' : ''}>
             {label}
           </Link>
         ))}
@@ -508,11 +596,6 @@ function DirectoryPage({ lang, trackReferral }) {
   return (
     <PageTransition>
       <PageHeader eyebrow={t.nav.directory} title={t.pages.directoryTitle} subtitle={t.pages.directoryDesc} />
-      <InternalPhoto
-        src="/photos/students-directory-guidance.webp"
-        alt="Student volunteers helping an immigrant family review local service information on a tablet at a library."
-        caption="CivicNavigation students help families compare service information and find a clear next step."
-      />
       <section className="container content-intro-grid" aria-label="How to use the directory">
         <article>
           <p className="eyebrow">Use the directory with confidence</p>
@@ -567,6 +650,11 @@ function DirectoryPage({ lang, trackReferral }) {
           )}
         </div>
       </section>
+      <InternalPhoto
+        src="/photos/students-directory-guidance.webp"
+        alt="Student volunteers helping an immigrant family review local service information on a tablet at a library."
+        caption="CivicNavigation students help families compare service information and find a clear next step."
+      />
     </PageTransition>
   );
 }
@@ -575,66 +663,174 @@ function ResourceCard({ resource, lang, t, trackReferral }) {
   const category = categories.find(item => item.id === resource.categoryId);
   const phoneLink = telHref(resource.phone);
   const directionsLink = mapHref(resource.address);
+  const services = serviceList(resource, lang).slice(0, 4);
 
   return (
-    <article className="paper-card resource-card">
-      <div className="resource-topline">
-        <span className="resource-category">{category ? localize(category.name, lang) : resource.categoryId}</span>
-        <span>{t.labels.lastVerified}: {resource.lastVerified}</span>
-      </div>
-      <div>
-        <h2>{resource.name}</h2>
-        <p>{localize(resource.description, lang)}</p>
-      </div>
-      <section className="resource-guidance" aria-label={`${resource.name} visit guidance`}>
+    <article className="paper-card resource-preview-card">
+      <div className="resource-preview-heading">
+        <span className="organization-mark" aria-hidden="true">
+          <b>{organizationInitials(resource.name)}</b>
+          {organizationIconHref(resource.website) && <img src={organizationIconHref(resource.website)} alt="" onError={event => { event.currentTarget.style.display = 'none'; }} />}
+        </span>
         <div>
-          <ClipboardCheck size={18} aria-hidden="true" />
-          <div>
-            <strong>Before you go</strong>
-            <p>Review the documents listed below. Ask whether the program is accepting people today, whether an appointment is required, and whether your ZIP code is served.</p>
+          <div className="resource-topline">
+            <span className="resource-category">{category ? localize(category.name, lang) : resource.categoryId}</span>
+            <span><ShieldCheck size={13} /> {t.labels.lastVerified}: {resource.lastVerified}</span>
           </div>
+          <h2><Link to={`/directory/${resource.id}`}>{resource.name}</Link></h2>
+          <p>{localize(resource.description, lang)}</p>
         </div>
-        <div>
-          <MapPin size={18} aria-hidden="true" />
-          <div>
-            <strong>Where to start</strong>
-            <p>{resource.address || 'Use the organization website or source page to confirm the best location for your needs.'}</p>
-          </div>
-        </div>
-      </section>
-      <p className="detail-intro">Service details</p>
-      <dl className="resource-details">
-        <div><dt>{t.labels.areaServed}</dt><dd>{localize(resource.areaServed, lang)}</dd></div>
-        <div><dt>{t.labels.hours}</dt><dd>{localize(resource.hours, lang)}</dd></div>
-        <div><dt>{t.labels.languages}</dt><dd>{resource.languages.map(language => translateStaticText(language, lang)).join(', ')}</dd></div>
-        <div><dt>{t.labels.cost}</dt><dd>{localize(resource.cost, lang)}</dd></div>
-        <div><dt>{t.labels.eligibility}</dt><dd>{localize(resource.eligibility, lang)}</dd></div>
-        <div><dt>{t.labels.documents}</dt><dd>{localize(resource.documentsRequired, lang)}</dd></div>
-        <div><dt>{t.labels.services}</dt><dd>{localize(resource.servicesOffered, lang)}</dd></div>
-        <div><dt>{t.labels.contact}</dt><dd>{phoneLink ? <a href={phoneLink}>{resource.phone}</a> : resource.phone}</dd></div>
-      </dl>
-      <p className="source-note">{t.labels.sourceNote}</p>
-      <div className="card-actions">
-        <a href={resource.website} target="_blank" rel="noreferrer" onClick={() => trackReferral(resource.categoryId)}>
-          {t.labels.website} <Globe size={15} />
-        </a>
-        {resource.sourceUrl && (
-          <a href={resource.sourceUrl} target="_blank" rel="noreferrer" onClick={() => trackReferral('source')}>
-            {t.labels.source} <ExternalLink size={15} />
-          </a>
-        )}
-        {telHref(resource.phone) && (
-          <a href={telHref(resource.phone)} onClick={() => trackReferral(resource.categoryId)}>
-            {t.labels.call} <Phone size={15} />
-          </a>
-        )}
-        {directionsLink && (
-          <a href={directionsLink} target="_blank" rel="noreferrer" onClick={() => trackReferral(resource.categoryId)}>
-            Directions <MapPin size={15} />
-          </a>
-        )}
+      </div>
+      <div className="preview-facts">
+        <span><MapPin size={16} /><strong>Serves</strong>{localize(resource.areaServed, lang)}</span>
+        <span><Clock size={16} /><strong>Hours</strong>{localize(resource.hours, lang)}</span>
+        <span><CircleDollarSign size={16} /><strong>Cost</strong>{localize(resource.cost, lang)}</span>
+      </div>
+      <div className="service-chip-row" aria-label="Services offered">
+        {services.map(service => <span key={service}>{service}</span>)}
+      </div>
+      <div className="card-actions profile-preview-actions">
+        <Link className="profile-link" to={`/directory/${resource.id}`}>View full profile <ChevronRight size={15} /></Link>
+        {phoneLink && <a href={phoneLink} onClick={() => trackReferral(resource.categoryId)}>Call now <Phone size={15} /></a>}
+        {directionsLink && <a href={directionsLink} target="_blank" rel="noreferrer" onClick={() => trackReferral(resource.categoryId)}>Directions <Navigation size={15} /></a>}
       </div>
     </article>
+  );
+}
+
+function ResourceProfilePage({ lang, trackReferral }) {
+  const t = useCopy(lang);
+  const { resourceId } = useParams();
+  const resource = resources.find(item => item.id === resourceId);
+
+  if (!resource) {
+    return (
+      <PageTransition>
+        <PageHeader eyebrow={t.nav.directory} title="Resource not found" subtitle="This listing may have moved or been removed." />
+        <section className="container profile-not-found"><Link className="dark-button" to="/directory"><ArrowLeft size={15} /> Back to directory</Link></section>
+      </PageTransition>
+    );
+  }
+
+  const category = categories.find(item => item.id === resource.categoryId);
+  const phoneLink = telHref(resource.phone);
+  const directionsLink = mapHref(resource.address);
+  const mapEmbed = mapEmbedHref(resource.address);
+  const services = serviceList(resource, lang);
+  const languages = resource.languages.map(language => translateStaticText(language, lang)).join(', ');
+
+  return (
+    <PageTransition>
+      <section className="profile-hero">
+        <div className="container profile-hero-grid">
+          <div className="profile-identity">
+            <Link className="back-link" to="/directory"><ArrowLeft size={15} /> Back to directory</Link>
+            <div className="profile-title-row">
+              <span className="organization-mark large" aria-hidden="true">
+                <b>{organizationInitials(resource.name)}</b>
+                {organizationIconHref(resource.website) && <img src={organizationIconHref(resource.website)} alt="" onError={event => { event.currentTarget.style.display = 'none'; }} />}
+              </span>
+              <div>
+                <p className="eyebrow">{category ? localize(category.name, lang) : resource.categoryId} resource</p>
+                <h1>{resource.name}</h1>
+              </div>
+            </div>
+            <p className="profile-lede">{localize(resource.description, lang)}</p>
+            <div className="profile-primary-actions">
+              {phoneLink && <a className="dark-button" href={phoneLink} onClick={() => trackReferral(resource.categoryId)}><Phone size={17} /> Call now</a>}
+              {directionsLink && <a className="outline-button" href={directionsLink} target="_blank" rel="noreferrer" onClick={() => trackReferral(resource.categoryId)}><Navigation size={17} /> Get directions</a>}
+              <a className="outline-button" href={resource.website} target="_blank" rel="noreferrer" onClick={() => trackReferral(resource.categoryId)}><Globe size={17} /> Visit website</a>
+            </div>
+          </div>
+          <figure className="profile-banner">
+            <img src="/photos/students-resource-call.webp" alt="A student navigator helping a community member prepare questions before contacting a service provider." />
+            <figcaption>Representative scene: prepare your questions, then confirm details directly with the provider.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section className="container profile-contact-strip" aria-label="Organization contact summary">
+        <div><MapPin size={19} /><span><strong>Address</strong>{resource.address}</span></div>
+        <div><Clock size={19} /><span><strong>Hours</strong>{localize(resource.hours, lang)}</span></div>
+        <div><Phone size={19} /><span><strong>Phone</strong>{phoneLink ? <a href={phoneLink}>{resource.phone}</a> : resource.phone}</span></div>
+        <div><ShieldCheck size={19} /><span><strong>Information checked</strong>{resource.lastVerified}</span></div>
+      </section>
+
+      <section className="container profile-main-grid">
+        <div className="profile-main-column">
+          <article className="profile-section-card">
+            <p className="eyebrow">What we offer</p>
+            <h2>Services available through this organization</h2>
+            <div className="service-offer-grid">
+              {services.map((service, index) => (
+                <div key={service}><span>{String(index + 1).padStart(2, '0')}</span><strong>{service}</strong></div>
+              ))}
+            </div>
+          </article>
+
+          <article className="profile-section-card about-organization">
+            <p className="eyebrow">About this resource</p>
+            <h2>Who it helps and where it works</h2>
+            <p>{localize(resource.description, lang)}</p>
+            <div className="about-fact-grid">
+              <div><Building2 size={18} /><span><strong>Service area</strong>{localize(resource.areaServed, lang)}</span></div>
+              <div><Users size={18} /><span><strong>Who may qualify</strong>{localize(resource.eligibility, lang)}</span></div>
+              <div><Languages size={18} /><span><strong>Language access</strong>{languages}</span></div>
+              <div><CircleDollarSign size={18} /><span><strong>Expected cost</strong>{localize(resource.cost, lang)}</span></div>
+            </div>
+          </article>
+
+          <article className="profile-section-card">
+            <p className="eyebrow">Programs, intake, and availability</p>
+            <h2>Check what is open before you go</h2>
+            <div className="program-status-card">
+              <CalendarDays size={24} />
+              <div><strong>Schedules and funding can change.</strong><p>Use the official website for current programs, appointment rules, application windows, distributions, classes, or events. Call if the website is unclear.</p></div>
+            </div>
+            <a className="inline-source-link" href={resource.website} target="_blank" rel="noreferrer" onClick={() => trackReferral('source')}>Check current programs on the official website <ExternalLink size={15} /></a>
+          </article>
+
+          <article className="profile-section-card faq-section">
+            <p className="eyebrow">Common questions</p>
+            <h2>Before you contact the organization</h2>
+            <details open><summary>Do I need an appointment?</summary><p>Appointment and walk-in rules vary. Call before traveling and ask whether the service you need is accepting people today.</p></details>
+            <details><summary>What will it cost?</summary><p>{localize(resource.cost, lang)} Ask about every fee before agreeing to a service.</p></details>
+            <details><summary>What if I do not have every document?</summary><p>Call anyway. Explain which documents you have and ask whether another document can be accepted. Never send sensitive documents through CivicNavigation.</p></details>
+            <details><summary>Can I ask for help in my language?</summary><p>Listed language information: {languages}. Ask the provider what interpretation or translated materials are available for your appointment.</p></details>
+          </article>
+        </div>
+
+        <aside className="profile-side-column">
+          <article className="profile-section-card preparation-card">
+            <ClipboardCheck size={26} />
+            <p className="eyebrow">What to bring</p>
+            <h2>Prepare before you call or visit</h2>
+            <p>{localize(resource.documentsRequired, lang)}</p>
+            <div className="profile-call-script"><strong>Ask these questions</strong><ul><li>Is this service open today?</li><li>Do you serve my ZIP code?</li><li>Do I need an appointment?</li><li>What documents and costs should I expect?</li></ul></div>
+          </article>
+
+          <article className="profile-section-card map-card">
+            <p className="eyebrow">Location</p>
+            <h2>Plan your visit</h2>
+            {mapEmbed && <iframe title={`Map showing ${resource.name}`} src={mapEmbed} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
+            <p>{resource.address}</p>
+            {directionsLink && <a className="outline-button" href={directionsLink} target="_blank" rel="noreferrer"><Navigation size={16} /> Open directions</a>}
+          </article>
+
+          <article className="profile-section-card verification-card">
+            <ShieldCheck size={25} />
+            <h2>Use the official source</h2>
+            <p>CivicNavigation summarizes public information. The provider decides eligibility, availability, appointments, and final costs.</p>
+            {resource.sourceUrl && <a href={resource.sourceUrl} target="_blank" rel="noreferrer" onClick={() => trackReferral('source')}>Open verified source <ExternalLink size={15} /></a>}
+          </article>
+        </aside>
+      </section>
+
+      <section className="container profile-bottom-cta">
+        <div><p className="eyebrow">Ready for the next step?</p><h2>Contact the organization, or compare another resource.</h2></div>
+        <div>{phoneLink && <a className="dark-button" href={phoneLink}><Phone size={16} /> Call {resource.phone.split('/')[0]}</a>}<Link className="outline-button" to={`/directory?category=${resource.categoryId}`}>Compare similar resources</Link></div>
+      </section>
+    </PageTransition>
   );
 }
 
@@ -650,15 +846,11 @@ function GuidesPage({ lang }) {
       searchableText(guide.steps).toLowerCase().includes(term);
   });
   const selectedGuide = filteredGuides.find(guide => guide.id === activeGuide) || filteredGuides[0];
+  const support = guideSupport[selectedGuide?.id];
 
   return (
     <PageTransition>
       <PageHeader eyebrow={t.misc.guide} title={t.pages.guidesTitle} subtitle={t.pages.guidesDesc} />
-      <InternalPhoto
-        src="/photos/student-family-guide.webp"
-        alt="A student volunteer explaining a document checklist to an immigrant family at their kitchen table."
-        caption="Students can walk through a guide with a family, explain unfamiliar terms, and help organize questions for a provider."
-      />
       <section className="container content-intro-grid" aria-label="Guide purpose">
         <article>
           <p className="eyebrow">A calm path through a complicated system</p>
@@ -694,21 +886,30 @@ function GuidesPage({ lang }) {
               <h2>{localize(selectedGuide.title, lang)}</h2>
               <p>{localize(selectedGuide.summary, lang)}</p>
               <section className="guide-orientation">
-                <p><strong>Use this guide when:</strong> you want a clear first step, a short list of what to prepare, and a way to decide what to do next.</p>
-                <p><strong>Take your time:</strong> service availability and eligibility can change. Save the organization’s source page and call before traveling.</p>
+                <p><strong>You can start before you know every rule.</strong> Tell the provider what you need, your ZIP code, your deadline, and which documents you already have.</p>
+                <p><strong>Ask for language help.</strong> Say your preferred language at the beginning of the call or visit. Do not sign something you do not understand.</p>
               </section>
+              {support && (
+                <section className="guide-support-grid" aria-label="Guide preparation and call help">
+                  <article><span>Before you start</span><p>{support.before}</p></article>
+                  <article className="call-script"><span>Words you can use</span><blockquote>{support.say}</blockquote></article>
+                  <article><span>If the first option does not work</span><p>{support.blocked}</p></article>
+                  <article><span>After the call or visit</span><p>{support.after}</p></article>
+                </section>
+              )}
+              <div className="guide-section-heading"><span>Step-by-step plan</span><p>Complete one step at a time. Write down names, dates, and next actions as you go.</p></div>
               <div className="steps-list">
                 {selectedGuide.steps.map((step, index) => (
                   <article key={`${selectedGuide.id}-${index}`}>
                     <span>{index + 1}</span>
-                    <p>{localize(step, lang)}</p>
+                    <div><strong>Step {index + 1}</strong><p>{localize(step, lang)}</p></div>
                   </article>
                 ))}
               </div>
-              <div className="guide-notes">
-                <p><strong>{t.misc.documentsNeeded}:</strong> {localize(selectedGuide.documentsNeeded, lang)}</p>
-                <p><strong>{t.labels.eligibility}:</strong> {localize(selectedGuide.eligibility, lang)}</p>
-                <p><strong>{t.misc.safetyNote}:</strong> {localize(selectedGuide.safetyNote, lang)}</p>
+              <div className="guide-checklist-grid">
+                <article><ClipboardCheck size={20} /><div><strong>{t.misc.documentsNeeded}</strong><p>{localize(selectedGuide.documentsNeeded, lang)}</p></div></article>
+                <article><Users size={20} /><div><strong>{t.labels.eligibility}</strong><p>{localize(selectedGuide.eligibility, lang)}</p></div></article>
+                <article className="safety-card"><ShieldCheck size={20} /><div><strong>{t.misc.safetyNote}</strong><p>{localize(selectedGuide.safetyNote, lang)}</p></div></article>
               </div>
               <div className="guide-actions">
                 <Link className="dark-button" to={`/directory?category=${selectedGuide.target}`}>Find related services <Search size={15} /></Link>
@@ -720,6 +921,11 @@ function GuidesPage({ lang }) {
           )}
         </div>
       </section>
+      <InternalPhoto
+        src="/photos/student-family-guide.webp"
+        alt="A student volunteer explaining a document checklist to an immigrant family at their kitchen table."
+        caption="Students can walk through a guide with a family, explain unfamiliar terms, and help organize questions for a provider."
+      />
     </PageTransition>
   );
 }
@@ -731,11 +937,6 @@ function KitPage({ lang }) {
   return (
     <PageTransition>
       <PageHeader eyebrow={t.nav.kit} title={t.pages.kitTitle} subtitle={t.pages.kitDesc} />
-      <InternalPhoto
-        src="/photos/students-assembling-kits.webp"
-        alt="Students and community volunteers assembling printed newcomer resource kits in a library."
-        caption="Student teams prepare printed kits for schools, libraries, clinics, and community events."
-      />
       <section className="container kit-layout">
         <div className="paper-card kit-intro-card">
           <p className="eyebrow">{t.home.storyEyebrow}</p>
@@ -799,11 +1000,6 @@ function VolunteerPage({ lang }) {
   return (
     <PageTransition>
       <PageHeader eyebrow={t.nav.volunteer} title={t.pages.volunteerTitle} subtitle={t.pages.volunteerDesc} />
-      <InternalPhoto
-        src="/photos/students-assembling-kits.webp"
-        alt="A diverse student volunteer team preparing folders of local resource information."
-        caption="Volunteers research, translate, assemble, and share practical local information."
-      />
       <section className="container two-column">
         <div>
           <h2 className="display-heading">{t.home.actionTitle}</h2>
