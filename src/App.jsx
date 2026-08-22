@@ -476,7 +476,7 @@ function Home({ lang }) {
   const t = useCopy(lang);
   const storyRef = useRef(null);
   const videoRef = useRef(null);
-  const scrollPlaybackRef = useRef({ progress: 0, timestamp: 0, rate: 0.6 });
+  const scrubFrameRef = useRef(null);
   const reduceMotion = useReducedMotion();
   const [storyPhase, setStoryPhase] = useState(-1);
   const { scrollYProgress } = useScroll({
@@ -493,13 +493,14 @@ function Home({ lang }) {
   const videoY = useTransform(smoothProgress, [0, 0.5, 1], ['0%', '-1.5%', '-3%']);
 
   useMotionValueEvent(scrollYProgress, 'change', progress => {
-    const now = performance.now();
-    const previous = scrollPlaybackRef.current;
-    const elapsed = previous.timestamp ? Math.max(16, now - previous.timestamp) : 16;
-    const velocity = Math.abs(progress - previous.progress) / elapsed;
-    previous.progress = progress;
-    previous.timestamp = now;
-    previous.rate = Math.min(2.6, 0.6 + velocity * 1050);
+    const video = videoRef.current;
+    if (!video || reduceMotion || !Number.isFinite(video.duration)) return;
+    const targetTime = Math.min(video.duration - 0.04, Math.max(0, progress * video.duration));
+    if (scrubFrameRef.current) cancelAnimationFrame(scrubFrameRef.current);
+    scrubFrameRef.current = requestAnimationFrame(() => {
+      if (Math.abs(video.currentTime - targetTime) >= 1 / 60) video.currentTime = targetTime;
+      scrubFrameRef.current = null;
+    });
   });
 
   useMotionValueEvent(smoothProgress, 'change', progress => {
@@ -508,21 +509,10 @@ function Home({ lang }) {
   });
 
   useEffect(() => {
-    if (reduceMotion) return undefined;
-    let frameId;
-    const updatePlayback = now => {
-      const video = videoRef.current;
-      const playback = scrollPlaybackRef.current;
-      const targetRate = now - playback.timestamp < 180 ? playback.rate : 0.6;
-      playback.rate += (targetRate - playback.rate) * 0.16;
-      if (video && video.readyState >= 2) {
-        video.playbackRate = Math.max(0.5, Math.min(2.6, playback.rate));
-      }
-      frameId = requestAnimationFrame(updatePlayback);
+    return () => {
+      if (scrubFrameRef.current) cancelAnimationFrame(scrubFrameRef.current);
     };
-    frameId = requestAnimationFrame(updatePlayback);
-    return () => cancelAnimationFrame(frameId);
-  }, [reduceMotion]);
+  }, []);
 
   return (
     <PageTransition className="home-page">
@@ -552,17 +542,12 @@ function Home({ lang }) {
               muted
               playsInline
               preload="auto"
-              autoPlay={!reduceMotion}
-              loop={!reduceMotion}
               aria-label={t.home.storyTitle}
               onLoadedMetadata={event => {
-                if (reduceMotion) {
-                  event.currentTarget.pause();
-                  event.currentTarget.currentTime = Math.min(4, event.currentTarget.duration / 2);
-                } else {
-                  event.currentTarget.playbackRate = 0.6;
-                  event.currentTarget.play().catch(() => {});
-                }
+                event.currentTarget.pause();
+                event.currentTarget.currentTime = reduceMotion
+                  ? Math.min(4, event.currentTarget.duration / 2)
+                  : Math.min(event.currentTarget.duration - 0.04, scrollYProgress.get() * event.currentTarget.duration);
               }}
             />
           </motion.figure>

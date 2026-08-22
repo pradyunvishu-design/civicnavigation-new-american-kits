@@ -4005,6 +4005,59 @@ img {
   align-items: center;
 }
 
+@media (min-width: 761px) and (max-height: 820px) {
+  .cinematic-intro,
+  .cinematic-chapter {
+    justify-content: center;
+    padding-top: clamp(82px, 11vh, 96px);
+    padding-bottom: clamp(142px, 20vh, 164px);
+  }
+
+  .cinematic-intro .eyebrow {
+    margin-bottom: 14px;
+  }
+
+  .cinematic-intro h1,
+  .cinematic-chapter h2 {
+    max-width: 10.5ch;
+    font-size: clamp(54px, 7vw, 96px);
+    line-height: 0.86;
+  }
+
+  .cinematic-chapter p {
+    width: min(350px, 32vw);
+    margin-top: 18px;
+    padding: 10px 13px;
+    font-size: 14px;
+  }
+
+  .cinematic-video-frame {
+    inset: -2%;
+  }
+
+  .cinematic-video-frame video {
+    object-position: 64% center;
+  }
+
+  .cinematic-footer {
+    bottom: 18px;
+    grid-template-columns: minmax(260px, 470px) auto;
+    gap: clamp(20px, 4vw, 48px);
+    width: min(820px, calc(100% - 56px));
+  }
+
+  .cinematic-footer > p {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .cinematic-footer .ink-link {
+    min-height: 38px;
+    padding: 7px 11px;
+    font-size: 13px;
+  }
+}
+
 @media (max-width: 760px) {
   .home-page .story-viewport {
     min-height: 400dvh;
