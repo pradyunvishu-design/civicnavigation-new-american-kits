@@ -55,6 +55,7 @@ import {
   texasNeedFilters,
   texasStatewideResources
 } from './texasResources';
+import { resourceProfileMedia } from './resourceProfileMedia';
 
 const BRAND = 'civicnavigation';
 const BRAND_LOGO_PATH = '/brand/civicnavigation-premium-logo.png';
@@ -1073,6 +1074,7 @@ function ResourceProfilePage({ lang, trackReferral }) {
   const phoneLink = telHref(resource.phone);
   const directionsLink = mapHref(resource.address);
   const mapEmbed = mapEmbedHref(resource.address);
+  const profileMedia = resourceProfileMedia[resource.id];
   const services = serviceList(resource, lang);
   const languages = resource.languages.map(language => translateStaticText(language, lang)).join(', ');
 
@@ -1083,10 +1085,6 @@ function ResourceProfilePage({ lang, trackReferral }) {
           <div className="profile-identity">
             <Link className="back-link" to="/directory"><ArrowLeft size={15} /> Back to directory</Link>
             <div className="profile-title-row">
-              <span className="organization-mark large" aria-hidden="true">
-                <b>{organizationInitials(resource.name)}</b>
-                {organizationIconHref(resource.website) && <img src={organizationIconHref(resource.website)} alt="" onError={event => { event.currentTarget.style.display = 'none'; }} />}
-              </span>
               <div>
                 <p className="eyebrow">{category ? localize(category.name, lang) : resource.categoryId} resource</p>
                 <h1>{resource.name}</h1>
@@ -1099,10 +1097,17 @@ function ResourceProfilePage({ lang, trackReferral }) {
               <a className="outline-button" href={resource.website} target="_blank" rel="noreferrer" onClick={() => trackReferral(resource.categoryId)}><Globe size={17} /> Visit website</a>
             </div>
           </div>
-          <figure className="profile-banner">
-            <img src="/photos/students-resource-call.webp" alt="A student navigator helping a community member prepare questions before contacting a service provider." />
-            <figcaption>Representative scene: prepare your questions, then confirm details directly with the provider.</figcaption>
-          </figure>
+          {profileMedia ? (
+            <figure className="profile-banner profile-provider-photo">
+              <img src={profileMedia.src} alt={profileMedia.alt} />
+              <figcaption>Official organization image · <a href={profileMedia.sourceUrl} target="_blank" rel="noreferrer">{profileMedia.sourceLabel} <ExternalLink size={12} /></a></figcaption>
+            </figure>
+          ) : (
+            <figure className="profile-banner profile-location-visual">
+              {mapEmbed && <iframe title={`Location preview for ${resource.name}`} src={mapEmbed} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />}
+              <figcaption>Location preview based on the provider’s listed address · <a href={directionsLink} target="_blank" rel="noreferrer">Open map <ExternalLink size={12} /></a></figcaption>
+            </figure>
+          )}
         </div>
       </section>
 
