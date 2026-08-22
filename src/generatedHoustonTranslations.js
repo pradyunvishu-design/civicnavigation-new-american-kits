@@ -5707,6 +5707,42 @@ export const allTranslations = {
     "hi": "पीडीएफ डाउनलोड करें",
     "ur": "پی ڈی ایف کو دیکھیں"
   },
+  "Call 832-369-9390 for current assistance hours; pantry schedules vary by location": {
+    "en": "Call 832-369-9390 for current assistance hours; pantry schedules vary by location",
+    "es": "Llame al 832-369-9390 para conocer los horarios actuales de asistencia; los horarios de las despensas varían según la ubicación",
+    "ar": "اتصل على 832-369-9390 لمعرفة ساعات المساعدة الحالية؛ تختلف جداول مخازن الطعام حسب الموقع",
+    "zh": "请致电 832-369-9390 了解当前援助时间；食品储藏点的开放时间因地点而异",
+    "vi": "Gọi 832-369-9390 để biết giờ hỗ trợ hiện tại; lịch hoạt động của các kho thực phẩm khác nhau tùy địa điểm",
+    "hi": "सहायता के वर्तमान समय के लिए 832-369-9390 पर कॉल करें; फूड पैंट्री का समय स्थान के अनुसार अलग-अलग होता है",
+    "ur": "مدد کے موجودہ اوقات جاننے کے لیے 832-369-9390 پر کال کریں؛ فوڈ پینٹری کے اوقات مقام کے لحاظ سے مختلف ہوتے ہیں"
+  },
+  "No documents are needed to use the pantry locator. Individual pantries or benefit applications may request ID, address, household, income, or benefit information; call first.": {
+    "en": "No documents are needed to use the pantry locator. Individual pantries or benefit applications may request ID, address, household, income, or benefit information; call first.",
+    "es": "No necesita documentos para usar el buscador de despensas. Las despensas o solicitudes de beneficios pueden pedir identificación, dirección e información del hogar, ingresos o beneficios; llame primero.",
+    "ar": "لا تحتاج إلى مستندات لاستخدام محدد مواقع مخازن الطعام. قد تطلب بعض المخازن أو طلبات الإعانات إثبات الهوية أو العنوان أو معلومات الأسرة أو الدخل أو الإعانات؛ اتصل أولاً.",
+    "zh": "使用食品储藏点查找工具不需要文件。个别储藏点或福利申请可能会要求身份证明、地址、家庭、收入或福利信息；请先致电确认。",
+    "vi": "Bạn không cần giấy tờ để dùng công cụ tìm kho thực phẩm. Từng kho hoặc đơn xin trợ cấp có thể yêu cầu giấy tờ tùy thân, địa chỉ và thông tin về hộ gia đình, thu nhập hoặc trợ cấp; hãy gọi trước.",
+    "hi": "फूड पैंट्री लोकेटर का उपयोग करने के लिए किसी दस्तावेज़ की आवश्यकता नहीं है। कुछ पैंट्री या लाभ आवेदन पहचान, पता, परिवार, आय या लाभ की जानकारी मांग सकते हैं; पहले कॉल करें।",
+    "ur": "فوڈ پینٹری تلاش کرنے کے لیے کسی دستاویز کی ضرورت نہیں ہے۔ بعض پینٹریاں یا مراعات کی درخواستیں شناخت، پتے، گھرانے، آمدنی یا مراعات کی معلومات مانگ سکتی ہیں؛ پہلے کال کریں۔"
+  },
+  "Harris County residency, household income, and family size are reviewed. The program is not health insurance; the official eligibility page explains current rules.": {
+    "en": "Harris County residency, household income, and family size are reviewed. The program is not health insurance; the official eligibility page explains current rules.",
+    "es": "Se revisan la residencia en el condado de Harris, los ingresos del hogar y el tamaño de la familia. El programa no es un seguro médico; la página oficial de elegibilidad explica las reglas actuales.",
+    "ar": "تتم مراجعة الإقامة في مقاطعة هاريس ودخل الأسرة وحجمها. البرنامج ليس تأميناً صحياً؛ توضح صفحة الأهلية الرسمية القواعد الحالية.",
+    "zh": "该计划会审核哈里斯县居住情况、家庭收入和家庭人数。该计划并非医疗保险；官方资格页面说明了现行规则。",
+    "vi": "Chương trình sẽ xem xét tình trạng cư trú tại Quận Harris, thu nhập hộ gia đình và số người trong gia đình. Đây không phải là bảo hiểm y tế; trang điều kiện chính thức giải thích các quy định hiện hành.",
+    "hi": "हैरिस काउंटी में निवास, परिवार की आय और परिवार के आकार की समीक्षा की जाती है। यह कार्यक्रम स्वास्थ्य बीमा नहीं है; आधिकारिक पात्रता पृष्ठ मौजूदा नियम समझाता है।",
+    "ur": "ہیرس کاؤنٹی میں رہائش، گھرانے کی آمدنی اور خاندان کے افراد کی تعداد کا جائزہ لیا جاتا ہے۔ یہ پروگرام ہیلتھ انشورنس نہیں ہے؛ سرکاری اہلیت کا صفحہ موجودہ قواعد کی وضاحت کرتا ہے۔"
+  },
+  "The application may require identity, Harris County residence, household relationship, income for the past 30 days, healthcare coverage, and other program-specific proof. Use the official checklist.": {
+    "en": "The application may require identity, Harris County residence, household relationship, income for the past 30 days, healthcare coverage, and other program-specific proof. Use the official checklist.",
+    "es": "La solicitud puede requerir prueba de identidad, residencia en el condado de Harris, relación familiar, ingresos de los últimos 30 días, cobertura médica y otros comprobantes específicos del programa. Use la lista oficial.",
+    "ar": "قد يتطلب الطلب إثبات الهوية والإقامة في مقاطعة هاريس والعلاقة بين أفراد الأسرة والدخل خلال آخر 30 يوماً والتغطية الصحية وإثباتات أخرى خاصة بالبرنامج. استخدم قائمة التحقق الرسمية.",
+    "zh": "申请可能需要身份证明、哈里斯县居住证明、家庭成员关系、过去 30 天的收入、医疗保障以及其他该计划要求的证明。请使用官方清单。",
+    "vi": "Đơn đăng ký có thể yêu cầu bằng chứng về danh tính, cư trú tại Quận Harris, quan hệ trong hộ gia đình, thu nhập trong 30 ngày qua, bảo hiểm y tế và các giấy tờ khác theo chương trình. Hãy dùng danh sách kiểm tra chính thức.",
+    "hi": "आवेदन में पहचान, हैरिस काउंटी निवास, परिवार के सदस्यों के संबंध, पिछले 30 दिनों की आय, स्वास्थ्य कवरेज और कार्यक्रम से जुड़े अन्य प्रमाण मांगे जा सकते हैं। आधिकारिक चेकलिस्ट का उपयोग करें।",
+    "ur": "درخواست میں شناخت، ہیرس کاؤنٹی میں رہائش، گھرانے کے افراد کا تعلق، گزشتہ 30 دن کی آمدنی، صحت کی کوریج اور پروگرام سے متعلق دیگر ثبوت درکار ہو سکتے ہیں۔ سرکاری چیک لسٹ استعمال کریں۔"
+  },
   "请致电 Houston Food Bank 832-369-9390 寻找食品和 SNAP 帮助。下班后或需要更多转介，请拨打 211 并提供邮编。": {
     "en": "请致电 Houston Food Bank 832-369-9390 寻找食品和 SNAP 帮助。下班后或需要更多转介，请拨打 211 并提供邮编。",
     "es": "请致电 Houston Food Bank 832-369-9390 寻找食品和 SNAP 帮助。下班后或需要更多转介，请拨打 211 并提供邮编.",

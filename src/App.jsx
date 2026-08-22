@@ -56,6 +56,7 @@ import {
   texasStatewideResources
 } from './texasResources';
 import { resourceProfileMedia } from './resourceProfileMedia';
+import { observeUiTranslations } from './uiTranslation';
 
 const BRAND = 'civicnavigation';
 const BRAND_LOGO_PATH = '/brand/civicnavigation-premium-logo.png';
@@ -341,6 +342,8 @@ function AppContent() {
     document.documentElement.dataset.textDirection = direction;
     window.localStorage.setItem('newAmericanKitsLanguage', lang);
   }, [lang]);
+
+  useEffect(() => observeUiTranslations(document.body, lang), [lang]);
 
   const trackReferral = (topic) => {
     setTracker(prev => ({
@@ -813,14 +816,6 @@ function TexasZipFinder({ trackReferral }) {
         ))}
       </div>
 
-      {!zipResult && !searchError && (
-        <div className="texas-finder-preview">
-          <div><strong>1</strong><span>Enter any five-digit Texas ZIP code.</span></div>
-          <div><strong>2</strong><span>Compare nearby and statewide starting points.</span></div>
-          <div><strong>3</strong><span>Open the map, call, or confirm details on the official site.</span></div>
-        </div>
-      )}
-
       {zipResult && (
         <div className="texas-results" aria-live="polite">
           <div className="texas-results-summary">
@@ -894,9 +889,6 @@ function TexasZipFinder({ trackReferral }) {
         </div>
       )}
 
-      <p className="texas-data-note">
-        ZIP coordinates from <a href={texasDataSources.zipData} target="_blank" rel="noreferrer">GeoNames</a> (CC BY 3.0). Food-bank locations and county coverage from <a href={texasDataSources.foodBanks} target="_blank" rel="noreferrer">Feeding Texas</a>. Information can change; confirm with the provider.
-      </p>
     </section>
   );
 }
