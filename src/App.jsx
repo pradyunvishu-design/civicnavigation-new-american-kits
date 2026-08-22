@@ -482,17 +482,10 @@ function Home({ lang }) {
     target: storyRef,
     offset: ['start start', 'end end']
   });
-  const videoScale = useTransform(scrollYProgress, [0, 0.34, 0.72, 1], [0.92, 1.02, 1.11, 1.04]);
-  const videoY = useTransform(scrollYProgress, [0, 0.52, 1], [42, -18, -54]);
-  const videoRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [7, 0, -4]);
-  const videoRotateY = useTransform(scrollYProgress, [0, 0.46, 1], [-7, 2, 6]);
+  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.02, 1.07, 1.11]);
   useMotionValueEvent(scrollYProgress, 'change', progress => {
     const nextPhase = progress < 0.18 ? -1 : Math.min(3, Math.floor((progress - 0.18) / 0.205));
     setStoryPhase(current => current === nextPhase ? current : nextPhase);
-    const video = videoRef.current;
-    if (!video || reduceMotion || !Number.isFinite(video.duration)) return;
-    const targetTime = Math.min(video.duration - 0.04, Math.max(0, progress * video.duration));
-    if (Math.abs(video.currentTime - targetTime) > 0.04) video.currentTime = targetTime;
   });
 
   return (
@@ -514,7 +507,7 @@ function Home({ lang }) {
           </div>
           <motion.figure
             className="cinematic-video-frame"
-            style={{ scale: reduceMotion ? 1 : videoScale, y: reduceMotion ? 0 : videoY, rotateX: reduceMotion ? 0 : videoRotateX, rotateY: reduceMotion ? 0 : videoRotateY }}
+            style={{ scale: reduceMotion ? 1 : videoScale }}
           >
             <video
               ref={videoRef}
@@ -523,13 +516,16 @@ function Home({ lang }) {
               muted
               playsInline
               preload="auto"
+              autoPlay={!reduceMotion}
+              loop={!reduceMotion}
               aria-label={t.home.storyTitle}
               onLoadedMetadata={event => {
-                event.currentTarget.pause();
-                const progress = scrollYProgress.get();
-                event.currentTarget.currentTime = reduceMotion
-                  ? Math.min(4, event.currentTarget.duration / 2)
-                  : Math.min(event.currentTarget.duration - 0.04, progress * event.currentTarget.duration);
+                if (reduceMotion) {
+                  event.currentTarget.pause();
+                  event.currentTarget.currentTime = Math.min(4, event.currentTarget.duration / 2);
+                } else {
+                  event.currentTarget.play().catch(() => {});
+                }
               }}
             />
           </motion.figure>
