@@ -33,7 +33,7 @@ const enLocale = {
     eyebrow: 'Houston civic navigation network',
     title: 'A visible path through Houston’s help systems.',
     subtitle: 'New American Kits turns verified Houston and Harris County resources into a multilingual story, printed handout, and searchable civic portal for immigrant and refugee families.',
-    primary: 'Find Houston help',
+    primary: 'Find help by Texas ZIP',
     secondary: 'Read the guides',
     storyEyebrow: 'Harris County edition',
     storyTitle: 'From one printed booklet to a citywide map of trusted support.',
@@ -41,18 +41,18 @@ const enLocale = {
       ['01 // The City', 'Houston is vast: a family may need food in Gulfton, a clinic in the East End, school enrollment in HISD, and legal help downtown.'],
       ['02 // The Gap', 'Resources exist, but phone trees, documents, office hours, and language barriers can make the system feel invisible.'],
       ['03 // The Kit', 'The booklet gives families a first path: 911, 988, 211, key documents, and plain-language next steps.'],
-      ['04 // The Portal', 'The website supports that path with Houston-wide search, official source links, emergency contacts, step-by-step guides, and a simple on-site resource finder.']
+      ['04 // The Portal', 'The website now adds Texas-wide ZIP search, nearby map results, official source links, emergency contacts, detailed Houston profiles, and step-by-step guides.']
     ],
-    portalTitle: 'Verified Houston resources',
-    portalText: 'Houston-first, Harris County-wide: food, healthcare, school enrollment, housing, utilities, English classes, legal aid, transportation, and emergency support.',
+    portalTitle: 'Find Texas help by ZIP',
+    portalText: 'Every Texas ZIP receives nearby food-bank network results and official statewide starting points for benefits, health, housing, jobs, childcare, schools, and legal aid.',
     modelTitle: 'One handout. One live portal. One citywide support map.',
     modelText: 'The design stays calm and readable while the directory handles long names, multilingual labels, and source-checked local details.',
-    actionTitle: 'Built for Harris County families.',
-    actionText: 'Each listing includes a source link and verification date so volunteers can keep the printed booklet aligned with the live portal.'
+    actionTitle: 'Built in Houston. Expanded across Texas.',
+    actionText: 'The statewide finder uses official Texas sources and clearly separates broad search tools from detailed, source-checked Houston profiles.'
   },
   pages: {
-    directoryTitle: 'Houston Resource Directory',
-    directoryDesc: 'Search verified Houston and Harris County resources by life situation.',
+    directoryTitle: 'Texas Resource Finder',
+    directoryDesc: 'Search by ZIP code anywhere in Texas, then explore detailed Houston and Harris County profiles.',
     guidesTitle: 'Step-by-Step Houston Guides',
     guidesDesc: 'Plain-language instructions based on the Harris County booklet and current local source pages.',
     kitTitle: 'Sample Printed Kit',
@@ -75,7 +75,7 @@ const enLocale = {
     searchPlaceholder: 'Search resources, guides, or organizations...',
     allResources: 'All resources',
     lifeSituations: 'Life situations',
-    verified: 'Verified Houston results',
+    verified: 'Detailed Houston profiles',
     items: 'items',
     source: 'Source',
     lastVerified: 'Verified',
@@ -190,8 +190,8 @@ export const locales = {
       actionText: 'Cada listado incluye fuente y fecha de verificación para mantener el folleto impreso alineado con el portal.'
     },
     pages: {
-      directoryTitle: 'Directorio de Recursos de Houston',
-      directoryDesc: 'Busque recursos verificados de Houston y el condado Harris por situación de vida.',
+      directoryTitle: 'Buscador de Recursos de Texas',
+      directoryDesc: 'Busque por código postal en cualquier parte de Texas y explore perfiles detallados de Houston y el condado Harris.',
       guidesTitle: 'Guías de Houston Paso a Paso',
       guidesDesc: 'Instrucciones claras basadas en el folleto del condado Harris y fuentes locales actuales.',
       kitTitle: 'Kit impreso de ejemplo',
@@ -205,7 +205,7 @@ export const locales = {
       aboutDesc: 'Una iniciativa estudiantil de navegación cívica de Houston para apoyo visible, local, claro y multilingüe.'
     },
     labels: {
-      search: 'Buscar', allResources: 'Todos los recursos', lifeSituations: 'Situaciones de vida', verified: 'Resultados verificados de Houston',
+      search: 'Buscar', allResources: 'Todos los recursos', lifeSituations: 'Situaciones de vida', verified: 'Perfiles detallados de Houston',
       items: 'elementos', source: 'Fuente', lastVerified: 'Verificado', areaServed: 'Área atendida', hours: 'Horario', languages: 'Idiomas',
       cost: 'Costo', eligibility: 'Elegibilidad', documents: 'Documentos', contact: 'Contacto', services: 'Servicios', website: 'Sitio web',
       call: 'Llamar', categoryScope: 'Alcance de categoría', relatedGuides: 'Leer guías relacionadas',
@@ -247,8 +247,8 @@ export const locales = {
       actionTitle: 'مصمم لعائلات مقاطعة هاريس.'
     },
     pages: {
-      directoryTitle: 'دليل موارد هيوستن',
-      directoryDesc: 'ابحث عن موارد موثقة في هيوستن ومقاطعة هاريس حسب الحاجة.',
+      directoryTitle: 'دليل موارد تكساس',
+      directoryDesc: 'ابحث بالرمز البريدي في جميع أنحاء تكساس، ثم استعرض ملفات هيوستن ومقاطعة هاريس التفصيلية.',
       guidesTitle: 'أدلة هيوستن خطوة بخطوة',
       kitTitle: 'نموذج الكتيب المطبوع',
       kitDesc: 'معاينة لدليل المساعدة في مقاطعة هاريس الذي يمكن للعائلات الحصول عليه داخل New American Kit.',
@@ -259,7 +259,7 @@ export const locales = {
       volunteerDesc: 'نموذج طلابي للبحث والترجمة والتوزيع والتحديث في هيوستن.',
       aboutDesc: 'مبادرة طلابية تجعل الدعم المدني في هيوستن واضحاً ومحلياً ومتعدد اللغات.'
     },
-    labels: { search: 'بحث', allResources: 'كل الموارد', lifeSituations: 'احتياجات الحياة', verified: 'نتائج موثقة في هيوستن', source: 'المصدر', call: 'اتصل', website: 'الموقع' },
+    labels: { search: 'بحث', allResources: 'كل الموارد', lifeSituations: 'احتياجات الحياة', verified: 'ملفات هيوستن التفصيلية', source: 'المصدر', call: 'اتصل', website: 'الموقع' },
     forms: { name: 'الاسم', email: 'البريد الإلكتروني', role: 'الدور المفضل', details: 'التفاصيل', submitFeedback: 'إرسال الملاحظة', received: 'تم الاستلام' },
     chatbot: { title: 'الملاح المدني', placeholder: 'اكتب سؤالك...', close: 'إغلاق', prompts: ['طعام', 'فواتير', 'طبيب', 'مدرسة', 'قانون', 'مواصلات', 'طوارئ', 'وثائق', 'السكن والإيجار', 'الإنجليزية والدروس', 'رعاية الأطفال', 'المزايا و211'] },
     misc: { guide: 'دليل', urgent: 'مساعدة عاجلة', touchpoints: 'نقاط مساعدة في هيوستن' }
@@ -285,8 +285,8 @@ export const locales = {
       actionTitle: '为哈里斯县家庭建立。'
     },
     pages: {
-      directoryTitle: '休斯顿资源目录',
-      directoryDesc: '按生活需求搜索休斯顿和哈里斯县资源。',
+      directoryTitle: '德州资源搜索',
+      directoryDesc: '使用邮政编码搜索德州各地资源，并查看休斯顿和哈里斯县的详细资料。',
       guidesTitle: '休斯顿分步指南',
       kitTitle: '纸质工具包样例',
       kitDesc: '哈里斯县援助指南预览，家庭可在实体 New American Kit 中收到。',
@@ -295,7 +295,7 @@ export const locales = {
       kitDownload: '下载指南',
       kitNote: 'PDF 预览在电脑上效果最好。手机上请使用打开 PDF。'
     },
-    labels: { search: '搜索', allResources: '所有资源', lifeSituations: '生活需求', verified: '已核实休斯顿结果', source: '来源', call: '拨打', website: '网站' },
+    labels: { search: '搜索', allResources: '所有资源', lifeSituations: '生活需求', verified: '休斯顿详细资料', source: '来源', call: '拨打', website: '网站' },
     forms: { name: '姓名', email: '电子邮件', details: '详情', submitFeedback: '提交反馈', received: '已收到' },
     chatbot: { title: '公共服务导航员', placeholder: '输入问题...', close: '关闭', prompts: ['需要食物', '水电费', '找医生', '学校注册', '法律帮助', '交通', '紧急', '文件', '住房或房租', '英语或课程', '儿童照护', '福利和 211'] },
     misc: { guide: '指南', urgent: '紧急帮助', touchpoints: '休斯顿服务点' }
@@ -320,8 +320,8 @@ export const locales = {
       actionTitle: 'Dành cho gia đình Harris County.'
     },
     pages: {
-      directoryTitle: 'Danh mục nguồn lực Houston',
-      directoryDesc: 'Tìm nguồn lực Houston và Harris County theo nhu cầu.',
+      directoryTitle: 'Công cụ tìm nguồn lực Texas',
+      directoryDesc: 'Tìm kiếm bằng mã ZIP trên toàn Texas, sau đó xem hồ sơ chi tiết ở Houston và Harris County.',
       guidesTitle: 'Hướng dẫn Houston từng bước',
       kitTitle: 'Bộ kit in mẫu',
       kitDesc: 'Bản xem trước hướng dẫn hỗ trợ Harris County mà gia đình có thể nhận trong New American Kit.',
@@ -330,7 +330,7 @@ export const locales = {
       kitDownload: 'Tải hướng dẫn',
       kitNote: 'Xem trước PDF tốt nhất trên máy tính. Trên điện thoại, dùng Mở PDF.'
     },
-    labels: { search: 'Tìm kiếm', allResources: 'Tất cả nguồn lực', lifeSituations: 'Nhu cầu', verified: 'Kết quả Houston đã kiểm chứng', source: 'Nguồn', call: 'Gọi', website: 'Trang web' },
+    labels: { search: 'Tìm kiếm', allResources: 'Tất cả nguồn lực', lifeSituations: 'Nhu cầu', verified: 'Hồ sơ chi tiết tại Houston', source: 'Nguồn', call: 'Gọi', website: 'Trang web' },
     forms: { name: 'Tên', email: 'Địa chỉ email', details: 'Chi tiết', submitFeedback: 'Gửi phản hồi', received: 'Đã nhận' },
     chatbot: { title: 'Điều hướng viên công dân', placeholder: 'Nhập câu hỏi...', close: 'Đóng', prompts: ['Cần thức ăn', 'Hóa đơn', 'Bác sĩ', 'Ghi danh trường', 'Pháp lý', 'Giao thông', 'Khẩn cấp', 'Giấy tờ', 'Nhà ở hoặc tiền thuê', 'Tiếng Anh hoặc lớp học', 'Chăm sóc trẻ', 'Phúc lợi và 211'] },
     misc: { guide: 'Hướng dẫn', urgent: 'Trợ giúp khẩn cấp', touchpoints: 'Điểm hỗ trợ Houston' }
@@ -355,8 +355,8 @@ export const locales = {
       actionTitle: 'Harris County परिवारों के लिए बनाया गया।'
     },
     pages: {
-      directoryTitle: 'ह्यूस्टन संसाधन डायरेक्टरी',
-      directoryDesc: 'जरूरत के अनुसार ह्यूस्टन और Harris County संसाधन खोजें।',
+      directoryTitle: 'टेक्सास संसाधन खोज',
+      directoryDesc: 'पूरे टेक्सास में ZIP कोड से खोजें, फिर ह्यूस्टन और Harris County की विस्तृत प्रोफ़ाइल देखें।',
       guidesTitle: 'ह्यूस्टन चरण-दर-चरण गाइड',
       kitTitle: 'प्रिंट किट नमूना',
       kitDesc: 'Harris County सहायता गाइड का पूर्वावलोकन जिसे परिवार New American Kit में पा सकते हैं।',
@@ -365,7 +365,7 @@ export const locales = {
       kitDownload: 'गाइड डाउनलोड करें',
       kitNote: 'PDF पूर्वावलोकन कंप्यूटर पर बेहतर है। फोन पर PDF खोलें का उपयोग करें।'
     },
-    labels: { search: 'खोजें', allResources: 'सभी संसाधन', lifeSituations: 'जीवन जरूरतें', verified: 'सत्यापित ह्यूस्टन परिणाम', source: 'स्रोत', call: 'कॉल', website: 'वेबसाइट' },
+    labels: { search: 'खोजें', allResources: 'सभी संसाधन', lifeSituations: 'जीवन जरूरतें', verified: 'ह्यूस्टन की विस्तृत प्रोफ़ाइल', source: 'स्रोत', call: 'कॉल', website: 'वेबसाइट' },
     forms: { name: 'नाम', email: 'ईमेल', details: 'विवरण', submitFeedback: 'फीडबैक भेजें', received: 'प्राप्त हुआ' },
     chatbot: { title: 'नागरिक नेविगेटर', placeholder: 'अपना प्रश्न लिखें...', close: 'बंद करें', prompts: ['भोजन', 'बिल', 'डॉक्टर', 'स्कूल', 'कानूनी मदद', 'यातायात', 'आपातकाल', 'दस्तावेज', 'आवास या किराया', 'अंग्रेज़ी या कक्षाएँ', 'बाल देखभाल', 'लाभ और 211'] },
     misc: { guide: 'गाइड', urgent: 'तत्काल मदद', touchpoints: 'ह्यूस्टन सहायता बिंदु' }
@@ -390,8 +390,8 @@ export const locales = {
       actionTitle: 'Harris County خاندانوں کے لیے بنایا گیا۔'
     },
     pages: {
-      directoryTitle: 'ہیوسٹن وسائل ڈائریکٹری',
-      directoryDesc: 'ضرورت کے مطابق ہیوسٹن اور Harris County وسائل تلاش کریں۔',
+      directoryTitle: 'ٹیکساس وسائل تلاش',
+      directoryDesc: 'پورے ٹیکساس میں ZIP کوڈ سے تلاش کریں، پھر ہیوسٹن اور Harris County کی تفصیلی پروفائل دیکھیں۔',
       guidesTitle: 'ہیوسٹن قدم بہ قدم رہنما',
       kitTitle: 'پرنٹ کٹ نمونہ',
       kitDesc: 'Harris County امدادی گائیڈ کا پیش نظارہ جو خاندان New American Kit میں حاصل کر سکتے ہیں۔',
@@ -400,7 +400,7 @@ export const locales = {
       kitDownload: 'گائیڈ ڈاؤن لوڈ کریں',
       kitNote: 'PDF پیش نظارہ کمپیوٹر پر بہتر ہے۔ فون پر PDF کھولیں استعمال کریں۔'
     },
-    labels: { search: 'تلاش', allResources: 'تمام وسائل', lifeSituations: 'زندگی کی ضروریات', verified: 'تصدیق شدہ ہیوسٹن نتائج', source: 'ذریعہ', call: 'کال', website: 'ویب سائٹ' },
+    labels: { search: 'تلاش', allResources: 'تمام وسائل', lifeSituations: 'زندگی کی ضروریات', verified: 'ہیوسٹن کی تفصیلی پروفائل', source: 'ذریعہ', call: 'کال', website: 'ویب سائٹ' },
     forms: { name: 'نام', email: 'ای میل', details: 'تفصیلات', submitFeedback: 'رائے بھیجیں', received: 'موصول ہوا' },
     chatbot: { title: 'شہری رہنما', placeholder: 'اپنا سوال لکھیں...', close: 'بند کریں', prompts: ['خوراک', 'بل', 'ڈاکٹر', 'اسکول', 'قانونی مدد', 'آمد و رفت', 'ایمرجنسی', 'دستاویزات', 'رہائش یا کرایہ', 'انگریزی یا کلاسیں', 'بچوں کی دیکھ بھال', 'فوائد اور 211'] },
     misc: { guide: 'رہنما', urgent: 'فوری مدد', touchpoints: 'ہیوسٹن مدد مقامات' }

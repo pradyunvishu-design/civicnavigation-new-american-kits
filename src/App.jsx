@@ -19,6 +19,7 @@ import {
   GraduationCap,
   Home as HomeIcon,
   Languages,
+  Map as MapIcon,
   MapPin,
   Menu,
   MessageSquare,
@@ -48,6 +49,12 @@ import {
   supportedLanguages,
   translateStaticText
 } from './houstonData';
+import {
+  texasDataSources,
+  texasFoodBanks,
+  texasNeedFilters,
+  texasStatewideResources
+} from './texasResources';
 
 const BRAND = 'civicnavigation';
 const BRAND_LOGO_PATH = '/brand/civicnavigation-premium-logo.png';
@@ -231,6 +238,30 @@ function mapHref(address) {
 
 function mapEmbedHref(address) {
   return address ? `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed` : undefined;
+}
+
+let texasZipDataPromise;
+
+function loadTexasZipData() {
+  if (!texasZipDataPromise) {
+    texasZipDataPromise = fetch('/data/texas-zip-centroids.json').then(response => {
+      if (!response.ok) throw new Error('ZIP data could not be loaded.');
+      return response.json();
+    });
+  }
+  return texasZipDataPromise;
+}
+
+function distanceInMiles(from, to) {
+  const earthRadiusMiles = 3958.8;
+  const radians = degrees => degrees * (Math.PI / 180);
+  const latitudeDelta = radians(to.latitude - from.latitude);
+  const longitudeDelta = radians(to.longitude - from.longitude);
+  const fromLatitude = radians(from.latitude);
+  const toLatitude = radians(to.latitude);
+  const a = Math.sin(latitudeDelta / 2) ** 2
+    + Math.cos(fromLatitude) * Math.cos(toLatitude) * Math.sin(longitudeDelta / 2) ** 2;
+  return earthRadiusMiles * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function organizationInitials(name) {
@@ -612,15 +643,16 @@ function DirectoryPage({ lang, trackReferral }) {
       <section className="container content-intro-grid" aria-label="How to use the directory">
         <article>
           <p className="eyebrow">Use the directory with confidence</p>
-          <h2>Details for the decision—not just a name and address.</h2>
-          <p>Each listing explains who the service is for, what it may cost, what to prepare, where to begin, and how to confirm the information with the provider.</p>
+          <h2>Start with your ZIP, then open the details.</h2>
+          <p>The Texas finder gives every ZIP code a trusted local starting point. Below it, detailed Houston profiles explain eligibility, cost, documents, language access, and the next action to take.</p>
         </article>
         <ol className="plain-steps">
-          <li><strong>Choose a need.</strong><span>Search a life situation or organization name.</span></li>
-          <li><strong>Compare the details.</strong><span>Review eligibility, language, cost, documents, and service area.</span></li>
+          <li><strong>Enter your ZIP.</strong><span>See nearby physical locations and official statewide tools.</span></li>
+          <li><strong>Choose a need.</strong><span>Filter food, benefits, housing, jobs, schools, or legal help.</span></li>
           <li><strong>Confirm before traveling.</strong><span>Call or open the official source because funding, hours, and intake rules can change.</span></li>
         </ol>
       </section>
+      <TexasZipFinder trackReferral={trackReferral} />
       <section className="portal-layout container">
         <aside className="filter-panel">
           <label>
@@ -664,6 +696,202 @@ function DirectoryPage({ lang, trackReferral }) {
         </div>
       </section>
     </PageTransition>
+  );
+}
+
+function TexasZipFinder({ trackReferral }) {
+  const [zipInput, setZipInput] = useState('');
+  const [selectedNeed, setSelectedNeed] = useState('all');
+  const [zipResult, setZipResult] = useState(null);
+  const [nearbyFoodBanks, setNearbyFoodBanks] = useState([]);
+  const [expandedMapId, setExpandedMapId] = useState(null);
+  const [searchError, setSearchError] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+
+  const submitZip = async event => {
+    event.preventDefault();
+    const cleanZip = zipInput.replace(/\D/g, '').slice(0, 5);
+    setZipInput(cleanZip);
+    setExpandedMapId(null);
+
+    if (cleanZip.length !== 5) {
+      setSearchError('Enter a five-digit Texas ZIP code.');
+      setZipResult(null);
+      return;
+    }
+
+    setIsSearching(true);
+    setSearchError('');
+
+    try {
+      const zipRows = await loadTexasZipData();
+      const zipLookup = new Map(zipRows.map(row => [row.zip, row]));
+      const matchedZip = zipLookup.get(cleanZip);
+
+      if (!matchedZip) {
+        setZipResult(null);
+        setNearbyFoodBanks([]);
+        setSearchError('That ZIP code was not found in Texas. Check the number and try again.');
+        return;
+      }
+
+      const rankedFoodBanks = texasFoodBanks
+        .map(resource => {
+          const resourceZip = zipLookup.get(resource.zip);
+          return resourceZip
+            ? { ...resource, distance: distanceInMiles(matchedZip, resourceZip) }
+            : null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 5);
+
+      setZipResult(matchedZip);
+      setNearbyFoodBanks(rankedFoodBanks);
+      trackReferral('zip-search');
+    } catch {
+      setZipResult(null);
+      setNearbyFoodBanks([]);
+      setSearchError('The ZIP finder could not load. Please try again or call 211 for immediate local referrals.');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const statewideResults = texasStatewideResources.filter(resource => (
+    selectedNeed === 'all' || resource.need === 'all' || resource.need === selectedNeed
+  ));
+  const showFoodBanks = selectedNeed === 'all' || selectedNeed === 'food';
+
+  return (
+    <section className="container texas-finder" aria-labelledby="texas-finder-title">
+      <div className="texas-finder-heading">
+        <div>
+          <p className="eyebrow">Now serving every Texas ZIP code</p>
+          <h2 id="texas-finder-title">Find trusted help near you</h2>
+          <p>Enter your ZIP code to see the closest statewide food-bank network partners and official Texas search tools for benefits, health, jobs, childcare, and legal help.</p>
+        </div>
+        <span className="texas-coverage-badge"><MapPin size={16} /> 254 counties covered</span>
+      </div>
+
+      <form className="zip-search-form" onSubmit={submitZip} noValidate>
+        <label htmlFor="texas-zip">Your Texas ZIP code</label>
+        <div className="zip-search-controls">
+          <div className="zip-input-wrap">
+            <MapPin size={19} />
+            <input
+              id="texas-zip"
+              inputMode="numeric"
+              autoComplete="postal-code"
+              maxLength="5"
+              pattern="[0-9]{5}"
+              placeholder="Example: 78701"
+              value={zipInput}
+              onChange={event => setZipInput(event.target.value.replace(/\D/g, '').slice(0, 5))}
+            />
+          </div>
+          <button className="dark-button" type="submit" disabled={isSearching}>
+            <Search size={17} /> {isSearching ? 'Finding help…' : 'Find nearby help'}
+          </button>
+        </div>
+        {searchError && <p className="zip-search-error" role="alert"><AlertTriangle size={16} /> {searchError}</p>}
+      </form>
+
+      <div className="need-filter-row" aria-label="Filter Texas results by need">
+        {texasNeedFilters.map(filter => (
+          <button
+            key={filter.id}
+            type="button"
+            className={selectedNeed === filter.id ? 'active' : ''}
+            aria-pressed={selectedNeed === filter.id}
+            onClick={() => setSelectedNeed(filter.id)}
+          >
+            {filter.label}
+          </button>
+        ))}
+      </div>
+
+      {!zipResult && !searchError && (
+        <div className="texas-finder-preview">
+          <div><strong>1</strong><span>Enter any five-digit Texas ZIP code.</span></div>
+          <div><strong>2</strong><span>Compare nearby and statewide starting points.</span></div>
+          <div><strong>3</strong><span>Open the map, call, or confirm details on the official site.</span></div>
+        </div>
+      )}
+
+      {zipResult && (
+        <div className="texas-results" aria-live="polite">
+          <div className="texas-results-summary">
+            <div>
+              <p className="eyebrow">Results near {zipResult.zip}</p>
+              <h3>{zipResult.city}{zipResult.county ? ` · ${zipResult.county} County` : ''}</h3>
+              <p>Distances are estimates between ZIP-code centers. Call before traveling to confirm the right location, hours, documents, and service area.</p>
+            </div>
+            <a href="https://www.211texas.org/" target="_blank" rel="noreferrer" onClick={() => trackReferral('zip-search')}>
+              Search every listed service on 211 Texas <ExternalLink size={15} />
+            </a>
+          </div>
+
+          {showFoodBanks && nearbyFoodBanks.length > 0 && (
+            <div className="nearby-section">
+              <div className="nearby-section-title">
+                <div><p className="eyebrow">Closest physical starting points</p><h3>Food and benefits assistance</h3></div>
+                <span>Feeding Texas network</span>
+              </div>
+              <div className="nearby-resource-grid">
+                {nearbyFoodBanks.map((resource, index) => {
+                  const mapIsOpen = expandedMapId === resource.id;
+                  return (
+                    <article className="nearby-resource-card" key={resource.id}>
+                      <div className="nearby-card-topline"><span>#{index + 1} nearest</span><strong>~{Math.round(resource.distance)} miles</strong></div>
+                      <h4>{resource.name}</h4>
+                      <p className="nearby-address"><MapPin size={16} /> {resource.address}</p>
+                      <p className="nearby-counties"><strong>Service area:</strong> {resource.counties}</p>
+                      <div className="nearby-card-actions">
+                        <a href={telHref(resource.phone)} onClick={() => trackReferral('food')}><Phone size={15} /> Call</a>
+                        <button type="button" aria-expanded={mapIsOpen} onClick={() => setExpandedMapId(mapIsOpen ? null : resource.id)}><MapIcon size={15} /> {mapIsOpen ? 'Hide map' : 'See map'}</button>
+                        <a href={resource.website} target="_blank" rel="noreferrer" onClick={() => trackReferral('food')}>Official site <ExternalLink size={14} /></a>
+                      </div>
+                      {mapIsOpen && (
+                        <div className="nearby-inline-map">
+                          <iframe title={`Map showing ${resource.name}`} src={mapEmbedHref(resource.address)} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+                          <a href={mapHref(resource.address)} target="_blank" rel="noreferrer"><Navigation size={15} /> Open turn-by-turn directions</a>
+                        </div>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="statewide-section">
+            <div className="nearby-section-title">
+              <div><p className="eyebrow">Official statewide tools</p><h3>More help for ZIP {zipResult.zip}</h3></div>
+              <span>{statewideResults.length} starting points</span>
+            </div>
+            <div className="statewide-resource-grid">
+              {statewideResults.map(resource => (
+                <article className="statewide-resource-card" key={resource.id}>
+                  <div><span>Statewide</span><ShieldCheck size={17} /></div>
+                  <h4>{resource.name}</h4>
+                  <p>{resource.description}</p>
+                  <small>Source: {resource.source}</small>
+                  <div className="nearby-card-actions">
+                    {resource.phone && <a href={telHref(resource.phone)} onClick={() => trackReferral('texas')}><Phone size={15} /> Call</a>}
+                    <a href={resource.website} target="_blank" rel="noreferrer" onClick={() => trackReferral('texas')}>{resource.action} <ExternalLink size={14} /></a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <p className="texas-data-note">
+        ZIP coordinates from <a href={texasDataSources.zipData} target="_blank" rel="noreferrer">GeoNames</a> (CC BY 3.0). Food-bank locations and county coverage from <a href={texasDataSources.foodBanks} target="_blank" rel="noreferrer">Feeding Texas</a>. Information can change; confirm with the provider.
+      </p>
+    </section>
   );
 }
 
