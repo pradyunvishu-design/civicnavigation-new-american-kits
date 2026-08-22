@@ -476,7 +476,7 @@ function Home({ lang }) {
   const t = useCopy(lang);
   const storyRef = useRef(null);
   const videoRef = useRef(null);
-  const scrubFrameRef = useRef(null);
+  const scrollStopTimerRef = useRef(null);
   const reduceMotion = useReducedMotion();
   const [storyPhase, setStoryPhase] = useState(-1);
   const { scrollYProgress } = useScroll({
@@ -492,15 +492,15 @@ function Home({ lang }) {
   const videoScale = useTransform(smoothProgress, [0, 0.5, 1], [1.02, 1.055, 1.085]);
   const videoY = useTransform(smoothProgress, [0, 0.5, 1], ['0%', '-1.5%', '-3%']);
 
-  useMotionValueEvent(scrollYProgress, 'change', progress => {
+  useMotionValueEvent(scrollYProgress, 'change', () => {
     const video = videoRef.current;
-    if (!video || reduceMotion || !Number.isFinite(video.duration)) return;
-    const targetTime = Math.min(video.duration - 0.04, Math.max(0, progress * video.duration));
-    if (scrubFrameRef.current) cancelAnimationFrame(scrubFrameRef.current);
-    scrubFrameRef.current = requestAnimationFrame(() => {
-      if (Math.abs(video.currentTime - targetTime) >= 1 / 60) video.currentTime = targetTime;
-      scrubFrameRef.current = null;
-    });
+    if (!video || reduceMotion || video.readyState < 2) return;
+    if (video.paused) video.play().catch(() => {});
+    if (scrollStopTimerRef.current) clearTimeout(scrollStopTimerRef.current);
+    scrollStopTimerRef.current = setTimeout(() => {
+      video.pause();
+      scrollStopTimerRef.current = null;
+    }, 180);
   });
 
   useMotionValueEvent(smoothProgress, 'change', progress => {
@@ -509,8 +509,10 @@ function Home({ lang }) {
   });
 
   useEffect(() => {
+    const video = videoRef.current;
     return () => {
-      if (scrubFrameRef.current) cancelAnimationFrame(scrubFrameRef.current);
+      if (scrollStopTimerRef.current) clearTimeout(scrollStopTimerRef.current);
+      video?.pause();
     };
   }, []);
 
@@ -542,12 +544,11 @@ function Home({ lang }) {
               muted
               playsInline
               preload="auto"
+              loop={!reduceMotion}
               aria-label={t.home.storyTitle}
               onLoadedMetadata={event => {
                 event.currentTarget.pause();
-                event.currentTarget.currentTime = reduceMotion
-                  ? Math.min(4, event.currentTarget.duration / 2)
-                  : Math.min(event.currentTarget.duration - 0.04, scrollYProgress.get() * event.currentTarget.duration);
+                event.currentTarget.currentTime = reduceMotion ? Math.min(4, event.currentTarget.duration / 2) : 0;
               }}
             />
           </motion.figure>
