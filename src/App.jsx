@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -61,6 +61,7 @@ import { observeUiTranslations } from './uiTranslation';
 const BRAND = 'civicnavigation';
 const BRAND_LOGO_PATH = '/brand/civicnavigation-premium-logo.png';
 const KIT_PDF_PATH = '/kits/houston-assistance-guide.pdf';
+const LANDING_VIDEO_PATH = '/media/civic-navigation-scroll.mp4';
 const CONTACT_EMAIL = 'nacivicnav@gmail.com';
 
 const verifiedServiceFacts = [
@@ -442,9 +443,9 @@ function Navbar({ lang, setLang }) {
   );
 }
 
-function PageTransition({ children }) {
+function PageTransition({ children, className = '' }) {
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.22 }}>
+    <motion.div className={`page-transition ${className}`.trim()} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.22 }}>
       {children}
     </motion.div>
   );
@@ -474,69 +475,71 @@ function InternalPhoto({ src, alt, caption }) {
 function Home({ lang }) {
   const t = useCopy(lang);
   const storyRef = useRef(null);
+  const videoRef = useRef(null);
+  const reduceMotion = useReducedMotion();
+  const [storyPhase, setStoryPhase] = useState(-1);
   const { scrollYProgress } = useScroll({
     target: storyRef,
     offset: ['start start', 'end end']
   });
-  const mapScale = useTransform(scrollYProgress, [0, 0.28, 0.72, 1], [1.01, 1.08, 1.14, 0.98]);
-  const mapY = useTransform(scrollYProgress, [0, 0.58, 1], [0, -22, -64]);
-  const mapOpacity = useTransform(scrollYProgress, [0, 0.9, 1], [1, 1, 0.78]);
-  const heroY = useTransform(scrollYProgress, [0, 0.24, 0.42], [0, -18, -58]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2, 0.38], [1, 0.92, 0.18]);
+  const videoScale = useTransform(scrollYProgress, [0, 0.34, 0.72, 1], [0.92, 1.02, 1.11, 1.04]);
+  const videoY = useTransform(scrollYProgress, [0, 0.52, 1], [42, -18, -54]);
+  const videoRotateX = useTransform(scrollYProgress, [0, 0.5, 1], [7, 0, -4]);
+  const videoRotateY = useTransform(scrollYProgress, [0, 0.46, 1], [-7, 2, 6]);
+  useMotionValueEvent(scrollYProgress, 'change', progress => {
+    const nextPhase = progress < 0.18 ? -1 : Math.min(3, Math.floor((progress - 0.18) / 0.205));
+    setStoryPhase(current => current === nextPhase ? current : nextPhase);
+    const video = videoRef.current;
+    if (!video || reduceMotion || !Number.isFinite(video.duration)) return;
+    const targetTime = Math.min(video.duration - 0.04, Math.max(0, progress * video.duration));
+    if (Math.abs(video.currentTime - targetTime) > 0.04) video.currentTime = targetTime;
+  });
 
   return (
-    <PageTransition>
+    <PageTransition className="home-page">
       <section className="story-viewport" ref={storyRef}>
         <div className="sticky-stage">
-          <div className="story-atmosphere" aria-hidden="true">
-            <span className="paper-current current-one" />
-            <span className="paper-current current-two" />
-            <span className="paper-current current-three" />
-            <span className="scan-light" />
-            <span className="civic-spark spark-one" />
-            <span className="civic-spark spark-two" />
-            <span className="civic-spark spark-three" />
-          </div>
-          <motion.figure className="map-canvas-frame" style={{ scale: mapScale, y: mapY, opacity: mapOpacity }}>
-            <img src={imageSet.hero} alt="" />
-            <span className="origin-pulse" />
-            <span className="route-arc arc-one" />
-            <span className="route-arc arc-two" />
-            <span className="route-arc arc-three" />
-          </motion.figure>
-          <motion.div className="story-cue" style={{ opacity: heroOpacity, y: heroY }} aria-hidden="true">
-            <span>{t.home.storyEyebrow}</span>
-          </motion.div>
-          <motion.div className="hero-card ink-panel" style={{ opacity: heroOpacity, y: heroY }}>
+          <div className="cinematic-grid" aria-hidden="true" />
+          <div className={`cinematic-intro${storyPhase === -1 ? ' is-active' : ''}`}>
             <p className="eyebrow cyan">{t.home.eyebrow}</p>
             <h1>{t.home.title}</h1>
+          </div>
+          <div className="cinematic-chapters">
+            {t.home.chapters.map(([title, text], index) => (
+              <article className={`cinematic-chapter${storyPhase === index ? ' is-active' : ''}`} key={title}>
+                <h2>{title.replace(/^\d+\s*\/\/\s*/, '')}</h2>
+                <p>{text}</p>
+              </article>
+            ))}
+          </div>
+          <motion.figure
+            className="cinematic-video-frame"
+            style={{ scale: reduceMotion ? 1 : videoScale, y: reduceMotion ? 0 : videoY, rotateX: reduceMotion ? 0 : videoRotateX, rotateY: reduceMotion ? 0 : videoRotateY }}
+          >
+            <video
+              ref={videoRef}
+              src={LANDING_VIDEO_PATH}
+              poster={imageSet.hero}
+              muted
+              playsInline
+              preload="auto"
+              aria-label={t.home.storyTitle}
+              onLoadedMetadata={event => {
+                event.currentTarget.pause();
+                const progress = scrollYProgress.get();
+                event.currentTarget.currentTime = reduceMotion
+                  ? Math.min(4, event.currentTarget.duration / 2)
+                  : Math.min(event.currentTarget.duration - 0.04, progress * event.currentTarget.duration);
+              }}
+            />
+          </motion.figure>
+          <div className={`cinematic-footer${storyPhase === -1 ? ' is-active' : ''}`}>
             <p>{t.home.subtitle}</p>
             <div className="hero-actions">
               <Link to="/directory" className="ink-link">{t.home.primary} <ChevronRight size={16} /></Link>
               <Link to="/guides" className="ink-link secondary">{t.home.secondary} <ChevronRight size={16} /></Link>
             </div>
-          </motion.div>
-          <div className="story-progress" aria-hidden="true">
-            {t.home.chapters.map((chapter, index) => (
-              <span key={chapter[0]} style={{ '--step': index }} />
-            ))}
           </div>
-        </div>
-        <div className="story-cards container">
-          {t.home.chapters.map(([title, text], index) => (
-            <motion.article
-              className="narrative-card"
-              key={title}
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.55 }}
-              transition={{ duration: 0.45 }}
-            >
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <h2>{title}</h2>
-              <p>{text}</p>
-            </motion.article>
-          ))}
         </div>
       </section>
 
