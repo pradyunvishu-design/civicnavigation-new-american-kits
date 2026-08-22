@@ -80,6 +80,37 @@ export const texasStatewideResources = [
   }
 ];
 
+const texasFoodBankImages = {
+  'brazos-valley-food-bank': 'brazos-valley-food-bank.jpg',
+  'central-texas-food-bank': 'central-texas-food-bank.jpg',
+  'coastal-bend-food-bank': 'coastal-bend-food-bank.jpg',
+  'east-texas-food-bank': 'east-texas-food-bank.jpg',
+  'el-pasoans-fighting-hunger': 'el-pasoans-fighting-hunger.jpg',
+  'golden-crescent-food-bank': 'golden-crescent-food-bank.jpg',
+  'rio-grande-valley-food-bank': 'rio-grande-valley-food-bank.jpg',
+  'west-central-texas-food-bank': 'west-central-texas-food-bank.jpg',
+  'galveston-county-food-bank': 'galveston-county-food-bank.jpg',
+  'high-plains-food-bank': 'high-plains-food-bank.jpg',
+  'houston-food-bank-texas': 'houston-food-bank-texas.jpg',
+  'montgomery-county-food-bank': 'montgomery-county-food-bank.jpg',
+  'north-texas-food-bank': 'north-texas-food-bank.jpg',
+  'san-antonio-food-bank': 'san-antonio-food-bank.jpg',
+  'south-plains-food-bank': 'south-plains-food-bank.webp',
+  'south-texas-food-bank': 'south-texas-food-bank.jpg',
+  'southeast-texas-food-bank': 'southeast-texas-food-bank.jpg',
+  'tarrant-area-food-bank': 'tarrant-area-food-bank.webp',
+  'west-texas-food-bank': 'west-texas-food-bank.jpg',
+  'wichita-falls-area-food-bank': 'wichita-falls-area-food-bank.jpg'
+};
+
+const identityImageIds = new Set([
+  'el-pasoans-fighting-hunger',
+  'golden-crescent-food-bank',
+  'montgomery-county-food-bank',
+  'south-texas-food-bank',
+  'southeast-texas-food-bank'
+]);
+
 export const texasFoodBanks = [
   { id: 'brazos-valley-food-bank', name: 'Brazos Valley Food Bank', address: '1501 Independence Ave, Bryan, TX 77803', zip: '77803', phone: '979-779-3663', website: 'https://www.bvfb.org/', counties: 'Brazos, Burleson, Grimes, Madison, Robertson, and Washington' },
   { id: 'central-texas-food-bank', name: 'Central Texas Food Bank', address: '6500 Metropolis Drive, Austin, TX 78744', zip: '78744', phone: '512-282-2111', website: 'https://www.centraltexasfoodbank.org/', counties: 'Bastrop, Bell, Blanco, Burnet, Caldwell, Coryell, Falls, Fayette, Freestone, Gillespie, Hays, Lampasas, Lee, Limestone, Llano, McLennan, Milam, Mills, San Saba, Travis, and Williamson' },
@@ -101,7 +132,11 @@ export const texasFoodBanks = [
   { id: 'tarrant-area-food-bank', name: 'Tarrant Area Food Bank', address: '2600 Cullen St, Fort Worth, TX 76107', zip: '76107', phone: '817-857-7100', website: 'https://tafb.org/', counties: 'Bosque, Cooke, Denton, Erath, Hamilton, Hill, Hood, Johnson, Palo Pinto, Parker, Somervell, Tarrant, and Wise' },
   { id: 'west-texas-food-bank', name: 'West Texas Food Bank', address: '411 S Pagewood Ave, Odessa, TX 79761', zip: '79761', phone: '432-580-6333', website: 'https://wtxfoodbank.org/', counties: 'Andrews, Borden, Brewster, Crane, Dawson, Ector, Glasscock, Howard, Jeff Davis, Loving, Martin, Midland, Pecos, Presidio, Reeves, Terrell, Upton, Ward, and Winkler' },
   { id: 'wichita-falls-area-food-bank', name: 'Wichita Falls Area Food Bank', address: '1230 Midwestern Parkway, Wichita Falls, TX 76307', zip: '76307', phone: '940-766-2322', website: 'https://www.wfafb.org/', counties: 'Archer, Baylor, Clay, Foard, Haskell, Jack, Knox, Montague, Throckmorton, Wichita, Wilbarger, and Young' }
-];
+].map(resource => ({
+  ...resource,
+  image: `/photos/texas-food-banks-optimized/${texasFoodBankImages[resource.id]}`,
+  imageKind: identityImageIds.has(resource.id) ? 'identity' : 'photo'
+}));
 
 export const texasDataSources = {
   foodBanks: 'https://www.feedingtexas.org/food-banks/?display=all',

@@ -362,6 +362,7 @@ function AppContent() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home lang={lang} />} />
             <Route path="/directory" element={<DirectoryPage lang={lang} trackReferral={trackReferral} />} />
+            <Route path="/directory/texas/:resourceId" element={<TexasFoodBankProfilePage trackReferral={trackReferral} />} />
             <Route path="/directory/:resourceId" element={<ResourceProfilePage lang={lang} trackReferral={trackReferral} />} />
             <Route path="/guides" element={<GuidesPage lang={lang} />} />
             <Route path="/kit" element={<KitPage lang={lang} />} />
@@ -844,10 +845,14 @@ function TexasZipFinder({ trackReferral }) {
                   return (
                     <article className="nearby-resource-card" key={resource.id}>
                       <div className="nearby-card-topline"><span>#{index + 1} nearest</span><strong>~{Math.round(resource.distance)} miles</strong></div>
-                      <h4>{resource.name}</h4>
+                      <Link className={`nearby-resource-image ${resource.imageKind === 'identity' ? 'identity-image' : ''}`} to={`/directory/texas/${resource.id}`} aria-label={`View the full ${resource.name} profile`}>
+                        <img src={resource.image} alt={`${resource.name} organization image from its official website`} />
+                      </Link>
+                      <h4><Link to={`/directory/texas/${resource.id}`}>{resource.name}</Link></h4>
                       <p className="nearby-address"><MapPin size={16} /> {resource.address}</p>
                       <p className="nearby-counties"><strong>Service area:</strong> {resource.counties}</p>
                       <div className="nearby-card-actions">
+                        <Link className="nearby-details-link" to={`/directory/texas/${resource.id}`}>View details <ChevronRight size={15} /></Link>
                         <a href={telHref(resource.phone)} onClick={() => trackReferral('food')}><Phone size={15} /> Call</a>
                         <button type="button" aria-expanded={mapIsOpen} onClick={() => setExpandedMapId(mapIsOpen ? null : resource.id)}><MapIcon size={15} /> {mapIsOpen ? 'Hide map' : 'See map'}</button>
                         <a href={resource.website} target="_blank" rel="noreferrer" onClick={() => trackReferral('food')}>Official site <ExternalLink size={14} /></a>
@@ -892,6 +897,122 @@ function TexasZipFinder({ trackReferral }) {
         ZIP coordinates from <a href={texasDataSources.zipData} target="_blank" rel="noreferrer">GeoNames</a> (CC BY 3.0). Food-bank locations and county coverage from <a href={texasDataSources.foodBanks} target="_blank" rel="noreferrer">Feeding Texas</a>. Information can change; confirm with the provider.
       </p>
     </section>
+  );
+}
+
+function TexasFoodBankProfilePage({ trackReferral }) {
+  const { resourceId } = useParams();
+  const resource = texasFoodBanks.find(item => item.id === resourceId);
+
+  if (!resource) {
+    return (
+      <PageTransition>
+        <PageHeader eyebrow="Texas resource finder" title="Organization not found" subtitle="This Texas food-bank profile may have moved or been removed." />
+        <section className="container profile-not-found"><Link className="dark-button" to="/directory"><ArrowLeft size={15} /> Back to ZIP finder</Link></section>
+      </PageTransition>
+    );
+  }
+
+  const phoneLink = telHref(resource.phone);
+  const directionsLink = mapHref(resource.address);
+
+  return (
+    <PageTransition>
+      <section className="profile-hero texas-profile-hero">
+        <div className="container profile-hero-grid">
+          <div className="profile-identity">
+            <Link className="back-link" to="/directory"><ArrowLeft size={15} /> Back to Texas ZIP finder</Link>
+            <div className="profile-title-row">
+              <span className="organization-mark large" aria-hidden="true"><Utensils size={24} /></span>
+              <div><p className="eyebrow">Feeding Texas network member</p><h1>{resource.name}</h1></div>
+            </div>
+            <p className="profile-lede">A regional food-bank organization serving families and community partners across {resource.counties}. Use this page to understand the service area, prepare your questions, and contact the organization for the nearest current food distribution or partner pantry.</p>
+            <div className="profile-primary-actions">
+              <a className="dark-button" href={phoneLink} onClick={() => trackReferral('food')}><Phone size={17} /> Call now</a>
+              <a className="outline-button" href={directionsLink} target="_blank" rel="noreferrer" onClick={() => trackReferral('food')}><Navigation size={17} /> Get directions</a>
+              <a className="outline-button" href={resource.website} target="_blank" rel="noreferrer" onClick={() => trackReferral('food')}><Globe size={17} /> Official website</a>
+            </div>
+          </div>
+          <figure className={`profile-banner texas-profile-banner ${resource.imageKind === 'identity' ? 'identity-image' : ''}`}>
+            <img src={resource.image} alt={`${resource.name} organization image from its official website`} />
+            <figcaption>Organization image from <a href={resource.website} target="_blank" rel="noreferrer">{resource.name}’s official website <ExternalLink size={12} /></a>.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section className="container profile-contact-strip texas-profile-contact" aria-label="Organization contact summary">
+        <div><MapPin size={19} /><span><strong>Address</strong>{resource.address}</span></div>
+        <div><Phone size={19} /><span><strong>Phone</strong><a href={phoneLink}>{resource.phone}</a></span></div>
+        <div><Building2 size={19} /><span><strong>Regional service area</strong>{resource.counties}</span></div>
+        <div><ShieldCheck size={19} /><span><strong>Directory source</strong><a href={texasDataSources.foodBanks} target="_blank" rel="noreferrer">Feeding Texas</a></span></div>
+      </section>
+
+      <section className="container profile-main-grid">
+        <div className="profile-main-column">
+          <article className="profile-section-card">
+            <p className="eyebrow">What this network can help with</p>
+            <h2>Start here, then confirm the local program</h2>
+            <div className="service-offer-grid">
+              <div><span>01</span><strong>Find nearby partner pantries and food distributions</strong></div>
+              <div><span>02</span><strong>Ask about emergency groceries and mobile distributions</strong></div>
+              <div><span>03</span><strong>Ask whether benefits-application help is available</strong></div>
+              <div><span>04</span><strong>Get referred to other community support when available</strong></div>
+            </div>
+            <div className="program-status-card"><AlertTriangle size={23} /><div><strong>The listed address may be a warehouse or administrative office.</strong><p>Call or use the official website to find the correct public distribution site before traveling.</p></div></div>
+          </article>
+
+          <article className="profile-section-card about-organization">
+            <p className="eyebrow">About this organization</p>
+            <h2>Regional help connected to local partners</h2>
+            <p>{resource.name} is listed in the statewide Feeding Texas food-bank network. Regional food banks typically work through local pantries, schools, mobile distributions, and community organizations. Exact services, schedules, intake rules, and available food vary by partner and day.</p>
+            <div className="about-fact-grid">
+              <div><Building2 size={18} /><span><strong>Counties listed</strong>{resource.counties}</span></div>
+              <div><MapPin size={18} /><span><strong>Organization location</strong>{resource.address}</span></div>
+              <div><Phone size={18} /><span><strong>Best first step</strong>Call and share your ZIP code and immediate need.</span></div>
+              <div><Globe size={18} /><span><strong>Current information</strong>Check the organization’s official website.</span></div>
+            </div>
+          </article>
+
+          <article className="profile-section-card faq-section">
+            <p className="eyebrow">Common questions</p>
+            <h2>Know what to ask before you go</h2>
+            <details open><summary>Can I receive food at this address?</summary><p>Not always. A food bank may be a warehouse that supplies other locations. Ask for the closest public pantry or distribution serving your ZIP code.</p></details>
+            <details><summary>What documents should I bring?</summary><p>Requirements vary. Ask whether the local partner requests an ID, proof of address, household information, or no documents. Do not delay an urgent call because you are missing paperwork.</p></details>
+            <details><summary>Do I need an appointment?</summary><p>Some distributions are walk-in, while others require registration or have limited arrival windows. Confirm the day, time, location, and appointment rules before leaving.</p></details>
+            <details><summary>Can I ask for language help?</summary><p>Tell the organization your preferred language at the start of the call. Ask whether the local site offers bilingual staff, interpretation, or translated instructions.</p></details>
+          </article>
+        </div>
+
+        <aside className="profile-side-column">
+          <article className="profile-section-card preparation-card">
+            <ClipboardCheck size={26} />
+            <p className="eyebrow">Before you call</p>
+            <h2>Have these details ready</h2>
+            <div className="profile-call-script"><ul><li>Your five-digit ZIP code.</li><li>How many people are in your household.</li><li>Whether you need food today or can visit later.</li><li>Your preferred language and transportation limits.</li><li>Any dietary, mobility, or accessibility needs.</li></ul></div>
+          </article>
+
+          <article className="profile-section-card map-card">
+            <p className="eyebrow">Organization map</p>
+            <h2>See the location</h2>
+            <iframe title={`Map showing ${resource.name}`} src={mapEmbedHref(resource.address)} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+            <p>{resource.address}</p>
+            <a className="outline-button" href={directionsLink} target="_blank" rel="noreferrer"><Navigation size={16} /> Open directions</a>
+          </article>
+
+          <article className="profile-section-card verification-card">
+            <ShieldCheck size={25} />
+            <h2>Confirm before traveling</h2>
+            <p>CivicNavigation provides a starting point, not a guarantee of food availability, eligibility, or hours. Confirm details with the organization or call 211.</p>
+            <a href={resource.website} target="_blank" rel="noreferrer" onClick={() => trackReferral('source')}>Open official source <ExternalLink size={15} /></a>
+          </article>
+        </aside>
+      </section>
+
+      <section className="container profile-bottom-cta">
+        <div><p className="eyebrow">Need another option?</p><h2>Call 211 for a broader local search, or return to the Texas ZIP finder.</h2></div>
+        <div><a className="dark-button" href="tel:211"><Phone size={16} /> Call 211</a><Link className="outline-button" to="/directory">Search another ZIP code</Link></div>
+      </section>
+    </PageTransition>
   );
 }
 
