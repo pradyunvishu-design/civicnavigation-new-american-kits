@@ -3882,7 +3882,7 @@ img {
   margin: 0;
   color: var(--ink);
   font-family: var(--font-ui);
-  font-size: clamp(68px, 10.7vw, 166px);
+  font-size: clamp(62px, 9.2vw, 142px);
   font-weight: 800;
   letter-spacing: -0.075em;
   line-height: 0.84;
@@ -4024,8 +4024,8 @@ img {
   .cinematic-intro h1,
   .cinematic-chapter h2 {
     max-width: 10ch;
-    font-size: clamp(54px, 15vw, 82px);
-    line-height: 0.88;
+    font-size: clamp(48px, 13.2vw, 70px);
+    line-height: 0.9;
   }
 
   .cinematic-chapter p {

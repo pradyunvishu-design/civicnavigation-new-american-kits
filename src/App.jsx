@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -476,17 +476,53 @@ function Home({ lang }) {
   const t = useCopy(lang);
   const storyRef = useRef(null);
   const videoRef = useRef(null);
+  const scrollPlaybackRef = useRef({ progress: 0, timestamp: 0, rate: 0.6 });
   const reduceMotion = useReducedMotion();
   const [storyPhase, setStoryPhase] = useState(-1);
   const { scrollYProgress } = useScroll({
     target: storyRef,
     offset: ['start start', 'end end']
   });
-  const videoScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.02, 1.07, 1.11]);
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 72,
+    damping: 24,
+    mass: 0.35,
+    restDelta: 0.0005
+  });
+  const videoScale = useTransform(smoothProgress, [0, 0.5, 1], [1.02, 1.055, 1.085]);
+  const videoY = useTransform(smoothProgress, [0, 0.5, 1], ['0%', '-1.5%', '-3%']);
+
   useMotionValueEvent(scrollYProgress, 'change', progress => {
+    const now = performance.now();
+    const previous = scrollPlaybackRef.current;
+    const elapsed = previous.timestamp ? Math.max(16, now - previous.timestamp) : 16;
+    const velocity = Math.abs(progress - previous.progress) / elapsed;
+    previous.progress = progress;
+    previous.timestamp = now;
+    previous.rate = Math.min(2.6, 0.6 + velocity * 1050);
+  });
+
+  useMotionValueEvent(smoothProgress, 'change', progress => {
     const nextPhase = progress < 0.18 ? -1 : Math.min(3, Math.floor((progress - 0.18) / 0.205));
     setStoryPhase(current => current === nextPhase ? current : nextPhase);
   });
+
+  useEffect(() => {
+    if (reduceMotion) return undefined;
+    let frameId;
+    const updatePlayback = now => {
+      const video = videoRef.current;
+      const playback = scrollPlaybackRef.current;
+      const targetRate = now - playback.timestamp < 180 ? playback.rate : 0.6;
+      playback.rate += (targetRate - playback.rate) * 0.16;
+      if (video && video.readyState >= 2) {
+        video.playbackRate = Math.max(0.5, Math.min(2.6, playback.rate));
+      }
+      frameId = requestAnimationFrame(updatePlayback);
+    };
+    frameId = requestAnimationFrame(updatePlayback);
+    return () => cancelAnimationFrame(frameId);
+  }, [reduceMotion]);
 
   return (
     <PageTransition className="home-page">
@@ -507,7 +543,7 @@ function Home({ lang }) {
           </div>
           <motion.figure
             className="cinematic-video-frame"
-            style={{ scale: reduceMotion ? 1 : videoScale }}
+            style={{ scale: reduceMotion ? 1 : videoScale, y: reduceMotion ? 0 : videoY }}
           >
             <video
               ref={videoRef}
@@ -524,6 +560,7 @@ function Home({ lang }) {
                   event.currentTarget.pause();
                   event.currentTarget.currentTime = Math.min(4, event.currentTarget.duration / 2);
                 } else {
+                  event.currentTarget.playbackRate = 0.6;
                   event.currentTarget.play().catch(() => {});
                 }
               }}
