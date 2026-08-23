@@ -4171,15 +4171,12 @@ img {
   inset: -2%;
   overflow: hidden;
   background: #f5f1e7;
-  border-radius: calc(var(--sc-segp, 0) * 20px);
-  box-shadow: 0 46px 90px rgba(16, 36, 58, 0.2);
-  transform-origin: 67% 70%;
+  transform-origin: 67% 50%;
   transform:
-    perspective(1500px)
-    rotateX(calc(var(--sc-segp, 0) * 58deg))
-    rotateZ(calc(var(--sc-segp, 0) * -0.8deg))
-    scale(calc(1.04 + var(--sc-segp, 0) * 0.36))
-    translate3d(0, calc(var(--sc-segp, 0) * 2.5vh), 0);
+    perspective(1600px)
+    rotateX(calc(var(--sc-segp, 0) * 48deg))
+    rotateZ(calc(var(--sc-segp, 0) * -0.45deg))
+    scale(calc(1.04 + var(--sc-segp, 0) * 0.58));
   will-change: transform;
 }
 
@@ -4455,13 +4452,12 @@ img {
 @media (max-width: 860px) {
   .atlas-map-plane {
     inset: -3%;
-    transform-origin: 52% 73%;
+    transform-origin: 52% 50%;
     transform:
       perspective(1050px)
-      rotateX(calc(var(--sc-segp, 0) * 48deg))
-      rotateZ(calc(var(--sc-segp, 0) * -0.55deg))
-      scale(calc(1.06 + var(--sc-segp, 0) * 0.28))
-      translate3d(0, calc(var(--sc-segp, 0) * 2vh), 0);
+      rotateX(calc(var(--sc-segp, 0) * 44deg))
+      rotateZ(calc(var(--sc-segp, 0) * -0.35deg))
+      scale(calc(1.06 + var(--sc-segp, 0) * 0.38));
   }
 
   .atlas-map-plane > img {
