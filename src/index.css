@@ -4166,22 +4166,31 @@ img {
   background: #f5f1e7;
 }
 
-.atlas-world__leg > :is(img, video) {
-  filter: saturate(0.86) contrast(1.025) brightness(0.98);
+.atlas-map-plane {
+  position: absolute;
+  inset: -2%;
+  overflow: hidden;
+  background: #f5f1e7;
+  border-radius: calc(var(--sc-segp, 0) * 20px);
+  box-shadow: 0 46px 90px rgba(16, 36, 58, 0.2);
+  transform-origin: 67% 70%;
+  transform:
+    perspective(1500px)
+    rotateX(calc(var(--sc-segp, 0) * 58deg))
+    rotateZ(calc(var(--sc-segp, 0) * -0.8deg))
+    scale(calc(1.04 + var(--sc-segp, 0) * 0.36))
+    translate3d(0, calc(var(--sc-segp, 0) * 2.5vh), 0);
+  will-change: transform;
 }
 
-.atlas-world__leg--0 > :is(img, video),
-.atlas-world__leg--1 > img,
-.atlas-world__leg--2 > img {
+.atlas-map-plane > :is(img, video) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   object-position: 60% center;
-}
-
-.atlas-world__leg--3 > img {
-  object-position: 52% center;
-}
-
-.atlas-world__leg--4 > img {
-  object-position: center;
+  filter: saturate(0.86) contrast(1.025) brightness(0.98);
 }
 
 .atlas-world__paper,
@@ -4391,22 +4400,18 @@ img {
   z-index: 62;
   left: max(22px, calc((100vw - 1340px) / 2));
   bottom: 22px;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(34px, 1fr));
+  display: flex;
   align-items: center;
-  width: min(320px, 28vw);
-  pointer-events: auto;
+  width: min(180px, 20vw);
+  pointer-events: none;
 }
 
 .atlas-route__track {
-  position: absolute;
-  z-index: 0;
-  left: 22px;
-  right: 22px;
-  top: 50%;
+  position: relative;
+  flex: 1 1 auto;
   height: 1px;
   background: rgba(16, 36, 58, 0.2);
-  transform: translateY(-50%);
+  overflow: hidden;
 }
 
 .atlas-route__fill[data-sc-progress] {
@@ -4416,39 +4421,6 @@ img {
   height: 2px;
   background: #477da8;
   transform-origin: left center;
-}
-
-.atlas-route button {
-  position: relative;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  justify-self: center;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  cursor: pointer;
-}
-
-.atlas-route button > span {
-  width: 7px;
-  height: 7px;
-  border: 1px solid rgba(16, 36, 58, 0.48);
-  border-radius: 50%;
-  background: rgba(247, 243, 234, 0.96);
-  box-shadow: 0 0 0 0 rgba(71, 125, 168, 0);
-  transition: width 180ms ease, height 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
-}
-
-.atlas-route button:hover > span,
-.atlas-route button.is-active > span {
-  width: 11px;
-  height: 11px;
-  border-color: #477da8;
-  background: #477da8;
-  box-shadow: 0 0 0 5px rgba(71, 125, 168, 0.12);
 }
 
 .atlas-home + .site-footer {
@@ -4481,22 +4453,23 @@ img {
 }
 
 @media (max-width: 860px) {
-  .atlas-world__leg--0 > img,
-  .atlas-world__leg--1 > img,
-  .atlas-world__leg--2 > img {
+  .atlas-map-plane {
+    inset: -3%;
+    transform-origin: 52% 73%;
+    transform:
+      perspective(1050px)
+      rotateX(calc(var(--sc-segp, 0) * 48deg))
+      rotateZ(calc(var(--sc-segp, 0) * -0.55deg))
+      scale(calc(1.06 + var(--sc-segp, 0) * 0.28))
+      translate3d(0, calc(var(--sc-segp, 0) * 2vh), 0);
+  }
+
+  .atlas-map-plane > img {
     object-position: 70% center;
   }
 
-  .atlas-world__leg--0 > video {
+  .atlas-map-plane > video {
     object-position: center;
-  }
-
-  .atlas-world__leg--3 > img {
-    object-position: 58% center;
-  }
-
-  .atlas-world__leg--4 > img {
-    object-position: 53% center;
   }
 
   .atlas-scrim {
@@ -4570,18 +4543,11 @@ img {
   .atlas-route {
     left: 18px;
     bottom: 10px;
-    width: min(240px, calc(100vw - 92px));
-    grid-template-columns: repeat(5, minmax(38px, 1fr));
+    width: min(150px, calc(100vw - 112px));
   }
 
   .atlas-route__track {
-    left: 20px;
-    right: 20px;
-  }
-
-  .atlas-route button {
-    width: 44px;
-    height: 44px;
+    min-width: 90px;
   }
 
   .atlas-copy--finale {
@@ -4625,10 +4591,13 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .atlas-map-plane {
+    transform: none;
+  }
+
   .atlas-button,
   .atlas-text-link,
-  .atlas-contact,
-  .atlas-route button > span {
+  .atlas-contact {
     transition-duration: 0.01ms;
   }
 }

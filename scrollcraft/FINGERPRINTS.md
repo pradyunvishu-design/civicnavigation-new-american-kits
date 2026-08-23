@@ -29,6 +29,7 @@ changes only grammar and world will fail it.
 | Build | Grammar | Nav treatment | Hero device | Act-sequence shape | Close pattern | Signature move | World | Port |
 |---|---|---|---|---|---|---|---|---|
 | Civic Navigation atlas | Continuous worldflight | Clickable cyan route rail with growing line | Dense-GOP map-film scrub over a matched poster | Five legs; short middle beats, long Houston peak, quiet pre-finale gap | Illustrated system path resolving into ZIP search, guides, and email | The civic route is both the visual story and its navigation | Warm-paper luminous Texas civic cartography | Vite default 5173 |
+| Civic Navigation single-map atlas | Continuous one-segment worldflight | Quiet linear journey gauge without chapter controls | One uninterrupted map film over one matched poster | Five copy beats crossing a single long visual plane | The same dimensional map resolves behind ZIP search, guides, and email | Scroll progressively tilts one map from frontal poster to horizontal civic atlas | Warm-paper luminous Texas civic cartography; shared with the superseded atlas | Vite default 5173 |
 
 *(empty: your first build has nothing to clear, so build whatever the interview
 points at. From the second onwards, this table is the constraint.)*
@@ -43,6 +44,7 @@ act-count-and-length band. The shared columns are what the next build inherits
 as a constraint, so writing them down is the whole point.
 
 - Civic atlas worldflight; route-as-navigation rail; map-film scrub opening; five-leg calm → friction → Houston peak → action shape; illustrated portal close.
+- Single-map perspective worldflight; passive journey gauge; one-film/five-copy-beat structure; scroll-driven atlas-plane tilt; action close on the same uninterrupted map.
 
 ---
 

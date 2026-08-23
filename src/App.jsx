@@ -64,40 +64,14 @@ const ATLAS_VIDEO_DESKTOP = '/media/civic-atlas-scroll-desktop.mp4';
 const ATLAS_VIDEO_MOBILE = '/media/civic-atlas-scroll-mobile.mp4';
 const CONTACT_EMAIL = 'nacivicnav@gmail.com';
 
-const atlasLegs = [
-  {
-    waypoint: 'Orientation',
-    weight: 2.15,
-    linger: 0.22,
-    poster: '/media/civic-atlas-scroll-poster.webp',
-    video: ATLAS_VIDEO_DESKTOP,
-    mobileVideo: ATLAS_VIDEO_MOBILE
-  },
-  {
-    waypoint: 'A need nearby',
-    weight: 1.45,
-    linger: 0.18,
-    poster: '/media/civic-atlas-national-01.webp'
-  },
-  {
-    waypoint: 'A verified path',
-    weight: 1.35,
-    linger: 0.24,
-    poster: '/media/civic-atlas-national-02.webp'
-  },
-  {
-    waypoint: 'Houston connected',
-    weight: 2.8,
-    linger: 0.48,
-    poster: '/illustrations/fulshear-local-node.webp'
-  },
-  {
-    waypoint: 'Your next step',
-    weight: 1.95,
-    linger: 0.3,
-    poster: '/illustrations/system-path-ink.webp'
-  }
-];
+const atlasMap = {
+  waypoint: 'Civic map',
+  weight: 9.7,
+  linger: 0.2,
+  poster: '/media/civic-atlas-scroll-poster.webp',
+  video: ATLAS_VIDEO_DESKTOP,
+  mobileVideo: ATLAS_VIDEO_MOBILE
+};
 
 const verifiedServiceFacts = [
   {
@@ -511,7 +485,6 @@ function Home({ lang }) {
   const t = useCopy(lang);
   const ui = chromeCopy[lang] || chromeCopy.en;
   const journeyRef = useRef(null);
-  const [activeLeg, setActiveLeg] = useState(0);
 
   useEffect(() => {
     const journey = journeyRef.current;
@@ -521,53 +494,34 @@ function Home({ lang }) {
       journey.dataset.scrollCraftMounted = 'true';
       window.ScrollCraft.mount(document, { lerp: 0.2 });
     }
-
-    const updateWaypoint = event => {
-      if (journey.contains(event.detail?.el)) setActiveLeg(event.detail.index);
-    };
-    window.addEventListener('sc:waypoint', updateWaypoint);
-
-    return () => {
-      window.removeEventListener('sc:waypoint', updateWaypoint);
-    };
+    return undefined;
   }, []);
 
-  const goToLeg = index => {
-    const journey = journeyRef.current;
-    if (!journey) return;
-    const priorWeight = atlasLegs.slice(0, index).reduce((sum, leg) => sum + leg.weight, 0);
-    const target = journey.getBoundingClientRect().top + window.scrollY + (priorWeight + atlasLegs[index].weight * 0.34) * window.innerHeight;
-    window.scrollTo({ top: target, behavior: 'smooth' });
-  };
-
-  const chapterWindows = ['0.12 0.32', '0.28 0.47', '0.44 0.62', '0.58 0.82'];
+  const chapterWindows = ['0.13 0.31', '0.28 0.46', '0.43 0.63', '0.59 0.81'];
   const chapterNames = t.home.chapters.map(([title]) => title.replace(/^\d+\s*\/\/\s*/, ''));
 
   return (
-    <div className="home-page atlas-home" ref={journeyRef} data-sc-mode="worldflight" data-sc-seam="0.14" data-sc-lerp="0.2">
+    <div className="home-page atlas-home" ref={journeyRef} data-sc-mode="worldflight" data-sc-seam="0" data-sc-lerp="0.2">
       <div className="atlas-world" data-sc-world aria-hidden="true">
-        {atlasLegs.map((leg, index) => (
-          <div
-            className={`atlas-world__leg atlas-world__leg--${index}`}
-            data-sc-segment
-            data-sc-w={leg.weight}
-            data-sc-linger={leg.linger}
-            data-sc-waypoint={index === 0 ? t.home.eyebrow : index < atlasLegs.length - 1 ? chapterNames[index - 1] : t.home.actionTitle}
-            key={leg.waypoint}
-          >
-            <img className="atlas-world__poster" data-sc-poster src={leg.poster} alt="" decoding={index === 0 ? 'sync' : 'async'} />
-            {leg.video && (
-              <video
-                data-sc-src={leg.video}
-                data-sc-src-mobile={leg.mobileVideo}
-                muted
-                playsInline
-                preload="none"
-                tabIndex="-1"
-              />
-            )}
+        <div
+          className="atlas-world__leg"
+          data-sc-segment
+          data-sc-w={atlasMap.weight}
+          data-sc-linger={atlasMap.linger}
+          data-sc-waypoint={t.home.eyebrow}
+        >
+          <div className="atlas-map-plane">
+            <img className="atlas-world__poster" data-sc-poster src={atlasMap.poster} alt="" decoding="sync" />
+            <video
+              data-sc-src={atlasMap.video}
+              data-sc-src-mobile={atlasMap.mobileVideo}
+              muted
+              playsInline
+              preload="none"
+              tabIndex="-1"
+            />
           </div>
-        ))}
+        </div>
         <div className="atlas-world__paper" />
         <div className="atlas-world__grain" />
       </div>
@@ -575,7 +529,7 @@ function Home({ lang }) {
       <div className="atlas-copy-layer" data-sc-world-copy>
         <div className="atlas-scrim" aria-hidden="true" />
 
-        <header className="sc-copy sc-copy--lead atlas-copy atlas-copy--hero" data-sc-copy data-sc-window="hero">
+        <header className="sc-copy sc-copy--lead atlas-copy atlas-copy--hero" data-sc-copy data-sc-window="0 0.18 0 0.32">
           <p className="atlas-kicker">{t.home.eyebrow}</p>
           <h1>{t.home.title}</h1>
           <p className="atlas-lede">{t.home.subtitle}</p>
@@ -599,7 +553,7 @@ function Home({ lang }) {
           </article>
         ))}
 
-        <section className="sc-copy sc-copy--lead atlas-copy atlas-copy--finale" data-sc-copy data-sc-window="finale">
+        <section className="sc-copy sc-copy--lead atlas-copy atlas-copy--finale" data-sc-copy data-sc-window="0.78 1 0.32 0">
           <p className="atlas-kicker">{t.home.modelTitle}</p>
           <h2>{t.home.actionTitle}</h2>
           <p>{t.home.actionText}</p>
@@ -611,23 +565,11 @@ function Home({ lang }) {
         </section>
       </div>
 
-      <nav className="atlas-route" aria-label={ui.landingJourney}>
+      <div className="atlas-route" aria-hidden="true">
         <div className="atlas-route__track" aria-hidden="true">
           <span className="atlas-route__fill" data-sc-progress />
         </div>
-        {atlasLegs.map((leg, index) => (
-          <button
-            type="button"
-            className={index === activeLeg ? 'is-active' : ''}
-            aria-current={index === activeLeg ? 'step' : undefined}
-            aria-label={index === 0 ? t.home.eyebrow : index < atlasLegs.length - 1 ? chapterNames[index - 1] : t.home.actionTitle}
-            onClick={() => goToLeg(index)}
-            key={leg.waypoint}
-          >
-            <span />
-          </button>
-        ))}
-      </nav>
+      </div>
 
       <div data-sc-spacer aria-hidden="true" />
     </div>
