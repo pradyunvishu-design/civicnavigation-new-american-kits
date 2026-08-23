@@ -141,6 +141,8 @@
   var fineMQ = matchMedia('(hover: hover) and (pointer: fine)');
   var smallMQ = matchMedia('(max-width: 860px)');
   var coarse = matchMedia('(hover: none) and (pointer: coarse)').matches;
+  var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  var constrainedData = !!(connection && (connection.saveData || /(^|-)2g$/.test(connection.effectiveType || '')));
   var isMobile = function () { return coarse || smallMQ.matches; };
 
   var clamp = function (x, a, b) { return x < a ? a : x > b ? b : x; };
@@ -288,6 +290,7 @@
     var scrollEls = [];
     var vh = innerHeight, vw = innerWidth;
     var y = 0, needsLayout = true;
+    var hasScrollIntent = (scrollY || pageYOffset) > 1;
     var progressBar = root.querySelector('[data-sc-progress]');
     var docEl = document.documentElement;
 
@@ -581,7 +584,10 @@
     function loadClip(V) {
       // Under reduced motion the clip is never fetched. The poster holds the
       // frame and the copy still cues, so the page reads without the decode.
-      if (reduce || !V || V.loading) return;
+      // Keep large cinematic media out of the critical loading path. The poster
+      // is the first paint; a real scroll is the signal that the reader wants
+      // the scrubbed clip. Data Saver and 2G keep the poster for the full story.
+      if (reduce || constrainedData || !hasScrollIntent || !V || V.loading) return;
       var src = V.el.getAttribute('data-sc-src') ||
                 (isMobile() && V.el.getAttribute('data-sc-src-mobile')) ||
                 V.el.currentSrc || V.el.src;
@@ -1031,6 +1037,7 @@
     // ---- wiring -----------------------------------------------------------
     var ticking = false;
     addEventListener('scroll', function () {
+      hasScrollIntent = true;
       if (!ticking) { ticking = true; requestAnimationFrame(function () { read(); ticking = false; }); }
     }, { passive: true });
 

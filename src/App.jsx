@@ -413,7 +413,7 @@ function Navbar({ lang, setLang }) {
     <nav className={`floating-nav${menuOpen ? ' menu-open' : ''}`} aria-label={ui.primaryNav}>
       <Link to="/" className="brand-mark" aria-label={`${BRAND} ${t.nav.home}`} onClick={() => setMenuOpen(false)}>
         <span className="brand-icon" aria-hidden="true">
-          <img src={BRAND_LOGO_PATH} alt="" />
+          <img src={BRAND_LOGO_PATH} alt="" width="40" height="40" decoding="async" />
         </span>
         <span className="brand-wordmark">{BRAND}</span>
       </Link>
@@ -475,7 +475,7 @@ function PageHeader({ eyebrow, title, subtitle }) {
 function InternalPhoto({ src, alt, caption }) {
   return (
     <figure className="internal-photo container">
-      <img src={src} alt={alt} loading="lazy" />
+      <img src={src} alt={alt} loading="lazy" decoding="async" />
       <figcaption><span>Representative scene</span>{caption}</figcaption>
     </figure>
   );
@@ -511,7 +511,7 @@ function Home({ lang }) {
           data-sc-waypoint={t.home.eyebrow}
         >
           <div className="atlas-map-plane">
-            <img className="atlas-world__poster" data-sc-poster src={atlasMap.poster} alt="" decoding="sync" />
+            <img className="atlas-world__poster" data-sc-poster src={atlasMap.poster} alt="" decoding="async" fetchPriority="high" />
             <video
               data-sc-src={atlasMap.video}
               data-sc-src-mobile={atlasMap.mobileVideo}
@@ -807,7 +807,7 @@ function TexasZipFinder({ trackReferral }) {
                     <article className="nearby-resource-card" key={resource.id}>
                       <div className="nearby-card-topline"><span>#{index + 1} nearest</span><strong>~{Math.round(resource.distance)} miles</strong></div>
                       <Link className={`nearby-resource-image ${resource.imageKind === 'identity' ? 'identity-image' : ''}`} to={`/directory/texas/${resource.id}`} aria-label={`View the full ${resource.name} profile`}>
-                        <img src={resource.image} alt={`${resource.name} organization image from its official website`} />
+                        <img src={resource.image} alt={`${resource.name} organization image from its official website`} loading="lazy" decoding="async" />
                       </Link>
                       <h4><Link to={`/directory/texas/${resource.id}`}>{resource.name}</Link></h4>
                       <p className="nearby-address"><MapPin size={16} /> {resource.address}</p>
@@ -892,7 +892,7 @@ function TexasFoodBankProfilePage({ trackReferral }) {
             </div>
           </div>
           <figure className={`profile-banner texas-profile-banner ${resource.imageKind === 'identity' ? 'identity-image' : ''}`}>
-            <img src={resource.image} alt={`${resource.name} organization image from its official website`} />
+            <img src={resource.image} alt={`${resource.name} organization image from its official website`} loading="eager" decoding="async" fetchPriority="high" />
             <figcaption>Organization image from <a href={resource.website} target="_blank" rel="noreferrer">{resource.name}’s official website <ExternalLink size={12} /></a>.</figcaption>
           </figure>
         </div>
@@ -985,7 +985,7 @@ function ResourceCard({ resource, lang, t, trackReferral }) {
       <div className="resource-preview-heading">
         <span className="organization-mark" aria-hidden="true">
           <b>{organizationInitials(resource.name)}</b>
-          {organizationIconHref(resource.website) && <img src={organizationIconHref(resource.website)} alt="" onError={event => { event.currentTarget.style.display = 'none'; }} />}
+          {organizationIconHref(resource.website) && <img src={organizationIconHref(resource.website)} alt="" loading="lazy" decoding="async" onError={event => { event.currentTarget.style.display = 'none'; }} />}
         </span>
         <div>
           <div className="resource-topline">
@@ -1056,7 +1056,7 @@ function ResourceProfilePage({ lang, trackReferral }) {
           </div>
           {profileMedia ? (
             <figure className="profile-banner profile-provider-photo">
-              <img src={profileMedia.src} alt={profileMedia.alt} />
+              <img src={profileMedia.src} alt={profileMedia.alt} loading="eager" decoding="async" fetchPriority="high" />
               <figcaption>Official organization image · <a href={profileMedia.sourceUrl} target="_blank" rel="noreferrer">{profileMedia.sourceLabel} <ExternalLink size={12} /></a></figcaption>
             </figure>
           ) : (
@@ -1323,7 +1323,7 @@ function VolunteerPage({ lang }) {
         <div>
           <h2 className="display-heading">{t.home.actionTitle}</h2>
           <p className="section-copy">{t.home.actionText}</p>
-          <figure className="image-card"><img src={imageSet.library} alt="" /></figure>
+          <figure className="image-card"><img src={imageSet.library} alt="" loading="lazy" decoding="async" /></figure>
         </div>
         <form
           className="paper-card volunteer-form"
@@ -1451,7 +1451,7 @@ function AboutPage({ lang }) {
           <p className="section-copy">{t.home.actionText}</p>
         </div>
         <figure className="image-card">
-          <img src="/photos/students-directory-guidance.webp" alt="Student volunteers and an immigrant family reviewing local resource information together at a library table." />
+          <img src="/photos/students-directory-guidance.webp" alt="Student volunteers and an immigrant family reviewing local resource information together at a library table." loading="lazy" decoding="async" />
           <figcaption>Representative scene: CivicNavigation students make local information easier to understand, compare, and act on.</figcaption>
         </figure>
       </section>
