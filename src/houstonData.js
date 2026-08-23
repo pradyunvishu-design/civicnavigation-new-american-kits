@@ -172,8 +172,8 @@ export const locales = {
     home: {
       eyebrow: 'Red de navegación cívica de Houston',
       title: 'Un camino visible por los sistemas de ayuda de Houston.',
-      subtitle: 'New American Kits convierte recursos verificados de Houston y el condado Harris en una historia multilingüe, una guía impresa y un portal cívico searchable.',
-      primary: 'Encontrar ayuda en Houston',
+      subtitle: 'New American Kits convierte recursos verificados de Houston y el condado Harris en una historia multilingüe, una guía impresa y un portal cívico con búsqueda en todo Texas.',
+      primary: 'Encontrar ayuda por código postal',
       secondary: 'Leer las guías',
       storyEyebrow: 'Edición del condado Harris',
       storyTitle: 'De un folleto impreso a un mapa de apoyo confiable en toda la ciudad.',
@@ -183,11 +183,11 @@ export const locales = {
         ['03 // El kit', 'El folleto da un primer camino: 911, 988, 211, documentos clave y pasos claros.'],
         ['04 // El portal', 'El sitio mantiene ese camino actualizado con búsqueda, fuentes, emergencias, guías y el chatbot Civic Navigator.']
       ],
-      portalTitle: 'Recursos verificados de Houston',
-      portalText: 'Houston primero y todo el condado Harris: comida, salud, escuela, vivienda, servicios públicos, inglés, ayuda legal, transporte y emergencias.',
+      portalTitle: 'Buscar ayuda en Texas por código postal',
+      portalText: 'Cada código postal de Texas recibe resultados cercanos de bancos de alimentos y puntos de partida estatales oficiales para beneficios, salud, vivienda, trabajo, cuidado infantil, escuelas y ayuda legal.',
       modelTitle: 'Un folleto. Un portal vivo. Un mapa de apoyo para la ciudad.',
-      actionTitle: 'Creado para familias del condado Harris.',
-      actionText: 'Cada listado incluye fuente y fecha de verificación para mantener el folleto impreso alineado con el portal.'
+      actionTitle: 'Creado en Houston. Ampliado por todo Texas.',
+      actionText: 'El buscador estatal usa fuentes oficiales de Texas y distingue claramente las herramientas amplias de búsqueda de los perfiles detallados de Houston verificados con fuentes.'
     },
     pages: {
       directoryTitle: 'Buscador de Recursos de Texas',
@@ -230,8 +230,8 @@ export const locales = {
     home: {
       eyebrow: 'شبكة الملاحة المدنية في هيوستن',
       title: 'طريق واضح داخل أنظمة المساعدة في هيوستن.',
-      subtitle: 'تحول New American Kits موارد هيوستن ومقاطعة هاريس الموثقة إلى كتيب مطبوع وبوابة مدنية متعددة اللغات.',
-      primary: 'ابحث عن مساعدة في هيوستن',
+      subtitle: 'تحول New American Kits موارد هيوستن ومقاطعة هاريس الموثقة إلى قصة متعددة اللغات وكتيب مطبوع وبوابة مدنية للبحث في جميع أنحاء تكساس.',
+      primary: 'ابحث عن المساعدة بالرمز البريدي',
       secondary: 'اقرأ الأدلة',
       storyEyebrow: 'إصدار مقاطعة هاريس',
       storyTitle: 'من كتيب مطبوع إلى خريطة دعم موثوقة في المدينة.',
@@ -241,10 +241,11 @@ export const locales = {
         ['03 // الكتيب', 'يعطي الكتيب بداية واضحة: 911 و988 و211 والوثائق الأساسية والخطوات التالية.'],
         ['04 // البوابة', 'يبقي الموقع المعلومات محدثة بالبحث والروابط والمساعدة الطارئة والأدلة وروبوت Civic Navigator.']
       ],
-      portalTitle: 'موارد موثقة في هيوستن',
-      portalText: 'هيوستن ومقاطعة هاريس: طعام، صحة، مدرسة، سكن، مرافق، إنجليزية، قانون، مواصلات وطوارئ.',
+      portalTitle: 'ابحث عن مساعدة في تكساس بالرمز البريدي',
+      portalText: 'يحصل كل رمز بريدي في تكساس على نتائج قريبة لشبكات بنوك الطعام ونقاط بداية رسمية على مستوى الولاية للمزايا والصحة والسكن والعمل ورعاية الأطفال والمدارس والمساعدة القانونية.',
       modelTitle: 'كتيب واحد. بوابة حية. خريطة دعم للمدينة.',
-      actionTitle: 'مصمم لعائلات مقاطعة هاريس.'
+      actionTitle: 'بُني في هيوستن. وتوسع في جميع أنحاء تكساس.',
+      actionText: 'يستخدم الباحث على مستوى الولاية مصادر رسمية من تكساس ويفصل بوضوح بين أدوات البحث العامة وملفات هيوستن التفصيلية التي تم التحقق من مصادرها.'
     },
     pages: {
       directoryTitle: 'دليل موارد تكساس',
@@ -269,8 +270,8 @@ export const locales = {
     home: {
       eyebrow: '休斯顿公共服务导航网络',
       title: '在休斯顿求助系统中找到清晰路径。',
-      subtitle: 'New American Kits 将休斯顿和哈里斯县已核实资源整理成多语言故事、纸质手册和可搜索门户。',
-      primary: '寻找休斯顿帮助',
+      subtitle: 'New American Kits 将休斯顿和哈里斯县已核实资源整理成多语言故事、纸质手册和覆盖全德州的公共服务搜索门户。',
+      primary: '按邮政编码寻找帮助',
       secondary: '阅读指南',
       storyEyebrow: '哈里斯县版本',
       storyTitle: '从一本手册到全城可信支持地图。',
@@ -280,9 +281,11 @@ export const locales = {
         ['03 // 工具包', '手册提供第一步：911、988、211、关键文件和清晰步骤。'],
         ['04 // 门户', '网站用搜索、来源链接、紧急资源、指南和聊天助手保持信息更新。']
       ],
-      portalTitle: '已核实的休斯顿资源',
+      portalTitle: '按邮政编码寻找德州帮助',
+      portalText: '德州每个邮政编码都会显示附近的食物银行网络结果，以及福利、医疗、住房、工作、儿童照护、学校和法律援助的官方全州入口。',
       modelTitle: '一本手册。一个在线门户。一张城市支持地图。',
-      actionTitle: '为哈里斯县家庭建立。'
+      actionTitle: '始于休斯顿，服务全德州。',
+      actionText: '全州搜索工具使用德州官方来源，并明确区分广泛搜索工具与经过来源核实的休斯顿详细资料。'
     },
     pages: {
       directoryTitle: '德州资源搜索',
@@ -305,8 +308,8 @@ export const locales = {
     home: {
       eyebrow: 'Mạng điều hướng công dân Houston',
       title: 'Một lối đi rõ ràng qua hệ thống trợ giúp Houston.',
-      subtitle: 'New American Kits biến nguồn lực đã kiểm chứng của Houston và Harris County thành sổ tay, câu chuyện đa ngôn ngữ và cổng tìm kiếm.',
-      primary: 'Tìm trợ giúp Houston',
+      subtitle: 'New American Kits biến nguồn lực đã kiểm chứng của Houston và Harris County thành câu chuyện đa ngôn ngữ, sổ tay in và cổng tìm kiếm dân sự trên toàn Texas.',
+      primary: 'Tìm trợ giúp theo mã ZIP',
       secondary: 'Đọc hướng dẫn',
       storyEyebrow: 'Bản Harris County',
       storyTitle: 'Từ sổ tay in đến bản đồ hỗ trợ đáng tin cậy toàn thành phố.',
@@ -316,8 +319,11 @@ export const locales = {
         ['03 // Bộ kit', 'Sổ tay cho bước đầu: 911, 988, 211, giấy tờ cần giữ và các bước đơn giản.'],
         ['04 // Cổng thông tin', 'Trang web cập nhật thông tin với tìm kiếm, nguồn, khẩn cấp, hướng dẫn và chatbot.']
       ],
-      portalTitle: 'Nguồn lực Houston đã kiểm chứng',
-      actionTitle: 'Dành cho gia đình Harris County.'
+      portalTitle: 'Tìm trợ giúp Texas theo mã ZIP',
+      portalText: 'Mỗi mã ZIP ở Texas nhận được kết quả mạng lưới ngân hàng thực phẩm gần đó và các điểm bắt đầu chính thức toàn tiểu bang cho phúc lợi, y tế, nhà ở, việc làm, chăm sóc trẻ, trường học và trợ giúp pháp lý.',
+      modelTitle: 'Một sổ tay. Một cổng trực tuyến. Một bản đồ hỗ trợ toàn thành phố.',
+      actionTitle: 'Xây dựng tại Houston. Mở rộng khắp Texas.',
+      actionText: 'Công cụ tìm kiếm toàn tiểu bang sử dụng nguồn chính thức của Texas và phân biệt rõ công cụ tìm kiếm rộng với hồ sơ Houston chi tiết đã kiểm tra nguồn.'
     },
     pages: {
       directoryTitle: 'Công cụ tìm nguồn lực Texas',
@@ -340,8 +346,8 @@ export const locales = {
     home: {
       eyebrow: 'ह्यूस्टन नागरिक सहायता नेटवर्क',
       title: 'ह्यूस्टन की सहायता प्रणालियों में साफ रास्ता।',
-      subtitle: 'New American Kits ह्यूस्टन और Harris County संसाधनों को बहुभाषी कहानी, छपे हैंडआउट और खोज योग्य पोर्टल में बदलता है।',
-      primary: 'ह्यूस्टन मदद खोजें',
+      subtitle: 'New American Kits सत्यापित ह्यूस्टन और Harris County संसाधनों को बहुभाषी कहानी, छपे हैंडआउट और पूरे टेक्सास में खोजे जा सकने वाले नागरिक पोर्टल में बदलता है।',
+      primary: 'ZIP कोड से मदद खोजें',
       secondary: 'गाइड पढ़ें',
       storyEyebrow: 'Harris County संस्करण',
       storyTitle: 'एक छपे बुकलेट से पूरे शहर के भरोसेमंद सहायता नक्शे तक।',
@@ -351,8 +357,11 @@ export const locales = {
         ['03 // किट', 'बुकलेट पहला रास्ता देता है: 911, 988, 211, जरूरी दस्तावेज और सरल कदम।'],
         ['04 // पोर्टल', 'वेबसाइट खोज, स्रोत, आपात संसाधन, गाइड और चैटबॉट से जानकारी अपडेट रखती है।']
       ],
-      portalTitle: 'सत्यापित ह्यूस्टन संसाधन',
-      actionTitle: 'Harris County परिवारों के लिए बनाया गया।'
+      portalTitle: 'ZIP से टेक्सास मदद खोजें',
+      portalText: 'टेक्सास के हर ZIP कोड को पास के फूड बैंक नेटवर्क परिणाम और लाभ, स्वास्थ्य, आवास, नौकरियां, बाल देखभाल, स्कूल और कानूनी सहायता के आधिकारिक राज्यव्यापी शुरुआती बिंदु मिलते हैं।',
+      modelTitle: 'एक हैंडआउट। एक लाइव पोर्टल। एक शहरव्यापी सहायता मानचित्र।',
+      actionTitle: 'ह्यूस्टन में बनाया। पूरे टेक्सास में विस्तारित।',
+      actionText: 'राज्यव्यापी खोज आधिकारिक टेक्सास स्रोतों का उपयोग करती है और व्यापक खोज साधनों को स्रोत-जाँची विस्तृत ह्यूस्टन प्रोफ़ाइल से साफ़ अलग करती है।'
     },
     pages: {
       directoryTitle: 'टेक्सास संसाधन खोज',
@@ -375,8 +384,8 @@ export const locales = {
     home: {
       eyebrow: 'ہیوسٹن شہری رہنمائی نیٹ ورک',
       title: 'ہیوسٹن کے مدد نظام میں واضح راستہ۔',
-      subtitle: 'New American Kits ہیوسٹن اور Harris County کے تصدیق شدہ وسائل کو کثیر لسانی ہینڈ آؤٹ اور سرچ پورٹل بناتا ہے۔',
-      primary: 'ہیوسٹن مدد تلاش کریں',
+      subtitle: 'New American Kits تصدیق شدہ ہیوسٹن اور Harris County وسائل کو کثیر لسانی کہانی، پرنٹ ہینڈ آؤٹ اور پورے ٹیکساس میں قابلِ تلاش شہری پورٹل بناتا ہے۔',
+      primary: 'ZIP کوڈ سے مدد تلاش کریں',
       secondary: 'رہنما پڑھیں',
       storyEyebrow: 'Harris County ایڈیشن',
       storyTitle: 'ایک پرنٹ کتابچے سے شہر بھر کے قابل اعتماد مدد نقشے تک۔',
@@ -386,8 +395,11 @@ export const locales = {
         ['03 // کٹ', 'کتابچہ پہلا راستہ دیتا ہے: 911، 988، 211، ضروری دستاویزات اور آسان قدم۔'],
         ['04 // پورٹل', 'ویب سائٹ تلاش، ذرائع، ایمرجنسی، رہنما اور چیٹ بوٹ سے معلومات تازہ رکھتی ہے۔']
       ],
-      portalTitle: 'تصدیق شدہ ہیوسٹن وسائل',
-      actionTitle: 'Harris County خاندانوں کے لیے بنایا گیا۔'
+      portalTitle: 'ZIP سے ٹیکساس مدد تلاش کریں',
+      portalText: 'ٹیکساس کے ہر ZIP کوڈ کو قریبی فوڈ بینک نیٹ ورک کے نتائج اور فوائد، صحت، رہائش، ملازمت، بچوں کی دیکھ بھال، اسکول اور قانونی مدد کے سرکاری ریاستی آغاز کے مقامات ملتے ہیں۔',
+      modelTitle: 'ایک ہینڈ آؤٹ۔ ایک لائیو پورٹل۔ ایک شہر گیر مدد نقشہ۔',
+      actionTitle: 'ہیوسٹن میں بنایا۔ پورے ٹیکساس میں پھیلایا۔',
+      actionText: 'ریاستی تلاش سرکاری ٹیکساس ذرائع استعمال کرتی ہے اور وسیع تلاش کے اوزار کو ذرائع سے جانچی گئی تفصیلی ہیوسٹن پروفائلز سے واضح طور پر الگ کرتی ہے۔'
     },
     pages: {
       directoryTitle: 'ٹیکساس وسائل تلاش',

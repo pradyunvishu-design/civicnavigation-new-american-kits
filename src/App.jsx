@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -40,7 +40,6 @@ import {
   categories,
   chatbotAnswers,
   emergencyResources,
-  impactMetrics,
   locales,
   researchCards,
   resources,
@@ -61,8 +60,44 @@ import { observeUiTranslations } from './uiTranslation';
 const BRAND = 'civicnavigation';
 const BRAND_LOGO_PATH = '/brand/civicnavigation-premium-logo.png';
 const KIT_PDF_PATH = '/kits/houston-assistance-guide.pdf';
-const LANDING_VIDEO_PATH = '/media/civic-navigation-scroll.mp4';
+const ATLAS_VIDEO_DESKTOP = '/media/civic-atlas-scroll-desktop.mp4';
+const ATLAS_VIDEO_MOBILE = '/media/civic-atlas-scroll-mobile.mp4';
 const CONTACT_EMAIL = 'nacivicnav@gmail.com';
+
+const atlasLegs = [
+  {
+    waypoint: 'Orientation',
+    weight: 2.15,
+    linger: 0.22,
+    poster: '/media/civic-atlas-scroll-poster.webp',
+    video: ATLAS_VIDEO_DESKTOP,
+    mobileVideo: ATLAS_VIDEO_MOBILE
+  },
+  {
+    waypoint: 'A need nearby',
+    weight: 1.45,
+    linger: 0.18,
+    poster: '/media/civic-atlas-national-01.webp'
+  },
+  {
+    waypoint: 'A verified path',
+    weight: 1.35,
+    linger: 0.24,
+    poster: '/media/civic-atlas-national-02.webp'
+  },
+  {
+    waypoint: 'Houston connected',
+    weight: 2.8,
+    linger: 0.48,
+    poster: '/illustrations/fulshear-local-node.webp'
+  },
+  {
+    waypoint: 'Your next step',
+    weight: 1.95,
+    linger: 0.3,
+    poster: '/illustrations/system-path-ink.webp'
+  }
+];
 
 const verifiedServiceFacts = [
   {
@@ -171,13 +206,13 @@ const imageSet = {
 };
 
 const chromeCopy = {
-  en: { primaryNav: 'Primary navigation', selectLanguage: 'Select language', centralTime: 'CT' },
-  es: { primaryNav: 'Navegación principal', selectLanguage: 'Seleccionar idioma', centralTime: 'CT' },
-  ar: { primaryNav: 'التنقل الرئيسي', selectLanguage: 'اختر اللغة', centralTime: 'CT' },
-  zh: { primaryNav: '主导航', selectLanguage: '选择语言', centralTime: 'CT' },
-  vi: { primaryNav: 'Điều hướng chính', selectLanguage: 'Chọn ngôn ngữ', centralTime: 'CT' },
-  hi: { primaryNav: 'मुख्य नेविगेशन', selectLanguage: 'भाषा चुनें', centralTime: 'CT' },
-  ur: { primaryNav: 'مرکزی نیویگیشن', selectLanguage: 'زبان منتخب کریں', centralTime: 'CT' }
+  en: { primaryNav: 'Primary navigation', selectLanguage: 'Select language', centralTime: 'CT', scrollJourney: 'Scroll to follow the route', landingJourney: 'Landing page journey' },
+  es: { primaryNav: 'Navegación principal', selectLanguage: 'Seleccionar idioma', centralTime: 'CT', scrollJourney: 'Desplázate para seguir la ruta', landingJourney: 'Recorrido de la página de inicio' },
+  ar: { primaryNav: 'التنقل الرئيسي', selectLanguage: 'اختر اللغة', centralTime: 'CT', scrollJourney: 'مرّر لمتابعة المسار', landingJourney: 'رحلة الصفحة الرئيسية' },
+  zh: { primaryNav: '主导航', selectLanguage: '选择语言', centralTime: 'CT', scrollJourney: '滚动以跟随路线', landingJourney: '首页导览' },
+  vi: { primaryNav: 'Điều hướng chính', selectLanguage: 'Chọn ngôn ngữ', centralTime: 'CT', scrollJourney: 'Cuộn để đi theo lộ trình', landingJourney: 'Hành trình trang chủ' },
+  hi: { primaryNav: 'मुख्य नेविगेशन', selectLanguage: 'भाषा चुनें', centralTime: 'CT', scrollJourney: 'रास्ते पर चलने के लिए स्क्रॉल करें', landingJourney: 'लैंडिंग पेज यात्रा' },
+  ur: { primaryNav: 'مرکزی نیویگیشن', selectLanguage: 'زبان منتخب کریں', centralTime: 'CT', scrollJourney: 'راستہ دیکھنے کے لیے اسکرول کریں', landingJourney: 'لینڈنگ صفحے کا سفر' }
 };
 
 const reviewRoles = [
@@ -379,7 +414,7 @@ function AppContent() {
           </Routes>
         </AnimatePresence>
       </main>
-      <Footer lang={lang} />
+      {location.pathname !== '/' && <Footer lang={lang} />}
       <Chatbot lang={lang} tracker={tracker} setTracker={setTracker} />
     </div>
   );
@@ -474,162 +509,128 @@ function InternalPhoto({ src, alt, caption }) {
 
 function Home({ lang }) {
   const t = useCopy(lang);
-  const storyRef = useRef(null);
-  const videoRef = useRef(null);
-  const scrollStopTimerRef = useRef(null);
-  const reduceMotion = useReducedMotion();
-  const [storyPhase, setStoryPhase] = useState(-1);
-  const { scrollYProgress } = useScroll({
-    target: storyRef,
-    offset: ['start start', 'end end']
-  });
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 72,
-    damping: 24,
-    mass: 0.35,
-    restDelta: 0.0005
-  });
-  const videoScale = useTransform(smoothProgress, [0, 0.5, 1], [1.02, 1.055, 1.085]);
-  const videoY = useTransform(smoothProgress, [0, 0.5, 1], ['0%', '-1.5%', '-3%']);
-
-  useMotionValueEvent(scrollYProgress, 'change', () => {
-    const video = videoRef.current;
-    if (!video || reduceMotion || video.readyState < 2) return;
-    if (video.paused) video.play().catch(() => {});
-    if (scrollStopTimerRef.current) clearTimeout(scrollStopTimerRef.current);
-    scrollStopTimerRef.current = setTimeout(() => {
-      video.pause();
-      scrollStopTimerRef.current = null;
-    }, 180);
-  });
-
-  useMotionValueEvent(smoothProgress, 'change', progress => {
-    const nextPhase = progress < 0.18 ? -1 : Math.min(3, Math.floor((progress - 0.18) / 0.205));
-    setStoryPhase(current => current === nextPhase ? current : nextPhase);
-  });
+  const ui = chromeCopy[lang] || chromeCopy.en;
+  const journeyRef = useRef(null);
+  const [activeLeg, setActiveLeg] = useState(0);
 
   useEffect(() => {
-    const video = videoRef.current;
+    const journey = journeyRef.current;
+    if (!journey || !window.ScrollCraft) return undefined;
+
+    if (!journey.dataset.scrollCraftMounted) {
+      journey.dataset.scrollCraftMounted = 'true';
+      window.ScrollCraft.mount(document, { lerp: 0.2 });
+    }
+
+    const updateWaypoint = event => {
+      if (journey.contains(event.detail?.el)) setActiveLeg(event.detail.index);
+    };
+    window.addEventListener('sc:waypoint', updateWaypoint);
+
     return () => {
-      if (scrollStopTimerRef.current) clearTimeout(scrollStopTimerRef.current);
-      video?.pause();
+      window.removeEventListener('sc:waypoint', updateWaypoint);
     };
   }, []);
 
+  const goToLeg = index => {
+    const journey = journeyRef.current;
+    if (!journey) return;
+    const priorWeight = atlasLegs.slice(0, index).reduce((sum, leg) => sum + leg.weight, 0);
+    const target = journey.getBoundingClientRect().top + window.scrollY + (priorWeight + atlasLegs[index].weight * 0.34) * window.innerHeight;
+    window.scrollTo({ top: target, behavior: 'smooth' });
+  };
+
+  const chapterWindows = ['0.12 0.32', '0.28 0.47', '0.44 0.62', '0.58 0.82'];
+  const chapterNames = t.home.chapters.map(([title]) => title.replace(/^\d+\s*\/\/\s*/, ''));
+
   return (
-    <PageTransition className="home-page">
-      <section className="story-viewport" ref={storyRef}>
-        <div className="sticky-stage">
-          <div className="cinematic-grid" aria-hidden="true" />
-          <div className={`cinematic-intro${storyPhase === -1 ? ' is-active' : ''}`}>
-            <p className="eyebrow cyan">{t.home.eyebrow}</p>
-            <h1>{t.home.title}</h1>
-          </div>
-          <div className="cinematic-chapters">
-            {t.home.chapters.map(([title, text], index) => (
-              <article className={`cinematic-chapter${storyPhase === index ? ' is-active' : ''}`} key={title}>
-                <h2>{title.replace(/^\d+\s*\/\/\s*/, '')}</h2>
-                <p>{text}</p>
-              </article>
-            ))}
-          </div>
-          <motion.figure
-            className="cinematic-video-frame"
-            style={{ scale: reduceMotion ? 1 : videoScale, y: reduceMotion ? 0 : videoY }}
+    <div className="home-page atlas-home" ref={journeyRef} data-sc-mode="worldflight" data-sc-seam="0.14" data-sc-lerp="0.2">
+      <div className="atlas-world" data-sc-world aria-hidden="true">
+        {atlasLegs.map((leg, index) => (
+          <div
+            className={`atlas-world__leg atlas-world__leg--${index}`}
+            data-sc-segment
+            data-sc-w={leg.weight}
+            data-sc-linger={leg.linger}
+            data-sc-waypoint={index === 0 ? t.home.eyebrow : index < atlasLegs.length - 1 ? chapterNames[index - 1] : t.home.actionTitle}
+            key={leg.waypoint}
           >
-            <video
-              ref={videoRef}
-              src={LANDING_VIDEO_PATH}
-              poster={imageSet.hero}
-              muted
-              playsInline
-              preload="auto"
-              loop={!reduceMotion}
-              aria-label={t.home.storyTitle}
-              onLoadedMetadata={event => {
-                event.currentTarget.pause();
-                event.currentTarget.currentTime = reduceMotion ? Math.min(4, event.currentTarget.duration / 2) : 0;
-              }}
-            />
-          </motion.figure>
-          <div className={`cinematic-footer${storyPhase === -1 ? ' is-active' : ''}`}>
-            <p>{t.home.subtitle}</p>
-            <div className="hero-actions">
-              <Link to="/directory" className="ink-link">{t.home.primary} <ChevronRight size={16} /></Link>
-              <Link to="/guides" className="ink-link secondary">{t.home.secondary} <ChevronRight size={16} /></Link>
-            </div>
+            <img className="atlas-world__poster" data-sc-poster src={leg.poster} alt="" decoding={index === 0 ? 'sync' : 'async'} />
+            {leg.video && (
+              <video
+                data-sc-src={leg.video}
+                data-sc-src-mobile={leg.mobileVideo}
+                muted
+                playsInline
+                preload="none"
+                tabIndex="-1"
+              />
+            )}
           </div>
-        </div>
-      </section>
+        ))}
+        <div className="atlas-world__paper" />
+        <div className="atlas-world__grain" />
+      </div>
 
-      <section className="editorial-section">
-        <div className="container two-column">
-          <div>
-            <p className="eyebrow">{t.home.storyEyebrow}</p>
-            <h2 className="display-heading">{t.home.storyTitle}</h2>
-          </div>
-          <div className="paper-card prose-card">
-            <p>{t.home.portalText}</p>
-            <p>{t.home.modelText}</p>
-            <Link to="/directory" className="outline-button">{t.home.portalTitle} <ChevronRight size={16} /></Link>
-          </div>
-        </div>
-      </section>
+      <div className="atlas-copy-layer" data-sc-world-copy>
+        <div className="atlas-scrim" aria-hidden="true" />
 
-      <section className="image-band">
-        <img src={imageSet.localNode} alt="" />
-        <div className="frosted-card">
-          <p className="eyebrow cyan">{t.home.modelTitle}</p>
-          <h2>{t.home.portalTitle}</h2>
-          <p>{t.home.portalText}</p>
-        </div>
-      </section>
-
-      <section className="editorial-section alt">
-        <div className="container">
-          <div className="section-intro">
-            <p className="eyebrow">{t.labels.lifeSituations}</p>
-            <h2 className="display-heading">{t.labels.allResources}</h2>
+        <header className="sc-copy sc-copy--lead atlas-copy atlas-copy--hero" data-sc-copy data-sc-window="hero">
+          <p className="atlas-kicker">{t.home.eyebrow}</p>
+          <h1>{t.home.title}</h1>
+          <p className="atlas-lede">{t.home.subtitle}</p>
+          <div className="atlas-actions">
+            <Link to="/directory" className="atlas-button atlas-button--primary">{t.home.primary} <ChevronRight size={16} /></Link>
+            <Link to="/guides" className="atlas-text-link">{t.home.secondary} <ChevronRight size={15} /></Link>
           </div>
-          <div className="situation-list">
-            {categories.map((category, index) => (
-              <Link to={`/directory?category=${category.id}`} className="situation-row" key={category.id}>
-                <span>{String(index + 1).padStart(2, '0')}</span>
-                <Icon name={category.icon} />
-                <strong>{localize(category.name, lang)}</strong>
-                <p>{localize(category.desc, lang)}</p>
-                <ChevronRight size={18} />
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+          <span className="atlas-scroll-cue"><span /> {ui.scrollJourney}</span>
+        </header>
 
-      <section className="editorial-section">
-        <div className="container split-visual">
-          <figure className="image-card"><img src={imageSet.system} alt="" /></figure>
-          <div>
-            <p className="eyebrow">{t.home.actionTitle}</p>
-            <h2 className="display-heading">{t.home.modelTitle}</h2>
-            <p className="section-copy">{t.home.actionText}</p>
-            <div className="stat-row">
-              <span><strong>{impactMetrics.partnerOrganizations}</strong>{t.misc.touchpoints || 'Community touchpoints'}</span>
-              <span><strong>{impactMetrics.languagesSupported}</strong>{t.labels.languages}</span>
-              <span><strong>2026</strong>{t.labels.lastVerified}</span>
-            </div>
-          </div>
-        </div>
-      </section>
+        {t.home.chapters.map(([title, text], index) => (
+          <article
+            className={`sc-copy sc-copy--lead atlas-copy atlas-copy--chapter atlas-copy--chapter-${index}`}
+            data-sc-copy
+            data-sc-window={chapterWindows[index]}
+            key={title}
+          >
+            <p className="atlas-kicker">{index === 0 ? t.home.storyEyebrow : chapterNames[index - 1] || t.home.storyEyebrow}</p>
+            <h2>{title.replace(/^\d+\s*\/\/\s*/, '')}</h2>
+            <p>{text}</p>
+          </article>
+        ))}
 
-      <section className="image-band right">
-        <img src={imageSet.scale} alt="" />
-        <div className="frosted-card">
-          <p className="eyebrow cyan">{t.misc.research}</p>
+        <section className="sc-copy sc-copy--lead atlas-copy atlas-copy--finale" data-sc-copy data-sc-window="finale">
+          <p className="atlas-kicker">{t.home.modelTitle}</p>
           <h2>{t.home.actionTitle}</h2>
           <p>{t.home.actionText}</p>
+          <div className="atlas-actions">
+            <Link to="/directory" className="atlas-button atlas-button--primary">{t.home.portalTitle} <Navigation size={16} /></Link>
+            <Link to="/guides" className="atlas-button atlas-button--quiet">{t.nav.guides} <ChevronRight size={16} /></Link>
+          </div>
+          <a className="atlas-contact" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+        </section>
+      </div>
+
+      <nav className="atlas-route" aria-label={ui.landingJourney}>
+        <div className="atlas-route__track" aria-hidden="true">
+          <span className="atlas-route__fill" data-sc-progress />
         </div>
-      </section>
-    </PageTransition>
+        {atlasLegs.map((leg, index) => (
+          <button
+            type="button"
+            className={index === activeLeg ? 'is-active' : ''}
+            aria-current={index === activeLeg ? 'step' : undefined}
+            aria-label={index === 0 ? t.home.eyebrow : index < atlasLegs.length - 1 ? chapterNames[index - 1] : t.home.actionTitle}
+            onClick={() => goToLeg(index)}
+            key={leg.waypoint}
+          >
+            <span />
+          </button>
+        ))}
+      </nav>
+
+      <div data-sc-spacer aria-hidden="true" />
+    </div>
   );
 }
 
